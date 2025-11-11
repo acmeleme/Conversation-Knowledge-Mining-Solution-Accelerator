@@ -1,0 +1,88 @@
+version: 2
+
+updates:
+  # GitHub Actions - grouped
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    target-branch: "dependabotchanges"
+    commit-message:
+      prefix: "build"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "github-actions"
+      - "security"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+
+  # Python backend dependencies - grouped
+  - package-ecosystem: "pip"
+    directory: "/src/api"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    target-branch: "dependabotchanges"
+    commit-message:
+      prefix: "build"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "python"
+      - "security"
+    groups:
+      azure-packages:
+        patterns:
+          - "azure-*"
+      backend-deps:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "azure-*"
+
+  # Frontend npm dependencies - grouped
+  - package-ecosystem: "npm"
+    directory: "/src/App"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    target-branch: "dependabotchanges"
+    commit-message:
+      prefix: "build"
+    open-pull-requests-limit: 10
+    registries:
+      - npm_public_registry
+    labels:
+      - "dependencies"
+      - "javascript"
+      - "security"
+    groups:
+      react-packages:
+        patterns:
+          - "react*"
+          - "@types/react*"
+      microsoft-packages:
+        patterns:
+          - "@microsoft/*"
+          - "@fluentui/*"
+      frontend-deps:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "react*"
+          - "@types/react*"
+          - "@microsoft/*"
+          - "@fluentui/*"
+
+registries:
+  npm_public_registry:
+    type: "npm-registry"
+    url: "https://registry.npmjs.org/"
+    token: ${{ secrets.TOKEN }}
