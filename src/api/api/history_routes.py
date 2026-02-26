@@ -233,7 +233,9 @@ async def list_conversations(
             request_headers=request.headers)
         user_id = authenticated_user["user_principal_id"]
 
-        logger.info(f"user_id: {user_id}, offset: {offset}, limit: {limit}")
+        sanitized_offset = str(offset).replace('\r', '').replace('\n', '')
+        sanitized_limit = str(limit).replace('\r', '').replace('\n', '')
+        logger.info(f"user_id: {user_id}, offset: {sanitized_offset}, limit: {sanitized_limit}")
 
         # Get conversations
         conversations = await history_service.get_conversations(user_id, offset=offset, limit=limit)
