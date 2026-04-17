@@ -19,8 +19,8 @@ import re
 from fastapi import HTTPException, Request, status
 from fastapi.responses import StreamingResponse
 
-# Guardrails
-from helpers.guardrails import is_in_scope
+# Guardrails - Enhanced multi-layer protection
+from helpers.guardrails_enhanced import classify_query, QueryScope, get_guardrail_message
 
 from semantic_kernel.agents import AzureAIAgentThread
 from semantic_kernel.exceptions.agent_exceptions import AgentException
@@ -91,12 +91,19 @@ class ChatService:
 
     async def stream_openai_text(self, conversation_id: str, query: str) -> StreamingResponse:
         """
-        Get a streaming text response from OpenAI.
+        Get a streaming text response from OpenAI with enhanced guardrails.
         """
-        # Guardrail: bloqueia perguntas fora do domínio
-        if not is_in_scope(query):
-            yield "I am only allowed to answer questions about customer satisfaction and call analysis. Please ask something related to this domain."
-            return
+        # Guardrail Layer 1: Enhanced pre-query validation
+        scope, reason = classify_query(query)
+        logger.debug(f"Query classification: {scope.value} - Reason: {reason}")
+        
+        if scope != QueryScope.IN_SCOPE:
+            message = get_guardrail_message(scope)
+            if message:
+                logger.warning(f"Blocked query ({scope.value}): '{query[:100]}' - {reason}")
+                yield message
+                return
+        
         thread = None
         complete_response = ""
         try:
