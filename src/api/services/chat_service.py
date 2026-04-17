@@ -15,8 +15,12 @@ import asyncio
 import random
 import re
 
+
 from fastapi import HTTPException, Request, status
 from fastapi.responses import StreamingResponse
+
+# Guardrails
+from helpers.guardrails import is_in_scope
 
 from semantic_kernel.agents import AzureAIAgentThread
 from semantic_kernel.exceptions.agent_exceptions import AgentException
@@ -89,6 +93,10 @@ class ChatService:
         """
         Get a streaming text response from OpenAI.
         """
+        # Guardrail: bloqueia perguntas fora do domínio
+        if not is_in_scope(query):
+            yield "I am only allowed to answer questions about customer satisfaction and call analysis. Please ask something related to this domain."
+            return
         thread = None
         complete_response = ""
         try:
@@ -139,6 +147,11 @@ class ChatService:
         """
         Handles streaming chat requests.
         """
+        # Guardrail: bloqueia perguntas fora do domínio
+        if not is_in_scope(query):
+            async def generate():
+                yield json.dumps({"error": "I am only allowed to answer questions about customer satisfaction and call analysis. Please ask something related to this domain."}) + "\n\n"
+            return generate()
         history_metadata = request_body.get("history_metadata", {})
 
         async def generate():

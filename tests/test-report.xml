@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="5" failures="0" skipped="0" tests="5" time="10.161" timestamp="2026-04-16T15:37:48.889175-03:00" hostname="rleme"><testcase classname="" name="src.tests.api.agents.test_conversation_agent_factory" time="0.000"><error message="collection failure">ImportError while importing test module 'C:\Users\rodrigoleme\OneDrive - Microsoft\Documents\AnoFiscal2026\demos\Conversation-Knowledge-Mining-Solution-Accelerator\src\tests\api\agents\test_conversation_agent_factory.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.3568.0_x64__qbz5n2kfra8p0\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\tests\api\agents\test_conversation_agent_factory.py:5: in &lt;module&gt;
+    from agents.conversation_agent_factory import ConversationAgentFactory
+src\api\agents\conversation_agent_factory.py:4: in &lt;module&gt;
+    from plugins.chat_with_data_plugin import ChatWithDataPlugin
+src\api\plugins\chat_with_data_plugin.py:19: in &lt;module&gt;
+    from common.database.sqldb_service import execute_sql_query
+src\api\common\database\sqldb_service.py:9: in &lt;module&gt;
+    import pyodbc
+E   ModuleNotFoundError: No module named 'pyodbc'</error></testcase><testcase classname="" name="src.tests.api.api.test_api_routes" time="0.000"><error message="collection failure">ImportError while importing test module 'C:\Users\rodrigoleme\OneDrive - Microsoft\Documents\AnoFiscal2026\demos\Conversation-Knowledge-Mining-Solution-Accelerator\src\tests\api\api\test_api_routes.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.3568.0_x64__qbz5n2kfra8p0\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\tests\api\api\test_api_routes.py:7: in &lt;module&gt;
+    from api import api_routes
+src\api\api\api_routes.py:12: in &lt;module&gt;
+    from services.chart_service import ChartService
+src\api\services\chart_service.py:5: in &lt;module&gt;
+    from common.database.sqldb_service import adjust_processed_data_dates, fetch_chart_data, fetch_filters_data
+src\api\common\database\sqldb_service.py:9: in &lt;module&gt;
+    import pyodbc
+E   ModuleNotFoundError: No module named 'pyodbc'</error></testcase><testcase classname="" name="src.tests.api.api.test_history_routes" time="0.000"><error message="collection failure">ImportError while importing test module 'C:\Users\rodrigoleme\OneDrive - Microsoft\Documents\AnoFiscal2026\demos\Conversation-Knowledge-Mining-Solution-Accelerator\src\tests\api\api\test_history_routes.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.3568.0_x64__qbz5n2kfra8p0\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\tests\api\api\test_history_routes.py:6: in &lt;module&gt;
+    from api.history_routes import router
+src\api\api\history_routes.py:6: in &lt;module&gt;
+    from services.history_service import HistoryService
+src\api\services\history_service.py:7: in &lt;module&gt;
+    from common.database.cosmosdb_service import CosmosConversationClient
+src\api\common\database\cosmosdb_service.py:4: in &lt;module&gt;
+    from azure.cosmos import exceptions
+E   ModuleNotFoundError: No module named 'azure.cosmos'</error></testcase><testcase classname="" name="src.tests.api.common.database.test_cosmosdb_service" time="0.000"><error message="collection failure">ImportError while importing test module 'C:\Users\rodrigoleme\OneDrive - Microsoft\Documents\AnoFiscal2026\demos\Conversation-Knowledge-Mining-Solution-Accelerator\src\tests\api\common\database\test_cosmosdb_service.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.3568.0_x64__qbz5n2kfra8p0\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\tests\api\common\database\test_cosmosdb_service.py:3: in &lt;module&gt;
+    from azure.cosmos import exceptions
+E   ModuleNotFoundError: No module named 'azure.cosmos'</error></testcase><testcase classname="" name="src.tests.api.common.database.test_sqldb_service" time="0.000"><error message="collection failure">ImportError while importing test module 'C:\Users\rodrigoleme\OneDrive - Microsoft\Documents\AnoFiscal2026\demos\Conversation-Knowledge-Mining-Solution-Accelerator\src\tests\api\common\database\test_sqldb_service.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.3568.0_x64__qbz5n2kfra8p0\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\tests\api\common\database\test_sqldb_service.py:2: in &lt;module&gt;
+    import pyodbc
+E   ModuleNotFoundError: No module named 'pyodbc'</error></testcase></testsuite></testsuites>
