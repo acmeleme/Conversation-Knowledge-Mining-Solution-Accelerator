@@ -47,7 +47,7 @@ CALL_CENTER_KEYWORDS = {
 # Blocked topics (explicitly forbidden)
 BLOCKED_TOPICS = {
     "harmful": ["bomb", "violence", "hack", "malware", "exploit", "illegal"],
-    "off_topic": ["recipe", "poem", "story", "joke", "music", "sports", "politics", "religion",
+    "off_topic": ["recipe", "recipes", "poem", "story", "joke", "music", "sports", "politics", "religion",
                  "weather", "travel", "vacation", "movie", "game", "hobby"],
     "prompt_injection": ["prompt", "instruction", "system message", "rule", "guideline", "ignore", 
                         "override", "bypass", "jailbreak"],
@@ -89,18 +89,23 @@ def is_in_allowed_keywords(query: str, allowed_dict: Dict[str, List[str]]) -> Tu
     return False, ""
 
 
-def is_blocked_topic(query: str) -> Tuple[bool, str]:
+def is_blocked_topic(query: str) -> bool:
     """
     Check if query contains explicitly blocked topics.
     
     Returns:
-        Tuple[bool, str]: (is_blocked, reason)
+        bool: True if query contains blocked topic, False otherwise
     """
+    query_norm = normalize(query)
     for category, keywords in BLOCKED_TOPICS.items():
-        is_match, matched_cat = is_in_allowed_keywords(query, {category: keywords})
-        if is_match:
-            return True, category
-    return False, ""
+        for keyword in keywords:
+            keyword_norm = normalize(keyword)
+            # Use word boundary check for more accurate matching
+            pattern = r'\b' + re.escape(keyword_norm) + r'\b'
+            if re.search(pattern, query_norm):
+                logger.debug(f"Blocked topic '{keyword}' detected in '{query[:50]}'")
+                return True
+    return False
 
 
 def check_jailbreak_attempt(query: str) -> bool:
@@ -110,13 +115,17 @@ def check_jailbreak_attempt(query: str) -> bool:
     """
     jailbreak_patterns = [
         # Prompt injection patterns
-        r"(?:ignore|forget|override|bypass|disregard).*(?:previous|prior|instruction|rule|system)",
-        r"(?:pretend|assume|act as if).*(?:not|no)\s+(?:rule|guard|restriction)",
-        r"(?:you are|you're|act as).*(?:different|new|unrestricted)",
+        r"(?:ignore|forget|override|bypass|disregard).*(?:previous|prior|instruction|rule|system|restriction|domain)",
+        r"(?:pretend|assume|act\s+as\s+if).*(?:not|no)\s+(?:rule|guard|restriction)",
+        r"(?:you\s+are|you're|act\s+as).*(?:different|new|unrestricted)",
+        # Direct pretend pattern
+        r"pretend\s+(?:to\s+be|you\s+are|i\s+want\s+you\s+to)",
         # Indirect manipulation
-        r"(?:what if|suppose|imagine).*(?:no|without).*(?:rule|guard|restriction)",
+        r"(?:what\s+if|suppose|imagine).*(?:no|without).*(?:rule|guard|restriction)",
         # Role play manipulation
-        r"(?:can you help me with).*(?:ignore|override|bypass)",
+        r"(?:can\s+you\s+help\s+me\s+with).*(?:ignore|override|bypass)",
+        # Dan and similar
+        r"(?:dan|do\s+anything\s+now)",
     ]
     
     query_norm = normalize(query)
@@ -142,9 +151,8 @@ def classify_query(query: str) -> Tuple[QueryScope, str]:
         return QueryScope.JAILBREAK_ATTEMPT, "Jailbreak pattern detected"
     
     # Check 2: Blocked topics
-    is_blocked, reason = is_blocked_topic(query)
-    if is_blocked:
-        return QueryScope.BLOCKED, f"Blocked topic: {reason}"
+    if is_blocked_topic(query):
+        return QueryScope.BLOCKED, "Blocked topic detected"
     
     # Check 3: Allowed keywords
     is_allowed, category = is_in_allowed_keywords(query, CALL_CENTER_KEYWORDS)
