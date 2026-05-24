@@ -3,11 +3,17 @@ import json
 import logging
 import math
 import os
+import re
+from typing import Any
+
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse, StreamingResponse
 import requests
 from common.config.config import Config
 from api.models.input_models import ChartFilters
+from api.models.rbac_models import UserInfo
+from auth.auth_utils import get_authenticated_user_details
+from auth.rbac import can_access_billing, get_current_user_roles
 from services.chat_service import ChatService
 from services.chart_service import ChartService
 from common.logging.event_utils import track_event_if_configured
@@ -45,6 +51,35 @@ logging.getLogger("azure.identity.aio._internal").setLevel(logging.WARNING)
 logging.getLogger("azure.monitor.opentelemetry.exporter.export._base").setLevel(
     logging.WARNING
 )
+
+BILLING_KEYWORDS = [
+    r"\bbilling\b",
+    r"\bbilling issues?\b",
+    r"\bpayments?\b",
+    r"\bpayment problems?\b",
+    r"\bfaturamento\b",
+    r"\bpagamento\b",
+    r"\bcobrança\b",
+]
+
+
+def _contains_billing_keywords(query: str | None) -> bool:
+    if not query:
+        return False
+
+    normalized_query = query.casefold()
+    return any(re.search(pattern, normalized_query) for pattern in BILLING_KEYWORDS)
+
+
+def _build_user_info(request: Request) -> UserInfo:
+    user_details = get_authenticated_user_details(request.headers)
+    roles = get_current_user_roles(request)
+    return UserInfo(
+        user_name=user_details.get("user_name"),
+        user_principal_id=user_details.get("user_principal_id"),
+        roles=roles,
+        can_access_billing=can_access_billing(roles),
+    )
 
 
 @router.get("/fetchChartData")
@@ -92,14 +127,20 @@ async def fetch_chart_data_with_filters(chart_filters: ChartFilters):
         return JSONResponse(content={"error": "Failed to fetch chart data due to an internal error."}, status_code=500)
 
 
+@router.get("/me", response_model=UserInfo)
+async def get_current_user(request: Request) -> UserInfo:
+    return _build_user_info(request)
+
+
 @router.get("/fetchFilterData")
-async def fetch_filter_data():
+async def fetch_filter_data(request: Request):
     try:
         chart_service = ChartService()
-        response = await chart_service.fetch_filter_data()
+        roles = get_current_user_roles(request)
+        response = await chart_service.fetch_filter_data_for_roles(roles)
         track_event_if_configured(
             "FetchFilterDataSuccess",
-            {"status": "success", "source": "/fetchFilterData"}
+            {"status": "success", "source": "/fetchFilterData", "roles": roles}
         )
         return JSONResponse(content=response)
     except Exception as e:
@@ -117,7 +158,25 @@ async def conversation(request: Request):
         # Get the request JSON and last RAG response from the client
         request_json = await request.json()
         conversation_id = request_json.get("conversation_id")
-        query = request_json.get("messages")[-1].get("content")
+        messages: list[dict[str, Any]] = request_json.get("messages", [])
+        last_message = messages[-1] if messages and isinstance(messages[-1], dict) else {}
+        query = last_message.get("content") or ""
+        roles = get_current_user_roles(request)
+
+        if _contains_billing_keywords(query) and not can_access_billing(roles):
+            logger.warning(
+                "Denied billing chat access for user %s with roles %s and query %s",
+                get_authenticated_user_details(request.headers).get("user_principal_id"),
+                roles,
+                query,
+            )
+            return JSONResponse(
+                content={
+                    "error": "Access denied. Billing and Payment Issues requires the faturamento role."
+                },
+                status_code=403,
+            )
+
         chat_service = ChatService(request=request)
         result = await chat_service.stream_chat_request(request_json, conversation_id, query)
         track_event_if_configured(

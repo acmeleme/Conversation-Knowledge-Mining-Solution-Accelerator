@@ -1,8 +1,22 @@
 import json
+import sys
+import types
+from unittest.mock import AsyncMock, Mock, patch
+
 import pytest
-from unittest.mock import AsyncMock, patch, Mock
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
+
+mock_events_package = types.ModuleType("azure.monitor.events")
+mock_events_extension = types.ModuleType("azure.monitor.events.extension")
+mock_events_extension.track_event = Mock()
+mock_events_package.extension = mock_events_extension
+sys.modules.setdefault("azure.monitor.events", mock_events_package)
+sys.modules.setdefault("azure.monitor.events.extension", mock_events_extension)
+
+mock_opentelemetry = types.ModuleType("azure.monitor.opentelemetry")
+mock_opentelemetry.configure_azure_monitor = Mock()
+sys.modules.setdefault("azure.monitor.opentelemetry", mock_opentelemetry)
 
 from api import api_routes
 
@@ -31,13 +45,14 @@ def test_fetch_chart_data_basic(create_test_client):
 def test_fetch_filter_data_basic(create_test_client):
     with patch("api.api_routes.ChartService") as MockChartService:
         mock_instance = MockChartService.return_value
-        mock_instance.fetch_filter_data = AsyncMock(return_value={"filters": "mocked"})
+        mock_instance.fetch_filter_data_for_roles = AsyncMock(return_value={"filters": "mocked"})
 
         client = create_test_client()
         response = client.get("/fetchFilterData")
 
         assert response.status_code == 200
         assert response.json() == {"filters": "mocked"}
+        mock_instance.fetch_filter_data_for_roles.assert_awaited_once_with(["callcenter"])
 
 
 def test_fetch_chart_data_with_filters_basic(create_test_client):
@@ -107,6 +122,19 @@ def test_fetch_chart_data_error_handling(create_test_client):
         assert "error" in response.json()
 
 
+def test_get_current_user_endpoint(create_test_client):
+    client = create_test_client()
+    response = client.get("/me")
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "user_name": "testusername@constoso.com",
+        "user_principal_id": "00000000-0000-0000-0000-000000000000",
+        "roles": ["callcenter"],
+        "can_access_billing": False,
+    }
+
+
 def test_chat_endpoint_basic(create_test_client):
     with patch("api.api_routes.ChatService") as MockChatService:
         mock_instance = MockChatService.return_value
@@ -123,6 +151,21 @@ def test_chat_endpoint_basic(create_test_client):
 
         assert response.status_code == 200
         assert response.json() == {"message": "mocked stream"}
+
+
+def test_chat_endpoint_blocks_billing_queries_without_role(create_test_client):
+    client = create_test_client()
+    payload = {
+        "conversation_id": "test",
+        "messages": [{"content": "Preciso de detalhes de billing e pagamento"}],
+    }
+
+    response = client.post("/chat", json=payload)
+
+    assert response.status_code == 403
+    assert response.json() == {
+        "error": "Você não tem permissão para acessar informações sobre Billing and Payment Issues."
+    }
 
 
 def test_get_layout_config_valid(create_test_client, monkeypatch):
@@ -169,7 +212,7 @@ def test_get_chart_config_missing(create_test_client, monkeypatch):
 def test_fetch_filter_data_error_handling(create_test_client):
     with patch("api.api_routes.ChartService") as MockChartService:
         mock_instance = MockChartService.return_value
-        mock_instance.fetch_filter_data = AsyncMock(side_effect=Exception("fail"))
+        mock_instance.fetch_filter_data_for_roles = AsyncMock(side_effect=Exception("fail"))
 
         client = create_test_client()
         response = client.get("/fetchFilterData")

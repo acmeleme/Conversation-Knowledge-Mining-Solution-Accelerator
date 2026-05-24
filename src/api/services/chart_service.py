@@ -1,7 +1,10 @@
 import logging
+from typing import Any
+
 from fastapi import HTTPException, status
 
 from api.models.input_models import ChartFilters
+from auth.rbac import RESTRICTED_TOPIC, filter_topics_by_role
 from common.database.sqldb_service import adjust_processed_data_dates, fetch_chart_data, fetch_filters_data
 
 # Configure logging
@@ -26,6 +29,48 @@ class ChartService:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while fetching filter data."
+            )
+
+    async def fetch_filter_data_for_roles(self, roles: list[str]) -> list[dict[str, Any]]:
+        """
+        Fetch filter data and remove restricted topics for users without billing access.
+        """
+        try:
+            await adjust_processed_data_dates()
+            filters_data = await fetch_filters_data()
+            filtered_response: list[dict[str, Any]] = []
+
+            for filter_item in filters_data:
+                if filter_item.get("filter_name") != "Topic":
+                    filtered_response.append(filter_item)
+                    continue
+
+                filter_values = filter_item.get("filter_values", [])
+                topic_names = [
+                    topic.get("displayValue") or topic.get("key")
+                    for topic in filter_values
+                    if isinstance(topic, dict)
+                ]
+                allowed_topics = set(filter_topics_by_role(topic_names, roles))
+
+                has_billing_access = any(role.casefold() == "faturamento" for role in roles)
+                filtered_values = [
+                    topic for topic in filter_values
+                    if (topic.get("displayValue") or topic.get("key")) in allowed_topics
+                    and (has_billing_access or (topic.get("displayValue") or topic.get("key")) != RESTRICTED_TOPIC)
+                ]
+
+                filtered_response.append({
+                    **filter_item,
+                    "filter_values": filtered_values,
+                })
+
+            return filtered_response
+        except Exception as e:
+            logger.error("Error in fetch_filter_data_for_roles: %s", e, exc_info=True)
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while fetching role-filtered filter data."
             )
 
     async def fetch_chart_data(self):
