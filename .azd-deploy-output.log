@@ -1,0 +1,5 @@
+Update available: 1.25.1 -> 1.25.2 (https://github.com/Azure/azure-dev/releases/tag/azure-dev-cli_1.25.2)
+To update, run `powershell -ex AllSigned -c "Invoke-RestMethod 'https://aka.ms/install-azd.ps1' | Invoke-Expression"`
+
+If you installed azd with custom options, use the same options when updating. See https://aka.ms/azd/upgrade/windows for details.
+Deploying application only to resource group: rg-callcenter-100

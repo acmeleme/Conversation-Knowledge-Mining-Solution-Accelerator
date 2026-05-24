@@ -189,6 +189,10 @@ const Chart = (props: ChartProps) => {
         console.error("Error loading data:", error);
         dispatch({ type: actionConstants.UPDATE_CHARTS_DATA, payload: [] });
         dispatch({
+          type: actionConstants.UPDATE_CHARTS_FETCHING_FLAG,
+          payload: false,
+        });
+        dispatch({
           type: actionConstants.UPDATE_FILTERS_FETCHING_FLAG,
           payload: false,
         });
@@ -196,6 +200,15 @@ const Chart = (props: ChartProps) => {
     };
     if (state.config.charts.length > 0) {
       loadData();
+    } else {
+      dispatch({
+        type: actionConstants.UPDATE_CHARTS_FETCHING_FLAG,
+        payload: false,
+      });
+      dispatch({
+        type: actionConstants.UPDATE_FILTERS_FETCHING_FLAG,
+        payload: false,
+      });
     }
   }, [state.config.charts]);
 

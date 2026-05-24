@@ -19,7 +19,6 @@ import {
   type ChartDataResponse,
   type Conversation,
   type ConversationRequest,
-  type ParsedChunk,
   type ChatMessage,
   ToolMessageContent,
 } from "../../types/AppTypes";
@@ -455,94 +454,112 @@ const Chat: React.FC<ChatProps> = ({
       if (response?.body) {
         let isChartResponseReceived = false;
         const reader = response.body.getReader();
+        const decoder = new TextDecoder("utf-8");
+        let pendingText = "";
+        let accumulatedAssistantPayload = "";
         let runningText = "";
         let hasError = false;
+
+        const processLine = (line: string) => {
+          if (!line || line === "{}") {
+            return;
+          }
+
+          try {
+            const parsed: any = JSON.parse(line);
+            if (parsed?.object?.data || parsed?.object?.message) {
+              runningText = line;
+              isChartResponseReceived = true;
+            }
+            if (parsed?.error) {
+              hasError = true;
+              runningText = typeof parsed.error === "string" ? parsed.error : JSON.stringify(parsed.error);
+              return;
+            }
+
+            if (!isChartResponseReceived && typeof parsed === "object") {
+              const responseContent = parsed?.choices?.[0]?.messages?.[0]?.content;
+              if (typeof responseContent !== "string") {
+                return;
+              }
+
+              accumulatedAssistantPayload += responseContent;
+
+              const answerKey = `"answer":`;
+              const answerStartIndex = accumulatedAssistantPayload.indexOf(answerKey);
+              const answerTextStart = answerStartIndex !== -1 ? answerStartIndex + 9 : 0;
+
+              const citationsKey = `"citations":`;
+              const citationsStartIndex = accumulatedAssistantPayload.indexOf(citationsKey);
+
+              let answerText = "";
+              let citationString = "";
+
+              if (citationsStartIndex > answerTextStart) {
+                answerText = accumulatedAssistantPayload.substring(answerTextStart, citationsStartIndex).trim();
+                citationString = accumulatedAssistantPayload.substring(citationsStartIndex).trim();
+              } else {
+                answerText = accumulatedAssistantPayload.substring(answerTextStart).trim();
+              }
+
+              if (answerStartIndex === -1) {
+                answerText = accumulatedAssistantPayload;
+              }
+
+              answerText = answerText.replace(/^"+|"+$|,$/g, "");
+              answerText = answerText.replace(/[",]+$/, "");
+              answerText = answerText.replace(/\\"/g, '"');
+              answerText = answerText.replace(/\\n/g, "  \n");
+              answerText = answerText.replace(/^[{}\s]+|[{}\s]+$/g, "");
+
+              streamMessage.content = answerText || "";
+              streamMessage.role = parsed?.choices?.[0]?.messages?.[0]?.role || ASSISTANT;
+              streamMessage.citations = citationString;
+
+              dispatch({
+                type: actionConstants.UPDATE_MESSAGE_BY_ID,
+                payload: streamMessage,
+              });
+              scrollChatToBottom();
+            }
+          } catch (e) {
+            console.log("Error while parsing and appending content", e);
+          }
+        };
+
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
-          const text = new TextDecoder("utf-8").decode(value);
-          try {
-            const textObj = JSON.parse(text);
-            if (textObj?.object?.data) {
-              runningText = text;
-              isChartResponseReceived = true;
-            }
-            if (textObj?.object?.message) {
-              runningText = text;
-              isChartResponseReceived = true;
-            }
-            if (textObj?.error) {
-              hasError = true;
-              runningText = text;
-            }
-          } catch (e) {
-            console.error("error while parsing text before split", e);
-          }
-          if (!isChartResponseReceived) {
-            //text based streaming response
-            const objects = text.split("\n").filter((val) => val !== "");
-            let answerText='';
-            let citationString ='';
-            let answerTextStart  = 0;
-            objects.forEach((textValue, index) => {
-              try {
-                if (textValue !== "" && textValue !== "{}") {
-                  const parsed: ParsedChunk = JSON.parse(textValue);
-                  if (parsed?.error && !hasError) {
-                    hasError = true;
-                    runningText = parsed?.error;
-                  } else if (isChartQuery(userMessage) && !hasError) {
-                    runningText = runningText + textValue;
-                  } else if (typeof parsed === "object" && !hasError) {
-                    const responseContent  = parsed?.choices?.[0]?.messages?.[0]?.content;
-                     
-                    const answerKey = `"answer":`;
-                    const answerStartIndex  = responseContent.indexOf(answerKey);
+          pendingText += decoder.decode(value, { stream: true });
+          const lines = pendingText.split("\n");
+          pendingText = lines.pop() || "";
 
-                    if (answerStartIndex  !== -1) {
-                      answerTextStart  =responseContent .indexOf(`"answer":`) +9;
-                    } 
-                 
-                    const citationsKey = `"citations":`;
-                    const citationsStartIndex = responseContent.indexOf(citationsKey);
+          lines.forEach((line) => processLine(line.trim()));
 
-                    if(citationsStartIndex > answerTextStart ){
-                      answerText = responseContent .substring(answerTextStart, citationsStartIndex).trim();
-                      citationString = responseContent .substring(citationsStartIndex).trim();
-                    }else{
-                      answerText = responseContent .substring(answerTextStart).trim();
-                    }
-
-                      answerText = answerText.replace(/^"+|"+$|,$/g, '');// first ""
-                      answerText = answerText.replace(/[",]+$/, ''); // last ",
-                      answerText = answerText.replace(/\\n/g, "  \n");
-                    
-                    
-                    streamMessage.content = answerText || "";
-                    streamMessage.role =
-                      parsed?.choices?.[0]?.messages?.[0]?.role || ASSISTANT;
-
-                    streamMessage.citations = citationString;
-                    dispatch({
-                      type: actionConstants.UPDATE_MESSAGE_BY_ID,
-                      payload: streamMessage,
-                    });
-                    scrollChatToBottom();
-                  }
-                }
-              } catch (e) {
-                console.log("Error while parsing and appending content", e);
-              }
-            });
-            if (hasError) {
-              console.log("STOPPED DUE TO ERROR FROM API RESPONSE");
-              break;
-            }
+          if (hasError) {
+            console.log("STOPPED DUE TO ERROR FROM API RESPONSE");
+            break;
           }
         }
+
+        const remaining = pendingText.trim();
+        if (remaining && !hasError) {
+          processLine(remaining);
+        }
+
         // END OF STREAMING
         if (hasError) {
-          const errorMsg = JSON.parse(runningText).error === "Attempted to access streaming response content, without having called `read()`."?"An error occurred. Please try again later.": JSON.parse(runningText).error;
+          let parsedError = runningText;
+          try {
+            const maybeJsonError = JSON.parse(runningText);
+            parsedError = maybeJsonError?.error || runningText;
+          } catch {
+            parsedError = runningText;
+          }
+
+          const errorMsg = parsedError === "Attempted to access streaming response content, without having called `read()`."
+            ? "An error occurred. Please try again later."
+            : parsedError;
           
           const errorMessage: ChatMessage = {
             id: generateUUIDv4(),

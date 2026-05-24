@@ -12,6 +12,14 @@ on:
           - dev
           - staging
           - production
+      deployment_mode:
+        description: 'Deployment mode'
+        required: true
+        default: 'application-only'
+        type: choice
+        options:
+          - application-only
+          - full
       resource_group:
         description: 'Azure Resource Group'
         required: true
@@ -28,6 +36,7 @@ env:
   AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   RESOURCE_GROUP: ${{ github.event.inputs.resource_group || 'rg-ckmsa' }}
   LOCATION: 'eastus2'
+  DEPLOYMENT_MODE: ${{ github.event.inputs.deployment_mode || 'application-only' }}
 
 permissions:
   id-token: write
@@ -54,8 +63,8 @@ jobs:
         bicep build main.bicep
         echo "✅ Bicep validation passed"
 
-  deploy-infrastructure:
-    name: Deploy Infrastructure
+  deploy-application:
+    name: Deploy Application
     runs-on: ubuntu-latest
     needs: validate
     environment: ${{ github.event.inputs.environment || 'dev' }}
@@ -74,21 +83,27 @@ jobs:
     - name: Install Azure Developer CLI
       uses: Azure/setup-azd@v1.0.0
     
-    - name: Deploy infrastructure with azd
+    - name: Deploy with azd (application-only or full)
       run: |
-        azd auth login --client-id ${{ secrets.AZURE_CLIENT_ID }} \
-          --federated-credential-provider "github" \
-          --tenant-id ${{ secrets.AZURE_TENANT_ID }}
-        
-        azd env new ${{ github.event.inputs.environment || 'dev' }} || true
-        azd env select ${{ github.event.inputs.environment || 'dev' }}
-        
-        # Set environment variables
-        azd env set AZURE_LOCATION ${{ env.LOCATION }}
-        azd env set AZURE_RESOURCE_GROUP ${{ env.RESOURCE_GROUP }}
-        
-        # Deploy
-        azd up --no-prompt
+        if [ "${{ env.DEPLOYMENT_MODE }}" = "full" ]; then
+          echo "Running full deployment (provision + deploy)"
+          azd auth login --client-id ${{ secrets.AZURE_CLIENT_ID }} \
+            --federated-credential-provider "github" \
+            --tenant-id ${{ secrets.AZURE_TENANT_ID }}
+
+          azd env new ${{ github.event.inputs.environment || 'dev' }} || true
+          azd env select ${{ github.event.inputs.environment || 'dev' }}
+
+          # Set environment variables
+          azd env set AZURE_LOCATION ${{ env.LOCATION }}
+          azd env set AZURE_RESOURCE_GROUP ${{ env.RESOURCE_GROUP }}
+
+          azd up --no-prompt
+        else
+          echo "Running application-only deployment (build/push and update existing App Services)"
+          chmod +x infra/scripts/deploy-app-only.sh
+          bash infra/scripts/deploy-app-only.sh "${{ env.RESOURCE_GROUP }}"
+        fi
       env:
         AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         AZURE_ENV_NAME: ${{ github.event.inputs.environment || 'dev' }}
@@ -96,7 +111,7 @@ jobs:
   post-deployment-setup:
     name: Post-Deployment Data Setup
     runs-on: ubuntu-latest
-    needs: deploy-infrastructure
+    needs: deploy-application
     
     steps:
     - name: Checkout code
@@ -148,7 +163,7 @@ jobs:
   notify:
     name: Deployment Notification
     runs-on: ubuntu-latest
-    needs: [deploy-infrastructure, post-deployment-setup]
+    needs: [deploy-application, post-deployment-setup]
     if: always()
     
     steps:
@@ -158,8 +173,9 @@ jobs:
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "- **Environment**: ${{ github.event.inputs.environment || 'dev' }}" >> $GITHUB_STEP_SUMMARY
         echo "- **Resource Group**: ${{ env.RESOURCE_GROUP }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Mode**: ${{ env.DEPLOYMENT_MODE }}" >> $GITHUB_STEP_SUMMARY
         echo "- **Status**: ${{ needs.post-deployment-setup.result }}" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "### Deployment Results:" >> $GITHUB_STEP_SUMMARY
-        echo "- Infrastructure: ${{ needs.deploy-infrastructure.result }}" >> $GITHUB_STEP_SUMMARY
+        echo "- Application deployment: ${{ needs.deploy-application.result }}" >> $GITHUB_STEP_SUMMARY
         echo "- Post-Setup: ${{ needs.post-deployment-setup.result }}" >> $GITHUB_STEP_SUMMARY

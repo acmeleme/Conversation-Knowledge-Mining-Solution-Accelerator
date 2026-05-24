@@ -14,6 +14,7 @@ from types import SimpleNamespace
 import asyncio
 import random
 import re
+from typing import Optional
 
 
 from fastapi import HTTPException, Request, status
@@ -80,6 +81,7 @@ class ChatService:
     """
 
     thread_cache = None
+    language_cache = None
 
     def __init__(self, request : Request):
         config = Config()
@@ -88,8 +90,80 @@ class ChatService:
 
         if ChatService.thread_cache is None:
             ChatService.thread_cache = ExpCache(maxsize=1000, ttl=3600.0, agent=self.agent)
+        if ChatService.language_cache is None:
+            ChatService.language_cache = TTLCache(maxsize=5000, ttl=24 * 3600)
 
-    async def stream_openai_text(self, conversation_id: str, query: str) -> StreamingResponse:
+    @staticmethod
+    def _detect_language(text: str) -> str:
+        """Detect preferred response language from first user interaction."""
+        if not text:
+            return "en"
+
+        text_norm = text.lower()
+        if re.search(r"[\u00e0-\u00ff]", text_norm):
+            return "pt"
+
+        pt_markers = [
+            "voce", "voces", "resumo", "analise", "plano", "acao", "melhoria",
+            "areas", "chamada", "cliente", "satisfacao", "sobre", "dados", "ligacao",
+        ]
+        es_markers = [
+            "resumen", "analisis", "accion", "mejora", "cliente", "llamada", "datos",
+        ]
+
+        pt_score = sum(1 for marker in pt_markers if marker in text_norm)
+        es_score = sum(1 for marker in es_markers if marker in text_norm)
+
+        if pt_score >= 2:
+            return "pt"
+        if es_score >= 2:
+            return "es"
+        return "en"
+
+    @staticmethod
+    def _extract_first_user_message(request_body: dict) -> str:
+        messages = request_body.get("messages", []) if isinstance(request_body, dict) else []
+        for message in messages:
+            if isinstance(message, dict) and message.get("role") == "user":
+                return str(message.get("content") or "")
+        return ""
+
+    def _get_or_set_conversation_language(self, conversation_id: str, request_body: dict) -> str:
+        if ChatService.language_cache is None:
+            return "en"
+
+        cached_language = ChatService.language_cache.get(conversation_id)
+        if cached_language:
+            return cached_language
+
+        first_user_message = self._extract_first_user_message(request_body)
+        detected = self._detect_language(first_user_message)
+        ChatService.language_cache[conversation_id] = detected
+        return detected
+
+    @staticmethod
+    def _build_language_enforced_query(user_query: str, language: str) -> str:
+        language_label = {
+            "pt": "Portuguese (Brazil)",
+            "es": "Spanish",
+            "en": "English",
+        }.get(language, "English")
+
+        return (
+            f"System requirement: respond strictly in {language_label} for this conversation. "
+            f"Do not change language unless the user explicitly asks to switch.\n"
+            f"User request: {user_query}"
+        )
+
+    @staticmethod
+    def _fallback_no_data_message(language: str) -> str:
+        if language == "pt":
+            return "Nao consegui responder com os dados atuais. Pode reformular sua pergunta com mais detalhes?"
+        if language == "es":
+            return "No pude responder con los datos actuales. Puedes reformular la pregunta con mas detalles?"
+        return "I could not answer with the current data. Please rephrase your question with more details."
+
+    async def stream_openai_text(self, conversation_id: str, query: str, language: str = "en") -> StreamingResponse:
         """
         Get a streaming text response from OpenAI with enhanced guardrails.
         """
@@ -148,28 +222,55 @@ class ChatService:
                     if thread_id is not None:
                         corrupt_key = f"{conversation_id}_corrupt_{random.randint(1000, 9999)}"
                         ChatService.thread_cache[corrupt_key] = thread_id
-                yield "I cannot answer this question with the current data. Please rephrase or add more details."
+                yield self._fallback_no_data_message(language)
 
     async def stream_chat_request(self, request_body, conversation_id, query):
         """
         Handles streaming chat requests.
         """
-        # Guardrail: bloqueia perguntas fora do domínio
-        if not is_in_scope(query):
-            async def generate():
-                yield json.dumps({"error": "I am only allowed to answer questions about customer satisfaction and call analysis. Please ask something related to this domain."}) + "\n\n"
-            return generate()
         history_metadata = request_body.get("history_metadata", {})
+        session_language = self._get_or_set_conversation_language(conversation_id, request_body)
+
+        scope, reason = classify_query(query or "")
+        if scope != QueryScope.IN_SCOPE:
+            message = get_guardrail_message(scope, session_language) or (
+                "I can only answer questions grounded in call center knowledge data. "
+                "Please ask about call transcripts, customer interactions, or call analytics."
+            )
+            logger.warning("Blocked query (%s): '%s' - %s", scope.value, (query or "")[:100], reason)
+
+            async def blocked_generate():
+                chat_completion_chunk = {
+                    "id": str(uuid.uuid4()),
+                    "model": "rag-model",
+                    "created": int(time.time()),
+                    "object": "extensions.chat.completion.chunk",
+                    "choices": [
+                        {
+                            "messages": [{"role": "assistant", "content": message}],
+                            "delta": {"role": "assistant", "content": message},
+                        }
+                    ],
+                    "history_metadata": history_metadata,
+                    "apim-request-id": "",
+                }
+                completion_chunk_obj = json.loads(
+                    json.dumps(chat_completion_chunk),
+                    object_hook=lambda d: SimpleNamespace(**d),
+                )
+                yield json.dumps(format_stream_response(completion_chunk_obj, history_metadata, "")) + "\n\n"
+
+            return blocked_generate()
 
         async def generate():
             try:
-                assistant_content = ""
-                async for chunk in self.stream_openai_text(conversation_id, query):
+                enforced_query = self._build_language_enforced_query(query or "", session_language)
+                async for chunk in self.stream_openai_text(conversation_id, enforced_query, session_language):
                     if isinstance(chunk, dict):
                         chunk = json.dumps(chunk)  # Convert dict to JSON string
-                    assistant_content += str(chunk)
 
-                    if assistant_content:
+                    chunk_text = str(chunk)
+                    if chunk_text:
                         chat_completion_chunk = {
                             "id": "",
                             "model": "",
@@ -190,11 +291,11 @@ class ChatService:
                         chat_completion_chunk["created"] = int(time.time())
                         chat_completion_chunk["object"] = "extensions.chat.completion.chunk"
                         chat_completion_chunk["choices"][0]["messages"].append(
-                            {"role": "assistant", "content": assistant_content}
+                            {"role": "assistant", "content": chunk_text}
                         )
                         chat_completion_chunk["choices"][0]["delta"] = {
                             "role": "assistant",
-                            "content": assistant_content,
+                            "content": chunk_text,
                         }
 
                         completion_chunk_obj = json.loads(

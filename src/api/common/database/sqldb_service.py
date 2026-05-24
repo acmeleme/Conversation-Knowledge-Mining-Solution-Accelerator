@@ -9,6 +9,19 @@ from helpers.azure_credential_utils import get_azure_credential_async
 import pyodbc
 
 
+def _group_records(df, group_columns, value_columns):
+    grouped_records = []
+    for group_keys, group_df in df.groupby(group_columns, sort=False):
+        if not isinstance(group_keys, tuple):
+            group_keys = (group_keys,)
+
+        grouped_entry = dict(zip(group_columns, group_keys))
+        grouped_entry["chart_value"] = group_df[value_columns].to_dict(orient='records')
+        grouped_records.append(grouped_entry)
+
+    return grouped_records
+
+
 async def get_db_connection():
     """Get a connection to the SQL database"""
     config = Config()
@@ -16,33 +29,47 @@ async def get_db_connection():
     server = config.sqldb_server
     database = config.sqldb_database
     username = config.sqldb_username
-    password = config.sqldb_database
+    password = config.sqldb_password
     driver = config.driver
-    # mid_id = config.mid_id
-    mid_id = config.azure_client_id
+    # Prefer SQL-specific managed identity when configured.
+    mid_id = config.mid_id or config.azure_client_id
 
     credential = None
     try:
-        credential = await get_azure_credential_async(client_id=mid_id)
-        token = await credential.get_token("https://database.windows.net/.default")
-        token_bytes = token.token.encode("utf-16-LE")
-        token_struct = struct.pack(
-            f"<I{len(token_bytes)}s",
-            len(token_bytes),
-            token_bytes
-        )
+        connection_string = f"DRIVER={driver};SERVER={server};DATABASE={database};"
         SQL_COPT_SS_ACCESS_TOKEN = 1256
 
-        # Set up the connection
-        connection_string = f"DRIVER={driver};SERVER={server};DATABASE={database};"
-        conn = pyodbc.connect(
-            connection_string, attrs_before={SQL_COPT_SS_ACCESS_TOKEN: token_struct}
-        )
+        for candidate_client_id in [mid_id, None]:
+            if candidate_client_id is None and not mid_id:
+                continue
 
-        logging.info("Connected using Azure Credential")
-        return conn
+            credential = await get_azure_credential_async(client_id=candidate_client_id)
+            try:
+                token = await credential.get_token("https://database.windows.net/.default")
+                token_bytes = token.token.encode("utf-16-LE")
+                token_struct = struct.pack(
+                    f"<I{len(token_bytes)}s",
+                    len(token_bytes),
+                    token_bytes
+                )
+                conn = pyodbc.connect(
+                    connection_string, attrs_before={SQL_COPT_SS_ACCESS_TOKEN: token_struct}
+                )
+                if candidate_client_id:
+                    logging.info("Connected using Azure Credential with configured managed identity")
+                else:
+                    logging.info("Connected using Azure Credential with system-assigned managed identity")
+                return conn
+            except Exception:
+                if hasattr(credential, "close"):
+                    await credential.close()
+                credential = None
+                if candidate_client_id is None:
+                    raise
     except pyodbc.Error as e:
         logging.error("Failed with Azure Credential: %s", str(e))
+        if not username or not password:
+            raise
         conn = pyodbc.connect(
             f"DRIVER={driver};SERVER={server};DATABASE={database};UID={username};PWD={password}",
             timeout=5)
@@ -132,13 +159,12 @@ async def fetch_filters_data():
         df = pd.DataFrame(rows, columns=column_names)
         df.rename(columns={'key1': 'key'}, inplace=True)
 
-        nested_json = (
-            df.groupby("filter_name")
-            .apply(lambda x: {
-                "filter_name": x.name,
-                "filter_values": x.to_dict(orient="records")
-            }, include_groups=False).to_list()
-        )
+        nested_json = []
+        for filter_name, filter_df in df.groupby("filter_name", sort=False):
+            nested_json.append({
+                "filter_name": filter_name,
+                "filter_values": filter_df.to_dict(orient="records")
+            })
 
         filters_data = nested_json
 
@@ -238,12 +264,11 @@ async def fetch_chart_data(chart_filters: ChartFilters = ''):
         df = pd.DataFrame(rows, columns=column_names)
 
         # charts pt1
-        nested_json1 = (
-            df.groupby(['id', 'chart_name', 'chart_type']).apply(
-                lambda x: x[['name', 'value', 'unit_of_measurement']].to_dict(orient='records'), include_groups=False).reset_index()
+        result1 = _group_records(
+            df,
+            ['id', 'chart_name', 'chart_type'],
+            ['name', 'value', 'unit_of_measurement']
         )
-        nested_json1.columns = ['id', 'chart_name', 'chart_type', 'chart_value']
-        result1 = nested_json1.to_dict(orient='records')
         sql_stmt = f'''SELECT TOP 1 WITH TIES
                         mined_topic as name, 'TOPICS' as id, 'Trending Topics' as chart_name, 'table' as chart_type,
                         lower(sentiment) as average_sentiment,
@@ -263,14 +288,11 @@ async def fetch_chart_data(chart_filters: ChartFilters = ''):
 
         # charts pt2
         if not df.empty:
-            nested_json2 = (
-                df.groupby(['id', 'chart_name', 'chart_type']).apply(
-                    lambda x: x[['name', 'call_frequency', 'average_sentiment']].to_dict(orient='records'),
-                    include_groups=False
-                ).reset_index()
+            result2 = _group_records(
+                df,
+                ['id', 'chart_name', 'chart_type'],
+                ['name', 'call_frequency', 'average_sentiment']
             )
-            nested_json2.columns = ['id', 'chart_name', 'chart_type', 'chart_value']
-            result2 = nested_json2.to_dict(orient='records')
         else:
             result2 = []
 
@@ -303,14 +325,11 @@ async def fetch_chart_data(chart_filters: ChartFilters = ''):
         df = df.head(15)
 
         if not df.empty:
-            nested_json3 = (
-                df.groupby(['id', 'chart_name', 'chart_type']).apply(
-                    lambda x: x[['text', 'size', 'average_sentiment']].to_dict(orient='records'),
-                    include_groups=False
-                ).reset_index()
+            result3 = _group_records(
+                df,
+                ['id', 'chart_name', 'chart_type'],
+                ['text', 'size', 'average_sentiment']
             )
-            nested_json3.columns = ['id', 'chart_name', 'chart_type', 'chart_value']
-            result3 = nested_json3.to_dict(orient='records')
         else:
             result3 = []
 

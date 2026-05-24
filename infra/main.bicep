@@ -153,14 +153,19 @@ param existingAiFoundryAiProjectResourceId string = ''
 @description('Optional. created by user name')
 param createdBy string = contains(deployer(), 'userPrincipalName')? split(deployer().userPrincipalName, '@')[0]: deployer().objectId
 
+@maxLength(21)
+@description('Optional. Full suffix to use in resource names. Set via the AZURE_SOLUTION_SUFFIX_OVERRIDE environment variable. If provided, it replaces the generated suffix entirely. This must stay within the shortest resource naming limits, such as Key Vault and Storage Account names.')
+param solutionSuffixOverride string = ''
 
 @maxLength(5)
-@description('Optional. A unique text value for the solution. This is used to ensure resource names are unique for global resources. Defaults to a 5-character substring of the unique string generated from the subscription ID, resource group name, and solution name.')
+@description('Optional. A short alphanumeric suffix (1-5 chars) appended to the environment name when no full suffix override is provided. Set via the AZURE_SOLUTION_UNIQUE_TEXT environment variable. If left empty, defaults to a 5-character substring derived from the subscription ID, resource group name, and solution name.')
 param solutionUniqueText string = substring(uniqueString(subscription().id, resourceGroup().name, solutionName), 0, 5)
+
+var solutionSuffixSource = !empty(solutionSuffixOverride) ? solutionSuffixOverride : '${solutionName}${solutionUniqueText}'
 
 var solutionSuffix = toLower(trim(replace(
   replace(
-    replace(replace(replace(replace('${solutionName}${solutionUniqueText}', '-', ''), '_', ''), '.', ''), '/', ''),
+    replace(replace(replace(replace(solutionSuffixSource, '-', ''), '_', ''), '.', ''), '/', ''),
     ' ',
     ''
   ),

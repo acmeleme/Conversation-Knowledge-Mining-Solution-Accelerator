@@ -64,8 +64,8 @@ const initialState: AppState = {
     },
     charts: [],
     selectedFilters: { ...defaultSelectedFilters },
-    fetchingCharts: true,
-    fetchingFilters: true
+    fetchingCharts: false,
+    fetchingFilters: false
   },
   chat: {
     generatingResponse: false,

@@ -5,6 +5,12 @@
     "solutionName": {
       "value": "${AZURE_ENV_NAME}"
     },
+    "solutionSuffixOverride": {
+      "value": "${AZURE_SOLUTION_SUFFIX_OVERRIDE=}"
+    },
+    "solutionUniqueText": {
+      "value": "${AZURE_SOLUTION_UNIQUE_TEXT=}"
+    },
     "location": {
       "value": "${AZURE_LOCATION}"
     },

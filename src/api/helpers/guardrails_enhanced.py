@@ -24,31 +24,51 @@ CALL_CENTER_KEYWORDS = {
     
     # Customer interaction
     "customer_interaction": ["customer", "client", "caller", "agent", "support", "service", "assistance", 
-                            "contact", "interaction", "conversation", "communication"],
+                            "contact", "interaction", "conversation", "communication", "cliente", "clientes",
+                            "atendente", "atendimento", "chamado", "chamados", "servico", "servico"],
     
     # Analysis topics
     "analysis": ["analysis", "analyze", "insight", "insights", "summary", "summarize", "report", 
-                "sentiment", "satisfaction", "feedback", "topic", "themes", "trends", "pattern"],
+                "sentiment", "satisfaction", "feedback", "topic", "themes", "trends", "pattern",
+                "resumo", "resumir", "analise", "analise", "relatorio", "relatorio",
+                "plano de acao", "plano de acao", "acoes", "acoes", "melhoria", "areas envolvidas", "areas envolvidas"],
     
     # Call content
     "call_content": ["transcript", "transcripts", "conversation", "dialogue", "discussion", "chat", 
-                    "message", "content", "speech", "audio", "recording"],
+                    "message", "content", "speech", "audio", "recording", "transcricao", "transcricao",
+                    "ligacao", "ligacao", "ligacoes", "ligacoes"],
     
     # Billing & resolution
     "billing_resolution": ["billing", "billing issues", "charges", "payment", "account", "plan", 
-                          "device", "connectivity", "resolution", "status", "resolved", "issue"],
+                          "device", "connectivity", "resolution", "status", "resolved", "issue",
+                          "conta", "cobranca", "cobranca", "pagamento", "resolucao", "resolucao"],
     
     # Sentiment & satisfaction
     "sentiment_satisfaction": ["sentiment", "satisfaction", "satisfied", "dissatisfied", "happy", 
                               "unhappy", "positive", "negative", "neutral", "feedback", "complaint",
-                              "praise", "issue", "problem", "challenge"],
+                              "praise", "issue", "problem", "challenge", "sentimento", "satisfacao",
+                              "insatisfeito", "insatisfeita", "frustrado", "frustrada"],
+
+    # Known call-center topic names commonly used in this solution demo
+    "known_topics": [
+        "account information updates",
+        "service activation",
+        "billing and payment issues",
+        "device troubleshooting",
+        "parental controls",
+        "internet services",
+        "international roaming",
+        "loyalty programs",
+        "plan management",
+        "network connectivity",
+        "appointment scheduling",
+        "customer feedback",
+    ],
 }
 
 # Blocked topics (explicitly forbidden)
 BLOCKED_TOPICS = {
-    "harmful": ["bomb", "violence", "hack", "malware", "exploit", "illegal"],
-    "off_topic": ["recipe", "recipes", "poem", "story", "joke", "music", "sports", "politics", "religion",
-                 "weather", "travel", "vacation", "movie", "game", "hobby"],
+    "harmful": ["bomb", "violence", "hack", "malware", "exploit", "illegal", "fraud"],
     "prompt_injection": ["prompt", "instruction", "system message", "rule", "guideline", "ignore", 
                         "override", "bypass", "jailbreak"],
 }
@@ -117,6 +137,7 @@ def check_jailbreak_attempt(query: str) -> bool:
         # Prompt injection patterns
         r"(?:ignore|forget|override|bypass|disregard).*(?:previous|prior|instruction|rule|system|restriction|domain)",
         r"(?:pretend|assume|act\s+as\s+if).*(?:not|no)\s+(?:rule|guard|restriction)",
+        r"act\s+as\s+if\s+i'?m\s+your\s+developer",
         r"(?:you\s+are|you're|act\s+as).*(?:different|new|unrestricted)",
         # Direct pretend pattern
         r"pretend\s+(?:to\s+be|you\s+are|i\s+want\s+you\s+to)",
@@ -158,13 +179,37 @@ def classify_query(query: str) -> Tuple[QueryScope, str]:
     is_allowed, category = is_in_allowed_keywords(query, CALL_CENTER_KEYWORDS)
     if is_allowed:
         return QueryScope.IN_SCOPE, f"Call center topic: {category}"
+
+    # Check 4: Analysis-intent + known-topic heuristic for multilingual requests.
+    # Example: "crie um resumo sobre Account Information Updates..."
+    query_norm = normalize(query)
+    analysis_intent_terms = [
+        "summary", "summarize", "analysis", "analyze", "action plan", "next steps",
+        "resumo", "resumir", "analise", "plano de acao", "acoes", "melhoria",
+    ]
+    known_topics = CALL_CENTER_KEYWORDS.get("known_topics", [])
+    if any(term in query_norm for term in analysis_intent_terms) and any(
+        normalize(topic) in query_norm for topic in known_topics
+    ):
+        return QueryScope.IN_SCOPE, "Analysis request over known call-center topic"
     
-    # Check 4: Conversational follow-ups (allowed with context history)
-    # Generic conversational phrases that need prior context
-    conversational_phrases = ["yes", "no", "tell me more", "explain", "continue", "next", "previous"]
-    if normalize(query) in conversational_phrases:
-        # In practice, this would be allowed if there's conversation history
-        return QueryScope.IN_SCOPE, "Conversational follow-up"
+    # Check 5: Conversational follow-ups and contextual planning requests.
+    # These are common after an in-scope response and should not be blocked.
+    conversational_phrases = [
+        "yes", "no", "tell me more", "explain", "continue", "next", "previous",
+        "ok", "okay", "go on", "based on the previous summary", "based on the summary",
+        "de acordo com o resumo", "de acordo com o resumo anterior", "com base no resumo",
+        "com base no resumo anterior", "plano de acao", "plano de ação", "next steps",
+        "action plan", "areas envolvidas", "areas envolvidas e acao", "ação de cada área",
+    ]
+    off_topic_hints = [
+        "joke", "poem", "recipe", "travel", "movie", "music", "weather", "sports",
+        "receita", "piada", "filme", "musica", "clima",
+    ]
+    if any(phrase in query_norm for phrase in conversational_phrases) and not any(
+        hint in query_norm for hint in off_topic_hints
+    ):
+        return QueryScope.IN_SCOPE, "Conversational/contextual follow-up"
     
     return QueryScope.OUT_OF_SCOPE, "Does not match call center domain"
 
@@ -214,12 +259,33 @@ def get_scope_reason(query: str) -> Tuple[QueryScope, str]:
     return classify_query(query)
 
 
-def get_guardrail_message(scope: QueryScope) -> str:
-    """Get appropriate message based on query scope."""
-    messages = {
-        QueryScope.IN_SCOPE: None,  # No message for in-scope queries
-        QueryScope.OUT_OF_SCOPE: "I am only allowed to answer questions about call center operations, customer interactions, and call analytics. Please ask something related to call transcripts, customer satisfaction, call metrics, or billing/resolution topics.",
-        QueryScope.BLOCKED: "This topic is not allowed. I can only assist with call center knowledge mining and customer service analytics.",
-        QueryScope.JAILBREAK_ATTEMPT: "I cannot process that request. Please ask questions directly related to call center operations and customer service analytics.",
+def get_guardrail_message(scope: QueryScope, language: str = "en") -> str:
+    """Get appropriate message based on query scope and preferred language."""
+    language_key = (language or "en").lower()
+
+    messages_en = {
+        QueryScope.IN_SCOPE: None,
+        QueryScope.OUT_OF_SCOPE: "Sorry, I can only help with call center operations, customer interactions, and call analytics. This request is not allowed outside that scope. If you want, I can help rewrite your request to focus on transcripts, sentiment, call metrics, billing, or resolution topics.",
+        QueryScope.BLOCKED: "I am sorry, but this topic is not allowed. I can gladly help with call center knowledge mining and customer service analytics.",
+        QueryScope.JAILBREAK_ATTEMPT: "I cannot process that request. Please send a direct question related to call center operations or customer service analytics.",
     }
-    return messages.get(scope)
+
+    messages_pt = {
+        QueryScope.IN_SCOPE: None,
+        QueryScope.OUT_OF_SCOPE: "Desculpe, eu so posso ajudar com operacoes de call center, interacoes com clientes e analises de chamadas. Se quiser, eu posso reformular sua pergunta para focar em transcricoes, sentimento, metricas de chamada, cobranca ou resolucao.",
+        QueryScope.BLOCKED: "Desculpe, nao posso ajudar com esse tema. Posso ajudar com analise de call center e atendimento ao cliente.",
+        QueryScope.JAILBREAK_ATTEMPT: "Nao posso processar esse pedido. Por favor, envie uma pergunta direta relacionada a operacoes de call center ou analise de atendimento.",
+    }
+
+    messages_es = {
+        QueryScope.IN_SCOPE: None,
+        QueryScope.OUT_OF_SCOPE: "Lo siento, solo puedo ayudar con operaciones de call center, interacciones con clientes y analitica de llamadas. Si quieres, puedo ayudarte a reformular la solicitud para enfocarla en transcripciones, sentimiento, metricas de llamadas, facturacion o resolucion.",
+        QueryScope.BLOCKED: "Lo siento, no puedo ayudar con ese tema. Puedo ayudarte con analitica de call center y atencion al cliente.",
+        QueryScope.JAILBREAK_ATTEMPT: "No puedo procesar esa solicitud. Envia una pregunta directa relacionada con operaciones de call center o analitica de servicio al cliente.",
+    }
+
+    if language_key.startswith("pt"):
+        return messages_pt.get(scope)
+    if language_key.startswith("es"):
+        return messages_es.get(scope)
+    return messages_en.get(scope)

@@ -12,7 +12,102 @@ requiredVersions:
 metadata:
   template: conversation-knowledge-mining@1.0
 
+services: {}
+
 hooks:
+  preprovision:
+    windows:
+      run: |
+        $current = azd env get-value AZURE_SOLUTION_SUFFIX_OVERRIDE 2>$null
+        if ([string]::IsNullOrWhiteSpace($current)) {
+          Write-Host ""
+          Write-Host "Resource name suffix" -ForegroundColor Cyan
+          Write-Host "Enter the full suffix to use in resource names (max 21 alphanumeric characters)."
+          Write-Host "Example: callcenter006"
+          Write-Host "Leave blank to auto-generate a unique suffix from the environment name."
+          $suffix = Read-Host "Suffix"
+          if (-not [string]::IsNullOrWhiteSpace($suffix)) {
+            if ($suffix -notmatch '^[a-zA-Z0-9]{1,21}$') {
+              Write-Host "ERROR: Suffix must be 1-21 alphanumeric characters (letters and digits only)." -ForegroundColor Red
+              exit 1
+            }
+            azd env set AZURE_SOLUTION_SUFFIX_OVERRIDE ($suffix.ToLower())
+            Write-Host "Suffix set to '$($suffix.ToLower())'" -ForegroundColor Green
+          } else {
+            azd env set AZURE_SOLUTION_SUFFIX_OVERRIDE ""
+            Write-Host "No suffix provided - a unique suffix will be auto-generated." -ForegroundColor Yellow
+          }
+        } else {
+          Write-Host "Using existing suffix: '$current'" -ForegroundColor Cyan
+        }
+      shell: pwsh
+      continueOnError: false
+      interactive: true
+    posix:
+      run: |
+        current=$(azd env get-value AZURE_SOLUTION_SUFFIX_OVERRIDE 2>/dev/null || echo "")
+        if [ -z "$current" ]; then
+          echo ""
+          echo "Resource name suffix"
+          echo "Enter the full suffix to use in resource names (max 21 alphanumeric characters)."
+          echo "Example: callcenter006"
+          echo "Leave blank to auto-generate a unique suffix from the environment name."
+          printf "Suffix: "
+          read suffix
+          if [ -n "$suffix" ]; then
+            if ! echo "$suffix" | grep -qE '^[a-zA-Z0-9]{1,21}$'; then
+              echo "ERROR: Suffix must be 1-21 alphanumeric characters (letters and digits only)."
+              exit 1
+            fi
+            suffix=$(echo "$suffix" | tr '[:upper:]' '[:lower:]')
+            azd env set AZURE_SOLUTION_SUFFIX_OVERRIDE "$suffix"
+            echo "Suffix set to '$suffix'"
+          else
+            azd env set AZURE_SOLUTION_SUFFIX_OVERRIDE ""
+            echo "No suffix provided - a unique suffix will be auto-generated."
+          fi
+        else
+          echo "Using existing suffix: '$current'"
+        fi
+      shell: sh
+      continueOnError: false
+      interactive: true
+  predeploy:
+    windows:
+      run: |
+        $resourceGroup = azd env get-value AZURE_RESOURCE_GROUP
+        if ([string]::IsNullOrWhiteSpace($resourceGroup)) {
+          Write-Host "ERROR: AZURE_RESOURCE_GROUP is not set in the selected azd environment." -ForegroundColor Red
+          exit 1
+        }
+
+        if (-not (Test-Path "./infra/scripts/deploy-app-only.ps1")) {
+          Write-Host "ERROR: Missing script infra/scripts/deploy-app-only.ps1" -ForegroundColor Red
+          exit 1
+        }
+
+        ./infra/scripts/deploy-app-only.ps1 -ResourceGroup $resourceGroup
+      shell: pwsh
+      continueOnError: false
+      interactive: true
+    posix:
+      run: |
+        resource_group=$(azd env get-value AZURE_RESOURCE_GROUP)
+        if [ -z "$resource_group" ]; then
+          echo "ERROR: AZURE_RESOURCE_GROUP is not set in the selected azd environment."
+          exit 1
+        fi
+
+        if [ ! -f "./infra/scripts/deploy-app-only.sh" ]; then
+          echo "ERROR: Missing script infra/scripts/deploy-app-only.sh"
+          exit 1
+        fi
+
+        chmod +x ./infra/scripts/deploy-app-only.sh
+        ./infra/scripts/deploy-app-only.sh "$resource_group"
+      shell: sh
+      continueOnError: false
+      interactive: true
   postprovision:
     windows:
       run: |
