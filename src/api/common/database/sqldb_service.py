@@ -272,7 +272,7 @@ async def fetch_chart_data(chart_filters: ChartFilters = ''):
         sql_stmt = f'''SELECT TOP 1 WITH TIES
                         mined_topic as name, 'TOPICS' as id, 'Trending Topics' as chart_name, 'table' as chart_type,
                         lower(sentiment) as average_sentiment,
-                        COUNT(*) AS call_frequency
+                        SUM(COUNT(*)) OVER (PARTITION BY mined_topic) AS call_frequency
                     FROM [dbo].[processed_data]
                     {where_clause}
                     GROUP BY mined_topic, sentiment

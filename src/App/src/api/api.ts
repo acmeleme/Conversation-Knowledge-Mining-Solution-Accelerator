@@ -82,6 +82,10 @@ const tokenize = (value: string) =>
     .map((x) => x.trim())
     .filter((x) => !!x && !["and", "de", "da", "do", "the", "of"].includes(x));
 
+// Billing Issues is a restricted topic — never expose it in client-side fallbacks
+// since we cannot check user roles without a server call.
+const RESTRICTED_TOPIC_FALLBACK = "Billing Issues";
+
 const getFallbackFilterData = () => {
   const topicChart = ChartsResponse.find((chart) => normalizeToken(chart.id) === "topics");
   const barChart = ChartsResponse.find(
@@ -96,12 +100,12 @@ const getFallbackFilterData = () => {
 
   const topicNames = new Set<string>();
   topicRows.forEach((row: any) => {
-    if (row?.name) {
+    if (row?.name && row.name !== RESTRICTED_TOPIC_FALLBACK) {
       topicNames.add(String(row.name));
     }
   });
   barRows.forEach((row: any) => {
-    if (row?.name) {
+    if (row?.name && row.name !== RESTRICTED_TOPIC_FALLBACK) {
       topicNames.add(String(row.name));
     }
   });
@@ -191,7 +195,9 @@ const buildFallbackFilteredCharts = (bodyData: any) => {
   );
 
   const topicChartValues = topicChart?.chart_value;
-  const topicsRows = Array.isArray(topicChartValues) ? [...topicChartValues] : [];
+  const topicsRows = Array.isArray(topicChartValues)
+    ? ([...topicChartValues] as any[]).filter((row: any) => row?.name !== RESTRICTED_TOPIC_FALLBACK)
+    : [];
 
   let filteredTopics = topicsRows.filter((row: any) => {
     const topicMatch = topicMatchesSelection(String(row?.name || ""));
@@ -210,7 +216,9 @@ const buildFallbackFilteredCharts = (bodyData: any) => {
   });
 
   const barChartValues = barChart?.chart_value;
-  const barRows = Array.isArray(barChartValues) ? [...barChartValues] : [];
+  const barRows = Array.isArray(barChartValues)
+    ? ([...barChartValues] as any[]).filter((row: any) => row?.name !== RESTRICTED_TOPIC_FALLBACK)
+    : [];
   let filteredBarRows = barRows.filter((row: any) => {
     const topicName = normalizeToken(row?.name);
     const topicMatch = topicMatchesSelection(String(row?.name || ""));

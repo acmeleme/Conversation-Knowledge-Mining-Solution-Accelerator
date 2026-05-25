@@ -102,8 +102,15 @@ async def fetch_chart_data():
 
 
 @router.post("/fetchChartDataWithFilters")
-async def fetch_chart_data_with_filters(chart_filters: ChartFilters):
+async def fetch_chart_data_with_filters(chart_filters: ChartFilters, request: Request):
     try:
+        roles = get_current_user_roles(request)
+        if not can_access_billing(roles):
+            from auth.rbac import RESTRICTED_TOPIC
+            chart_filters.selected_filters.Topic = [
+                t for t in chart_filters.selected_filters.Topic
+                if t != RESTRICTED_TOPIC
+            ]
         logger.info(f"Received filters: {chart_filters}")
         chart_service = ChartService()
         response = await chart_service.fetch_chart_data_with_filters(chart_filters)
