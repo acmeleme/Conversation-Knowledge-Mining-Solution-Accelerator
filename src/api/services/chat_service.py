@@ -143,17 +143,12 @@ class ChatService:
 
     @staticmethod
     def _build_language_enforced_query(user_query: str, language: str) -> str:
-        language_label = {
-            "pt": "Portuguese (Brazil)",
-            "es": "Spanish",
-            "en": "English",
-        }.get(language, "English")
-
-        return (
-            f"System requirement: respond strictly in {language_label} for this conversation. "
-            f"Do not change language unless the user explicitly asks to switch.\n"
-            f"User request: {user_query}"
-        )
+        # NOTE: Do NOT use "System requirement:" or similar prefixes here.
+        # The agent's anti-injection instructions cause it to refuse any message
+        # that appears to be injecting system-level rules.
+        # Language handling is already covered by the agent's own instructions
+        # ("Reply in the same language used by the user whenever possible").
+        return user_query
 
     @staticmethod
     def _fallback_no_data_message(language: str) -> str:
