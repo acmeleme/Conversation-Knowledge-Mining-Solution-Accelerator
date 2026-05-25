@@ -58,6 +58,7 @@ export const ChartsResponse = [
     id: "AVG_HANDLING_TIME",
     chart_name: "Average Handling Time",
     chart_type: "card",
+    layout: { row: 1, column: 3, height: 20 },
     chart_value: [
       {
         name: "Average Handling Time",
@@ -70,6 +71,7 @@ export const ChartsResponse = [
     id: "Satisfied",
     chart_name: "Satisfied",
     chart_type: "card",
+    layout: { row: 1, column: 1, height: 20 },
     chart_value: [
       {
         name: "Satisfied",
@@ -82,6 +84,7 @@ export const ChartsResponse = [
     id: "TOTAL_CALLS",
     chart_name: "Total Calls",
     chart_type: "card",
+    layout: { row: 1, column: 2, height: 20 },
     chart_value: [
       {
         name1: "Total Calls",
@@ -94,26 +97,17 @@ export const ChartsResponse = [
     id: "TOPICS",
     chart_name: "Trending Topics",
     chart_type: "table",
+    layout: { row: 3, column: 1, width: 50, height: 40 },
     chart_value: [
       {
-        name: "Account Information Updates",
+        name: "Account Management",
         call_frequency: 13,
         average_sentiment: "neutral",
       },
       {
-        name: "Appointment Scheduling",
-        call_frequency: 8,
-        average_sentiment: "neutral",
-      },
-      {
-        name: "Billing and Payment Issues",
+        name: "Billing Issues",
         call_frequency: 12,
         average_sentiment: "neutral",
-      },
-      {
-        name: "Customer Feedback",
-        call_frequency: 6,
-        average_sentiment: "positive",
       },
       {
         name: "Device Troubleshooting",
@@ -121,13 +115,23 @@ export const ChartsResponse = [
         average_sentiment: "neutral",
       },
       {
-        name: "Parental Controls",
-        call_frequency: 7,
+        name: "Internet Connectivity",
+        call_frequency: 18,
         average_sentiment: "neutral",
       },
       {
-        name: "Promotions and Customer Feedback",
-        call_frequency: 13,
+        name: "Lost or Stolen Devices",
+        call_frequency: 9,
+        average_sentiment: "negative",
+      },
+      {
+        name: "Mobile Plan Options",
+        call_frequency: 11,
+        average_sentiment: "positive",
+      },
+      {
+        name: "Parental Controls",
+        call_frequency: 7,
         average_sentiment: "neutral",
       },
       {
@@ -141,6 +145,7 @@ export const ChartsResponse = [
     id: "KEY_PHRASES",
     chart_name: "Key Phrases",
     chart_type: "wordcloud",
+    layout: { row: 3, column: 2, width: 50, height: 40 },
     chart_value: [
       {
         text: "account number",
@@ -193,6 +198,7 @@ export const ChartsResponse = [
     id: "SENTIMENT",
     chart_name: "Topics Overview",
     chart_type: "donutchart",
+    layout: { row: 2, column: 1, width: 35, height: 38 },
     chart_value: [
       {
         name: "positive",
@@ -212,22 +218,39 @@ export const ChartsResponse = [
     id: "AVG_HANDLING_TIME_BY_TOPIC",
     chart_name: "Average Handling Time By Topic",
     chart_type: "bar",
+    layout: { row: 2, column: 2, width: 65, height: 38 },
     chart_value: [
       {
-        name: "Internet Services",
-        value: 1,
+        name: "Account Management",
+        value: 12.5,
       },
       {
-        name: "Billing and Payment",
-        value: 2.8,
+        name: "Billing Issues",
+        value: 18.2,
       },
       {
-        name: "Loyalty Programs",
-        value: 3.7,
+        name: "Device Troubleshooting",
+        value: 22.7,
       },
       {
-        name: "International Roaming",
-        value: 4,
+        name: "Internet Connectivity",
+        value: 15.3,
+      },
+      {
+        name: "Lost or Stolen Devices",
+        value: 14.1,
+      },
+      {
+        name: "Mobile Plan Options",
+        value: 10.8,
+      },
+      {
+        name: "Parental Controls",
+        value: 9.4,
+      },
+      {
+        name: "Service Activation",
+        value: 11.6,
       },
     ],
   },
@@ -237,23 +260,14 @@ export const sampleFiltersData = [
   {
     filter_name: "Topic",
     filter_values: [
-      { key: "internet-services", displayValue: "Internet Services" },
-      {
-        key: "billing-and-payment",
-        displayValue: "Billing and Payment",
-      },
-      { key: "loyalty-programs", displayValue: "Loyalty Programs" },
-      {
-        key: "international-roaming",
-        displayValue: "International Roaming",
-      },
-      { key: "plan-management", displayValue: "Plan Management" },
-      { key: "device-support", displayValue: "Device Support" },
-      {
-        key: "network-connectivity",
-        displayValue: "Network Connectivity",
-      },
-      { key: "parental-controls", displayValue: "Parental Controls" },
+      { key: "Account Management", displayValue: "Account Management" },
+      { key: "Billing Issues", displayValue: "Billing Issues" },
+      { key: "Device Troubleshooting", displayValue: "Device Troubleshooting" },
+      { key: "Internet Connectivity", displayValue: "Internet Connectivity" },
+      { key: "Lost or Stolen Devices", displayValue: "Lost or Stolen Devices" },
+      { key: "Mobile Plan Options", displayValue: "Mobile Plan Options" },
+      { key: "Parental Controls", displayValue: "Parental Controls" },
+      { key: "Service Activation", displayValue: "Service Activation" },
     ],
   },
   {

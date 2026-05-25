@@ -89,7 +89,7 @@ const getFallbackFilterData = () => {
 
   const topicValues = Array.from(topicNames)
     .sort((a, b) => a.localeCompare(b))
-    .map((name) => ({ key: slugify(name), displayValue: name }));
+    .map((name) => ({ key: name, displayValue: name }));
 
   return [
     {
@@ -653,8 +653,23 @@ export async function callConversationApi(
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(JSON.stringify(errorData.error));
+    let errorMessage = `Request failed with status ${response.status}`;
+    try {
+      const text = await response.text();
+      if (text) {
+        try {
+          const errorData = JSON.parse(text);
+          errorMessage = typeof errorData.error === "string"
+            ? errorData.error
+            : JSON.stringify(errorData.error || errorData);
+        } catch {
+          errorMessage = text;
+        }
+      }
+    } catch {
+      // ignore body read errors; use default message
+    }
+    throw new Error(errorMessage);
   }
 
   return response;
