@@ -17,13 +17,15 @@ const baseURL = process.env.REACT_APP_API_BASE_URL;// base API URL
 // Cached Easy Auth id_token used as Bearer for cross-domain API calls.
 let _cachedIdToken: string | null = null;
 
-async function getIdToken(): Promise<string | null> {
-  if (_cachedIdToken) return _cachedIdToken;
+async function fetchFreshIdToken(): Promise<string | null> {
   try {
+    // Refresh the Easy Auth session tokens (no-op if already fresh)
+    await fetch("/.auth/refresh");
     const res = await fetch("/.auth/me");
     if (!res.ok) return null;
     const payload = await res.json();
-    const token = payload?.[0]?.id_token ?? null;
+    // Prefer id_token; fall back to access_token if id_token absent
+    const token = payload?.[0]?.id_token ?? payload?.[0]?.access_token ?? null;
     if (token) _cachedIdToken = token;
     return token;
   } catch {
@@ -31,11 +33,28 @@ async function getIdToken(): Promise<string | null> {
   }
 }
 
+async function getIdToken(): Promise<string | null> {
+  if (_cachedIdToken) return _cachedIdToken;
+  return fetchFreshIdToken();
+}
+
 async function apiFetch(url: string, options: RequestInit = {}): Promise<Response> {
   const token = await getIdToken();
   const headers = new Headers(options.headers as HeadersInit);
   if (token) headers.set("Authorization", `Bearer ${token}`);
-  return fetch(url, { ...options, headers });
+  const response = await fetch(url, { ...options, headers });
+
+  // On 401, clear cached token and retry once with a refreshed token
+  if (response.status === 401) {
+    _cachedIdToken = null;
+    const freshToken = await fetchFreshIdToken();
+    if (freshToken) {
+      const retryHeaders = new Headers(options.headers as HeadersInit);
+      retryHeaders.set("Authorization", `Bearer ${freshToken}`);
+      return fetch(url, { ...options, headers: retryHeaders });
+    }
+  }
+  return response;
 }
 
 const normalizeToken = (value: string) =>

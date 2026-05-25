@@ -205,6 +205,11 @@ def classify_query(query: str) -> Tuple[QueryScope, str]:
     # Check 5: Conversational follow-ups and contextual planning requests.
     # These are common after an in-scope response and should not be blocked.
     conversational_phrases = [
+        # Greetings (English/Portuguese/Spanish)
+        "hello", "hi", "hey", "good morning", "good afternoon", "good evening",
+        "ola", "oi", "olá", "bom dia", "boa tarde", "boa noite",
+        "hola", "buenos dias", "buenas tardes", "buenas noches",
+        # Follow-ups
         "yes", "no", "tell me more", "explain", "continue", "next", "previous",
         "ok", "okay", "go on", "based on the previous summary", "based on the summary",
         "de acordo com o resumo", "de acordo com o resumo anterior", "com base no resumo",
