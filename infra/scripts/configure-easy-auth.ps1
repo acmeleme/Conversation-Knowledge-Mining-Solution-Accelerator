@@ -149,6 +149,23 @@ foreach ($appName in $AppNames) {
         $currentAuthConfig.properties.globalValidation = [PSCustomObject]@{}
     }
     $currentAuthConfig.properties.globalValidation.unauthenticatedClientAction = $unauthAction
+
+    if ($appName -like 'api-*') {
+        # Only /health is public; all other routes require a valid Bearer id_token.
+        $currentAuthConfig.properties.globalValidation | Add-Member -NotePropertyName 'excludedPaths' -NotePropertyValue @('/health') -Force
+    }
+
+    if ($appName -like 'app-*') {
+        # Hybrid flow: request both authorization code (for token store) and id_token (for apiFetch Bearer header).
+        # Without this, AAD v2 only returns a code and id_token is absent from /.auth/me, breaking cross-domain API calls.
+        if ($null -eq $currentAuthConfig.properties.identityProviders.azureActiveDirectory.login) {
+            $currentAuthConfig.properties.identityProviders.azureActiveDirectory | Add-Member -NotePropertyName 'login' -NotePropertyValue ([PSCustomObject]@{}) -Force
+        }
+        $currentAuthConfig.properties.identityProviders.azureActiveDirectory.login | Add-Member `
+            -NotePropertyName 'loginParameters' `
+            -NotePropertyValue @('response_type=code id_token', 'scope=openid profile email offline_access') `
+            -Force
+    }
     $authConfigJson = $currentAuthConfig | ConvertTo-Json -Depth 20 -Compress
     $authConfigPath = Join-Path $PSScriptRoot ".auth-nonce-patch-$appName.json"
     $authConfigJson | Set-Content -Path $authConfigPath -Encoding utf8 -NoNewline
@@ -172,6 +189,32 @@ foreach ($appName in $AppNames) {
 
     Write-Success "Easy Auth habilitado em $appName"
     Write-Host "    Callback URI: $callbackUri" -ForegroundColor White
+
+    # Configure CORS for API apps: allow requests from paired frontend app.
+    # App Service platform CORS handles OPTIONS preflight before Easy Auth middleware,
+    # ensuring cross-domain fetch() calls succeed without CORS errors.
+    if ($appName -like 'api-*') {
+        $pairedFrontend = $AppNames | Where-Object { $_ -like 'app-*' } | Select-Object -First 1
+        if ($pairedFrontend) {
+            $pairedApp = Invoke-AzJson -Arguments @(
+                'webapp', 'show',
+                '--resource-group', $ResourceGroup,
+                '--name', $pairedFrontend,
+                '--subscription', $SubscriptionId,
+                '--output', 'json'
+            )
+            $frontendOrigin = "https://$($pairedApp.defaultHostName)"
+            Invoke-AzCommand -Arguments @(
+                'webapp', 'cors', 'add',
+                '--resource-group', $ResourceGroup,
+                '--name', $appName,
+                '--subscription', $SubscriptionId,
+                '--allowed-origins', $frontendOrigin,
+                '--output', 'json'
+            ) | Out-Null
+            Write-Success "CORS configurado em $appName para $frontendOrigin"
+        }
+    }
 }
 
 $currentRedirectUris = @()
