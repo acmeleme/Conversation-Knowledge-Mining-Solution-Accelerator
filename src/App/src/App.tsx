@@ -9,8 +9,13 @@ import {
   webLightTheme,
   Avatar,
   Tag,
+  Popover,
+  PopoverTrigger,
+  PopoverSurface,
+  Divider,
+  Text,
 } from "@fluentui/react-components";
-import { SparkleRegular } from "@fluentui/react-icons";
+import { SparkleRegular, ArrowExitRegular, PersonRegular } from "@fluentui/react-icons";
 import "./App.css";
 import { ChatHistoryPanel } from "./components/ChatHistoryPanel/ChatHistoryPanel";
 
@@ -72,6 +77,8 @@ const Dashboard: React.FC = () => {
   const OFFSET_INCREMENT = 25;
   const [hasMoreRecords, setHasMoreRecords] = useState<boolean>(true);
   const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [userMenuOpen, setUserMenuOpen] = useState<boolean>(false);
 
   useEffect(() => {
     try {
@@ -105,8 +112,16 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     getUserInfo().then((res) => {
-      const name: string = res[0]?.user_claims?.find((claim: any) => claim.typ === 'name')?.val ?? ''
+      const claims = res[0]?.user_claims ?? [];
+      const name: string = claims.find((claim: any) => claim.typ === 'name')?.val ?? ''
+      const email: string = claims.find((claim: any) =>
+        claim.typ === 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress' ||
+        claim.typ === 'preferred_username' ||
+        claim.typ === 'emails' ||
+        claim.typ === 'email'
+      )?.val ?? ''
       setName(name)
+      setEmail(email)
     }).catch((err) => {
       console.error('Error fetching user info: ', err)
     })
@@ -328,9 +343,53 @@ const Dashboard: React.FC = () => {
           >
             {`${panelShowStates?.[panels.CHAT] ? "Hide" : "Show"} Chat`}
           </Button>
-          <div>
-            <Avatar name={name} title={name} />
-          </div>
+          <Popover
+            open={userMenuOpen}
+            onOpenChange={(_, data) => setUserMenuOpen(data.open)}
+            positioning="below-end"
+          >
+            <PopoverTrigger>
+              <div style={{ cursor: "pointer" }}>
+                <Avatar name={name} title={name} />
+              </div>
+            </PopoverTrigger>
+            <PopoverSurface style={{ padding: 0, minWidth: 240, borderRadius: 8, boxShadow: "0 4px 16px rgba(0,0,0,0.12)" }}>
+              {/* Profile info */}
+              <div style={{ padding: "16px", display: "flex", alignItems: "center", gap: 12 }}>
+                <Avatar name={name} size={40} />
+                <div style={{ display: "flex", flexDirection: "column", overflow: "hidden" }}>
+                  <Text weight="semibold" style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    {name || "Usuário"}
+                  </Text>
+                  <Text size={200} style={{ color: "#616161", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    {email}
+                  </Text>
+                </div>
+              </div>
+              <Divider />
+              {/* Menu items */}
+              <div style={{ padding: "4px 0 8px" }}>
+                <button
+                  onClick={() => setUserMenuOpen(false)}
+                  style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "8px 16px", background: "none", border: "none", cursor: "pointer", fontSize: 14, color: "#242424" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f5f5f5")}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
+                >
+                  <PersonRegular style={{ fontSize: 16 }} />
+                  Ver Perfil
+                </button>
+                <button
+                  onClick={() => { window.location.href = "/.auth/logout?post_logout_redirect_uri=/"; }}
+                  style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "8px 16px", background: "none", border: "none", cursor: "pointer", fontSize: 14, color: "#c50f1f" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#fdf3f4")}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
+                >
+                  <ArrowExitRegular style={{ fontSize: 16 }} />
+                  Logout
+                </button>
+              </div>
+            </PopoverSurface>
+          </Popover>
         </div>
       </div>
       <div className="main-container">
