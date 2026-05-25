@@ -7,7 +7,8 @@ from fastapi import Depends, HTTPException, Request, status
 
 from auth.auth_utils import DEFAULT_DEV_ROLE, can_access_billing, get_user_roles
 
-RESTRICTED_TOPIC = "Billing and Payment Issues"
+# Must match exactly the topic name stored in the SQL database processed_data table.
+RESTRICTED_TOPIC = "Billing Issues"
 
 
 def get_current_user_roles(request: Request) -> list[str]:

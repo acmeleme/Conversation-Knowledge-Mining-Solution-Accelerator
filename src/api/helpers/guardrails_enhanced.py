@@ -49,13 +49,22 @@ CALL_CENTER_KEYWORDS = {
                               "praise", "issue", "problem", "challenge", "sentimento", "satisfacao",
                               "insatisfeito", "insatisfeita", "frustrado", "frustrada"],
 
-    # Known call-center topic names commonly used in this solution demo
+    # Known call-center topic names — must match the actual topic names in the SQL database.
+    # These ensure that queries like "summarize Billing Issues" or "what is Device Troubleshooting"
+    # are always classified as IN_SCOPE even without other call-center keywords.
     "known_topics": [
-        "account information updates",
-        "service activation",
-        "billing and payment issues",
+        # Actual topics from sqldb-callcenter100 processed_data table
+        "account management",
+        "billing issues",
         "device troubleshooting",
+        "internet connectivity",
+        "lost or stolen devices",
+        "mobile plan options",
         "parental controls",
+        "service activation",
+        # Legacy / alternate names kept for backward compatibility
+        "account information updates",
+        "billing and payment issues",
         "internet services",
         "international roaming",
         "loyalty programs",
