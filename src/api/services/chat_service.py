@@ -190,8 +190,11 @@ class ChatService:
             async for response in self.agent.invoke_stream(messages=query, thread=thread, truncation_strategy=truncation_strategy):
                 if ChatService.thread_cache is not None:
                     ChatService.thread_cache[conversation_id] = response.thread.id
-                complete_response += str(response.content)
-                yield response.content
+                content = response.content
+                if content is None:
+                    continue
+                complete_response += str(content)
+                yield content
 
         except RuntimeError as e:
             complete_response = str(e)

@@ -78,8 +78,11 @@ CALL_CENTER_KEYWORDS = {
 # Blocked topics (explicitly forbidden)
 BLOCKED_TOPICS = {
     "harmful": ["bomb", "violence", "hack", "malware", "exploit", "illegal", "fraud"],
-    "prompt_injection": ["prompt", "instruction", "system message", "rule", "guideline", "ignore", 
-                        "override", "bypass", "jailbreak"],
+    # Only block clear jailbreak keywords — contextual patterns (ignore+instruction, etc.)
+    # are handled more precisely by check_jailbreak_attempt() with multi-token regex.
+    # Single common words like "rule", "prompt", "ignore", "guideline" are too broad
+    # and would block legitimate call-center queries.
+    "prompt_injection": ["jailbreak", "bypass", "override"],
 }
 
 # Allowed response contexts
