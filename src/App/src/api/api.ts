@@ -14,6 +14,30 @@ import {
 } from "../types/AppTypes";
 const baseURL = process.env.REACT_APP_API_BASE_URL;// base API URL
 
+// Cached Easy Auth id_token used as Bearer for cross-domain API calls.
+let _cachedIdToken: string | null = null;
+
+async function getIdToken(): Promise<string | null> {
+  if (_cachedIdToken) return _cachedIdToken;
+  try {
+    const res = await fetch("/.auth/me");
+    if (!res.ok) return null;
+    const payload = await res.json();
+    const token = payload?.[0]?.id_token ?? null;
+    if (token) _cachedIdToken = token;
+    return token;
+  } catch {
+    return null;
+  }
+}
+
+async function apiFetch(url: string, options: RequestInit = {}): Promise<Response> {
+  const token = await getIdToken();
+  const headers = new Headers(options.headers as HeadersInit);
+  if (token) headers.set("Authorization", `Bearer ${token}`);
+  return fetch(url, { ...options, headers });
+}
+
 const normalizeToken = (value: string) =>
   String(value || "")
     .trim()
@@ -331,7 +355,7 @@ const fallbackLayoutConfig = {
 
 export const fetchChartData = async () => {
   try {
-    const response = await fetch(`${baseURL}/api/fetchChartData`);
+    const response = await apiFetch(`${baseURL}/api/fetchChartData`);
     if (!response.ok) {
       throw new Error(`Error: ${response.status} ${response.statusText}`);
     }
@@ -345,7 +369,7 @@ export const fetchChartData = async () => {
 
 export const fetchChartDataWithFilters = async (bodyData: any) => {
   try {
-    const response = await fetch(`${baseURL}/api/fetchChartDataWithFilters`, {
+    const response = await apiFetch(`${baseURL}/api/fetchChartDataWithFilters`, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -365,7 +389,7 @@ export const fetchChartDataWithFilters = async (bodyData: any) => {
 
 export const fetchFilterData = async () => {
   try {
-    const response = await fetch(`${baseURL}/api/fetchFilterData`);
+    const response = await apiFetch(`${baseURL}/api/fetchFilterData`);
     if (!response.ok) {
       throw new Error(`Error: ${response.status} ${response.statusText}`);
     }
@@ -430,7 +454,7 @@ function getUserIdFromLocalStorage(): string | null {
 
 export const historyRead = async (convId: string): Promise<ChatMessage[]> => {
   const userId = getUserIdFromLocalStorage();
-  const response = await fetch(`${baseURL}/history/read`, {
+  const response = await apiFetch(`${baseURL}/history/read`, {
     method: "POST",
     body: JSON.stringify({
       conversation_id: convId,
@@ -483,7 +507,7 @@ export const historyList = async (
   offset = 0
 ): Promise<Conversation[] | null> => {
   const userId = getUserIdFromLocalStorage();
-  let response = await fetch(`${baseURL}/history/list?offset=${offset}`, {
+  let response = await apiFetch(`${baseURL}/history/list?offset=${offset}`, {
     method: "GET",
   headers: {
     "Content-Type": "application/json",
@@ -532,7 +556,7 @@ export const historyUpdate = async (
   convId: string
 ): Promise<Response> => {
   const userId = getUserIdFromLocalStorage();
-  const response = await fetch(`${baseURL}/history/update`, {
+  const response = await apiFetch(`${baseURL}/history/update`, {
     method: "POST",
     body: JSON.stringify({
       conversation_id: convId,
@@ -563,7 +587,7 @@ export async function getLayoutConfig(): Promise<{
   charts: ChartConfigItem[];
 }> {
   const userId = getUserIdFromLocalStorage();
-  const response = await fetch(`${baseURL}/api/layout-config`, {
+  const response = await apiFetch(`${baseURL}/api/layout-config`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -588,7 +612,7 @@ export async function getIsChartDisplayDefault(): Promise<{
   isChartDisplayDefault: boolean;
 }> {
   const userId = getUserIdFromLocalStorage();
-  const response = await fetch(`${baseURL}/api/display-chart-default`, {
+  const response = await apiFetch(`${baseURL}/api/display-chart-default`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -614,7 +638,7 @@ export async function callConversationApi(
   abortSignal: AbortSignal
 ): Promise<Response> {
   const userId = getUserIdFromLocalStorage();
-  const response = await fetch(`${baseURL}/api/chat`, {
+  const response = await apiFetch(`${baseURL}/api/chat`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -641,7 +665,7 @@ export const historyRename = async (
   title: string
 ): Promise<Response> => {
   const userId = getUserIdFromLocalStorage();
-  const response = await fetch(`${baseURL}/history/rename`, {
+  const response = await apiFetch(`${baseURL}/history/rename`, {
     method: "POST",
     body: JSON.stringify({
       conversation_id: convId,
@@ -669,7 +693,7 @@ export const historyRename = async (
 
 export const historyDelete = async (convId: string): Promise<Response> => {
   const userId = getUserIdFromLocalStorage();
-  const response = await fetch(`${baseURL}/history/delete`, {
+  const response = await apiFetch(`${baseURL}/history/delete`, {
     method: "DELETE",
     body: JSON.stringify({
       conversation_id: convId,

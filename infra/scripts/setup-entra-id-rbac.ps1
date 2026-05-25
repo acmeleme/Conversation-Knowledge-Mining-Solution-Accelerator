@@ -331,6 +331,35 @@ Invoke-AzCommand -Arguments @(
 ) | Out-Null
 Remove-Item -Path $AppRolesPath -ErrorAction SilentlyContinue
 
+# Enable ID token issuance required by App Service Easy Auth v2 (runtime ~2).
+# Easy Auth uses a hybrid response_type=code id_token flow; without this setting
+# AAD returns error 700054 and the /.auth/login/aad/callback returns HTTP 401.
+Write-Info 'Habilitando emissão de ID token (necessário para Easy Auth v2 hybrid flow).'
+$implicitGrantPatch = @{
+    web = @{
+        implicitGrantSettings = @{
+            enableIdTokenIssuance     = $true
+            enableAccessTokenIssuance = $false
+        }
+    }
+} | ConvertTo-Json -Depth 5 -Compress
+$implicitGrantPath = Join-Path $PSScriptRoot '.implicit-grant-patch.json'
+$implicitGrantPatch | Set-Content -Path $implicitGrantPath -Encoding utf8 -NoNewline
+try {
+    Invoke-AzCommand -Arguments @(
+        'rest',
+        '--method', 'PATCH',
+        '--url', "https://graph.microsoft.com/v1.0/applications/$($app.id)",
+        '--headers', 'Content-Type=application/json',
+        '--body', "@$implicitGrantPath",
+        '--output', 'json'
+    ) | Out-Null
+}
+finally {
+    Remove-Item -Path $implicitGrantPath -ErrorAction SilentlyContinue
+}
+Write-Success 'Emissão de ID token habilitada.'
+
 $app = Invoke-AzJson -Arguments @(
     'ad', 'app', 'show',
     '--id', $app.appId,

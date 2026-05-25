@@ -118,6 +118,10 @@ foreach ($appName in $AppNames) {
         '--output', 'json'
     )
 
+    # api-* apps use Return401 so cross-domain JS fetch() calls get 401 instead of a redirect.
+    # app-* (frontend) apps use RedirectToLoginPage for browser navigation.
+    $unauthAction = if ($appName -like 'api-*') { 'Return401' } else { 'RedirectToLoginPage' }
+
     Invoke-AzCommand -Arguments @(
         'webapp', 'auth', 'update',
         '--resource-group', $ResourceGroup,
@@ -130,6 +134,36 @@ foreach ($appName in $AppNames) {
         '--token-store', 'true',
         '--output', 'json'
     ) | Out-Null
+
+    # Increase nonce expiration to 15 minutes to support forced password-change flows.
+    # The default 5-minute window expires before AAD finishes the password change redirect,
+    # causing HTTP 401 at /.auth/login/aad/callback.
+    $subscriptionId = $SubscriptionId
+    $authV2Url = "https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Web/sites/$appName/config/authsettingsV2?api-version=2022-03-01"
+    $currentAuthConfig = Invoke-AzJson -Arguments @(
+        'rest', '--method', 'GET', '--url', $authV2Url, '--output', 'json'
+    )
+    $currentAuthConfig.properties.login.nonce.nonceExpirationInterval = "00:15:00"
+    # Set unauthenticatedClientAction: api-* apps return 401 so JS fetch() works; frontend apps redirect.
+    if ($null -eq $currentAuthConfig.properties.globalValidation) {
+        $currentAuthConfig.properties.globalValidation = [PSCustomObject]@{}
+    }
+    $currentAuthConfig.properties.globalValidation.unauthenticatedClientAction = $unauthAction
+    $authConfigJson = $currentAuthConfig | ConvertTo-Json -Depth 20 -Compress
+    $authConfigPath = Join-Path $PSScriptRoot ".auth-nonce-patch-$appName.json"
+    $authConfigJson | Set-Content -Path $authConfigPath -Encoding utf8 -NoNewline
+    try {
+        Invoke-AzCommand -Arguments @(
+            'rest', '--method', 'PUT', '--url', $authV2Url,
+            '--headers', 'Content-Type=application/json',
+            '--body', "@$authConfigPath",
+            '--output', 'json'
+        ) | Out-Null
+    }
+    finally {
+        Remove-Item -Path $authConfigPath -ErrorAction SilentlyContinue
+    }
+    Write-Success "Nonce expiration ajustado para 15 minutos em $appName"
 
     $callbackUri = "https://$($webApp.defaultHostName)/.auth/login/aad/callback"
     $logoutUri = "https://$($webApp.defaultHostName)/.auth/logout/complete"
@@ -150,27 +184,36 @@ if ($null -ne $webProperty -and $null -ne $webProperty.Value) {
 }
 
 $mergedRedirectUris = @($currentRedirectUris + @($redirectUris.ToArray()) | Sort-Object -Unique)
-$redirectPatch = @{
+
+# Enable ID token issuance alongside redirect URIs in a single PATCH.
+# App Service Easy Auth v2 uses hybrid flow (response_type=code id_token).
+# Without enableIdTokenIssuance=true, AAD returns error 700054 and the callback returns HTTP 401.
+$appRegPatch = @{
     web = @{
         redirectUris = $mergedRedirectUris
+        implicitGrantSettings = @{
+            enableIdTokenIssuance     = $true
+            enableAccessTokenIssuance = $false
+        }
     }
 } | ConvertTo-Json -Depth 5 -Compress
 
-Write-Info 'Atualizando redirect URIs da App Registration para o fluxo do Easy Auth.'
+Write-Info 'Atualizando redirect URIs e habilitando ID token na App Registration.'
 Invoke-AzCommand -Arguments @(
     'rest',
     '--method', 'PATCH',
     '--url', "https://graph.microsoft.com/v1.0/applications/$($appRegistration.id)",
     '--headers', 'Content-Type=application/json',
-    '--body', $redirectPatch,
+    '--body', $appRegPatch,
     '--output', 'json'
 ) | Out-Null
 
 Write-Host ''
 Write-Host '=== Verificação recomendada ===' -ForegroundColor Magenta
 Write-Host '1. Acesse o App Service e confirme que Authentication está habilitado.' -ForegroundColor White
-Write-Host '2. Faça login com os usuários de teste criados pelo setup.' -ForegroundColor White
+Write-Host '2. Faça login com os usuários de teste (incluindo a troca de senha obrigatória na 1ª vez).' -ForegroundColor White
 Write-Host '3. Inspecione /.auth/me ou o token JWT para validar a claim roles.' -ForegroundColor White
 Write-Host '4. Garanta que a aplicação trate faturamento como role superset de callcenter.' -ForegroundColor White
+Write-Host '5. O nonce de login está configurado para 15 min (suporte ao fluxo force-change-password).' -ForegroundColor White
 Write-Host ''
 Write-Success 'Configuração do Easy Auth concluída.'
