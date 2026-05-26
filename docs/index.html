@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversation Knowledge Mining Solution Accelerator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+
+        header {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0078D4;
+            text-decoration: none;
+        }
+
+        nav a {
+            display: inline-block;
+            margin: 0 20px;
+            color: #333;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #0078D4;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        section {
+            padding: 60px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        section:last-child {
+            border-bottom: none;
+        }
+
+        h1 {
+            font-size: 42px;
+            color: #0078D4;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 32px;
+            color: #0078D4;
+            margin-bottom: 30px;
+            padding-top: 10px;
+        }
+
+        h3 {
+            font-size: 20px;
+            color: #333;
+            margin: 20px 0 15px 0;
+            font-weight: 600;
+        }
+
+        p {
+            color: #555;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #0078D4 0%, #0063B1 100%);
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .hero h1 {
+            color: white;
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            color: rgba(255,255,255,0.95);
+            font-size: 18px;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: white;
+            color: #0078D4;
+            padding: 12px 30px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            transition: box-shadow 0.3s, transform 0.3s;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 20px rgba(0,120,212,0.15);
+            transform: translateY(-4px);
+        }
+
+        .card h3 {
+            color: #0078D4;
+            margin-top: 0;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin: 20px 0;
+        }
+
+        .feature-list li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+            color: #555;
+        }
+
+        .feature-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #0078D4;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .data-table th {
+            background: #0078D4;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .data-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .data-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #E8F4F8;
+            color: #0078D4;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin: 5px 5px 5px 0;
+        }
+
+        .footer {
+            background: #f0f0f0;
+            padding: 40px 0;
+            text-align: center;
+            color: #666;
+            margin-top: 60px;
+        }
+
+        .footer a {
+            color: #0078D4;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                height: auto;
+                padding: 15px 20px;
+            }
+
+            nav {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                margin-top: 15px;
+            }
+
+            nav a {
+                margin: 10px 0;
+                display: block;
+            }
+
+            h1 {
+                font-size: 32px;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+
+            main {
+                padding: 0 15px;
+            }
+
+            section {
+                padding: 40px 0;
+            }
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="#" class="logo">💬 CKM Accelerator</a>
+            <nav>
+                <a href="#visao-geral">Visão Geral</a>
+                <a href="#cenario">Cenário</a>
+                <a href="#dados">Dados</a>
+                <a href="#agents">Agents</a>
+                <a href="#arquitetura">Arquitetura</a>
+                <a href="#recursos">Recursos</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="hero">
+            <h1>Conversation Knowledge Mining</h1>
+            <p>Extraia insights acionáveis de grandes volumes de dados conversacionais usando inteligência artificial avançada.</p>
+            <a href="https://github.com/microsoft/Conversation-Knowledge-Mining-Solution-Accelerator/blob/main/DEPLOYMENT_QUICK_START.md" class="cta-button">Quick Start</a>
+        </div>
+
+        <section id="visao-geral">
+            <h2>📊 Visão Geral da Solução</h2>
+            <p>A solução Conversation Knowledge Mining foi desenvolvida para extrair insights acionáveis de grandes volumes de dados conversacionais, identificando padrões, temas-chave e relacionamentos significativos em diálogos.</p>
+            
+            <h3>Value Proposition</h3>
+            <ul class="feature-list">
+                <li><strong>Análise em Escala:</strong> Processa grandes volumes de transcrições de áudio e texto</li>
+                <li><strong>Extração de Insights:</strong> Identifica padrões, tendências e relacionamentos automáticamente</li>
+                <li><strong>Decisões Mais Rápidas:</strong> Enables natural language exploration dos dados</li>
+                <li><strong>Qualidade Aprimorada:</strong> Melhora nos processos de contato center e satisfação do cliente</li>
+            </ul>
+
+            <h3>Principais Capacidades</h3>
+            <div class="card-grid">
+                <div class="card">
+                    <h3>🎯 Topic Modeling</h3>
+                    <p>Identifica temas e padrões de conversa automaticamente usando processamento de linguagem natural avançado.</p>
+                </div>
+                <div class="card">
+                    <h3>🔑 Key Phrase Extraction</h3>
+                    <p>Extrai frases-chave e entidades relevantes de conversas para análise estruturada.</p>
+                </div>
+                <div class="card">
+                    <h3>🎙️ Transcrição de Áudio</h3>
+                    <p>Converte automaticamente arquivos de áudio em texto estruturado e indexado.</p>
+                </div>
+                <div class="card">
+                    <h3>💬 Chat Interativo</h3>
+                    <p>Interface de linguagem natural para exploração de dados e geração de insights em tempo real.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="cenario">
+            <h2>🎬 Business Scenario</h2>
+            
+            <h3>Problema</h3>
+            <p>Grandes volumes de dados conversacionais de call centers, atendimento ao cliente e comunicações internas não são sistemática e eficientemente explorados para extrair insights de negócio.</p>
+
+            <h3>Usuários-Alvo</h3>
+            <ul class="feature-list">
+                <li><strong>Analistas de Centro de Contato:</strong> Identificam tendências de qualidade e satisfação</li>
+                <li><strong>Gerentes de Operações:</strong> Monitoram KPIs e avaliam desempenho de equipes</li>
+                <li><strong>Líderes de Negócio:</strong> Tomam decisões estratégicas baseadas em insights de clientes</li>
+                <li><strong>Equipes de Conformidade:</strong> Garantem qualidade e conformidade nas conversas</li>
+            </ul>
+
+            <h3>Use Cases</h3>
+            <ul class="feature-list">
+                <li>Identificar tendências de reclamações e problemas recorrentes</li>
+                <li>Monitorar qualidade de atendimento e performance de agentes</li>
+                <li>Descobrir oportunidades de venda e upsell</li>
+                <li>Análise de satisfação e NPS automática</li>
+                <li>Conformidade e auditoria de conversas</li>
+            </ul>
+        </section>
+
+        <section id="dados">
+            <h2>📁 Estrutura de Dados</h2>
+            
+            <h3>Tipos de Dados Processados</h3>
+            <div style="background: white; padding: 20px; border-radius: 6px; border: 1px solid #e0e0e0;">
+                <p><strong>Entradas:</strong></p>
+                <ul class="feature-list">
+                    <li>Arquivos de áudio (WAV, MP3, etc.)</li>
+                    <li>Transcrições de texto</li>
+                    <li>Metadados de conversas (data, duração, agente)</li>
+                </ul>
+                <p style="margin-top: 20px;"><strong>Saídas Processadas:</strong></p>
+                <ul class="feature-list">
+                    <li>Transcrições estruturadas com timestamps</li>
+                    <li>Entidades e frases-chave extraídas</li>
+                    <li>Vetores de embedding para busca semântica</li>
+                    <li>Tópicos e clusters de conversas</li>
+                </ul>
+            </div>
+
+            <h3>Estrutura de Dados Principais</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Estrutura</th>
+                        <th>Descrição</th>
+                        <th>Ubicação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>km_processed_data</strong></td>
+                        <td>Dados processados com entidades, tópicos e sentimentos</td>
+                        <td>SQL Database</td>
+                    </tr>
+                    <tr>
+                        <td><strong>processed_data_key_phrases</strong></td>
+                        <td>Frases-chave extraídas e suas frequências</td>
+                        <td>SQL Database</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Chat History</strong></td>
+                        <td>Histórico de conversas e interações do usuário</td>
+                        <td>Cosmos DB</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Indexed Transcripts</strong></td>
+                        <td>Transcrições indexadas para busca semântica</td>
+                        <td>AI Search</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="agents">
+            <h2>🤖 Semantic Kernel Agents</h2>
+            <p>A solução utiliza 4 agents especializados que trabalham em conjunto para processar e responder a consultas sobre dados conversacionais:</p>
+            
+            <div class="card-grid">
+                <div class="card">
+                    <h3>Conversation Agent</h3>
+                    <p>Orquestra conversas naturais com usuários, mantém contexto e coordena outros agents para responder perguntas complexas sobre dados conversacionais.</p>
+                    <div>
+                        <span class="badge">Context Aware</span>
+                        <span class="badge">Multi-turn</span>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3>Search Agent</h3>
+                    <p>Busca e recupera informações relevantes de transcrições usando busca semântica, keyword matching e filtros estruturados para encontrar conversas pertinentes.</p>
+                    <div>
+                        <span class="badge">Semantic Search</span>
+                        <span class="badge">Hybrid</span>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3>SQL Agent</h3>
+                    <p>Executa queries SQL complexas para análise agregada de dados, estatísticas e insights de negócio sobre tópicos, sentimentos e padrões de conversas.</p>
+                    <div>
+                        <span class="badge">Analytics</span>
+                        <span class="badge">Aggregations</span>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3>Chart Agent</h3>
+                    <p>Gera visualizações de dados - gráficos, dashboards e relatórios - para comunicar insights de forma clara e impactante.</p>
+                    <div>
+                        <span class="badge">Visualization</span>
+                        <span class="badge">Real-time</span>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Fluxo de Coordenação</h3>
+            <p>Os agents trabalham de forma orquestrada:</p>
+            <ol style="margin-left: 20px; color: #555;">
+                <li><strong>Conversation Agent</strong> recebe a pergunta do usuário</li>
+                <li>Determina qual agent(s) executar (Search, SQL, Chart)</li>
+                <li><strong>Search/SQL Agents</strong> processam e retornam resultados</li>
+                <li><strong>Chart Agent</strong> visualiza os dados conforme necessário</li>
+                <li><strong>Conversation Agent</strong> sintetiza resposta final natural</li>
+            </ol>
+        </section>
+
+        <section id="arquitetura">
+            <h2>🏗️ Arquitetura Técnica</h2>
+            <p>A arquitetura segue um padrão de processamento em pipeline, combinando serviços Azure gerenciados para processamento, indexação e entrega de insights.</p>
+
+            <h3>Componentes Principais</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Componente</th>
+                        <th>Função</th>
+                        <th>Serviço Azure</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Storage</strong></td>
+                        <td>Armazena áudio, transcrições e arquivos de entrada</td>
+                        <td>Storage Account</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Processing</strong></td>
+                        <td>Extrai entidades, tópicos e estrutura de conversas</td>
+                        <td>AI Content Understanding</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Indexação</strong></td>
+                        <td>Indexa dados para busca semântica e keyword</td>
+                        <td>AI Search</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Database</strong></td>
+                        <td>Armazena dados estruturados e metadados</td>
+                        <td>SQL Database</td>
+                    </tr>
+                    <tr>
+                        <td><strong>LLM & Orchestration</strong></td>
+                        <td>Fornece capacidades de IA e coordena agents</td>
+                        <td>Azure OpenAI + Semantic Kernel</td>
+                    </tr>
+                    <tr>
+                        <td><strong>API & Web</strong></td>
+                        <td>Interface web e APIs REST</td>
+                        <td>App Service</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Session Context</strong></td>
+                        <td>Persiste histórico de conversas</td>
+                        <td>Cosmos DB</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Fluxo de Dados</h3>
+            <ol style="margin-left: 20px; color: #555;">
+                <li><strong>Ingestão:</strong> Áudio/transcrições → Storage Account</li>
+                <li><strong>Processing:</strong> AI Content Understanding → Extração de dados estruturados</li>
+                <li><strong>Indexação:</strong> SQL Database + AI Search com embeddings</li>
+                <li><strong>Consulta:</strong> Agents buscam em Storage → Search/SQL → LLM</li>
+                <li><strong>Resposta:</strong> Conversation Agent sintetiza → Web UI</li>
+            </ol>
+        </section>
+
+        <section id="recursos">
+            <h2>☁️ Recursos Azure Utilizados</h2>
+            <p>A solução deploy para o resource group <strong>proj-callcenter100</strong> utiliza os seguintes serviços:</p>
+
+            <div class="card-grid">
+                <div class="card">
+                    <h3>🗄️ Data Storage</h3>
+                    <ul class="feature-list">
+                        <li>Storage Account</li>
+                        <li>SQL Database</li>
+                        <li>Cosmos DB</li>
+                        <li>AI Search</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>🧠 AI Services</h3>
+                    <ul class="feature-list">
+                        <li>Azure OpenAI Service</li>
+                        <li>AI Content Understanding</li>
+                        <li>Semantic Kernel</li>
+                        <li>AI Foundry</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>🚀 Hosting</h3>
+                    <ul class="feature-list">
+                        <li>App Service (API)</li>
+                        <li>Container Registry</li>
+                        <li>Application Insights</li>
+                        <li>Key Vault</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>🔧 Infrastructure</h3>
+                    <ul class="feature-list">
+                        <li>Resource Group</li>
+                        <li>Virtual Network</li>
+                        <li>Application Insights</li>
+                        <li>Log Analytics</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>Estimativa de Custos</h3>
+            <p>Os custos principais variam conforme:</p>
+            <ul class="feature-list">
+                <li><strong>Volume de dados:</strong> Storage e processamento em AI services</li>
+                <li><strong>Computação:</strong> App Service tier e horários de operação</li>
+                <li><strong>Queries:</strong> SQL Database DTU e Azure OpenAI tokens</li>
+                <li><strong>Armazenamento:</strong> Cosmos DB RU/s e retenção de histórico</li>
+            </ul>
+        </section>
+
+        <section style="background: white; padding: 60px 20px; border-radius: 6px; text-align: center; margin: 40px 0;">
+            <h2>🚀 Pronto para Começar?</h2>
+            <p style="font-size: 18px; margin-bottom: 30px;">Siga o guia de deployment para implantar a solução em sua subscrição Azure.</p>
+            <a href="https://github.com/microsoft/Conversation-Knowledge-Mining-Solution-Accelerator/blob/main/DEPLOYMENT_QUICK_START.md" class="cta-button">Ver Deployment Guide</a>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 Conversation Knowledge Mining Solution Accelerator | Microsoft</p>
+        <p style="margin-top: 10px; font-size: 14px;">
+            <a href="https://github.com/microsoft/Conversation-Knowledge-Mining-Solution-Accelerator">GitHub Repository</a> • 
+            <a href="https://microsoft.com">Microsoft</a>
+        </p>
+    </footer>
+</body>
+</html>

@@ -156,6 +156,10 @@ Clear, contextual insights empower employees to take meaningful action based on 
 Supporting documentation
 </h2>
 
+### Project documentation
+
+View comprehensive documentation at: **[GitHub Pages](https://acmeleme.github.io/Conversation-Knowledge-Mining-Solution-Accelerator/)** or in the `docs/` directory.
+
 ### Security guidelines
 
 This solution uses [Azure Key Vault](https://learn.microsoft.com/en-us/azure/key-vault/general/overview) to securely store secrets, connection strings, and API keys required by application components.
