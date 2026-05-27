@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8"><!-- Updated 2026-05-26 -->
+    <meta charset="UTF-8"><!-- Updated 2026-05-28 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Conversation Knowledge Mining Solution Accelerator</title>
     <style>
@@ -303,6 +303,9 @@
                 <a href="#cenario">Cenário</a>
                 <a href="#dados">Dados</a>
                 <a href="#agents">Agents</a>
+                <a href="#guardrails">Guardrails & RBAC</a>
+                <a href="#login-ui">Login UI</a>
+                <a href="#e2e">E2E Tests</a>
                 <a href="#arquitetura">Arquitetura</a>
                 <a href="#recursos">Recursos</a>
             </nav>
@@ -602,6 +605,75 @@
                 <li><strong>Queries:</strong> SQL Database DTU e Azure OpenAI tokens</li>
                 <li><strong>Armazenamento:</strong> Cosmos DB RU/s e retenção de histórico</li>
             </ul>
+        </section>
+
+        <!-- GUARDRAILS & RBAC -->
+        <section id="guardrails" class="section">
+            <h2>🛡️ Guardrails &amp; RBAC</h2>
+            <p>A solução implementa dois mecanismos de controle para garantir comportamento seguro e correto do agente IA:</p>
+
+            <h3 style="margin-top:30px;">🔒 Guardrails — Controle de Conteúdo</h3>
+            <p>O agente recusa educadamente perguntas fora do contexto financeiro:</p>
+            <ul class="feature-list">
+                <li><strong>Off-topic:</strong> Receitas, meteorologia, notícias gerais → resposta educada redirecionando ao domínio financeiro</li>
+                <li><strong>Prompt Injection:</strong> Tentativas de alterar o comportamento do agente bloqueadas</li>
+                <li><strong>Jailbreak:</strong> Instruções maliciosas detectadas e ignoradas</li>
+                <li><strong>Busca na web:</strong> Agente restrito à base de conhecimento local (sem acesso externo)</li>
+            </ul>
+
+            <h3 style="margin-top:30px;">👥 RBAC — Controle de Acesso por Perfil</h3>
+            <p>Três perfis de acesso controlam quais tópicos cada usuário pode consultar:</p>
+            <table class="data-table" style="margin-top:15px;">
+                <thead>
+                    <tr><th>Perfil</th><th>Email</th><th>Acesso</th><th>Restrições</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>💼 Financeiro &amp; Faturamento</td><td>financeiro-faturamento@MngEnvMCAP197214.onmicrosoft.com</td><td style="color:#107c10;font-weight:600;">Completo</td><td>Nenhuma</td></tr>
+                    <tr><td>🎧 Operador de Callcenter</td><td>operador-callcenter@MngEnvMCAP197214.onmicrosoft.com</td><td style="color:#e67e00;font-weight:600;">Parcial</td><td>Sem acesso a Cartão de Crédito — Fatura/Bloqueio</td></tr>
+                    <tr><td>👁️ Visitante / Demo</td><td>—</td><td style="color:#555;">Padrão</td><td>Acesso geral ao callcenter</td></tr>
+                </tbody>
+            </table>
+            <p style="margin-top:15px;font-size:14px;color:#666;">⚙️ Implementado via header <code>x-demo-role</code> no backend Python. A seleção de perfil no frontend armazena o papel em <code>localStorage</code> e injeta o header em cada chamada à API.</p>
+        </section>
+
+        <!-- LOGIN UI -->
+        <section id="login-ui" class="section" style="background:white;">
+            <h2>🔐 Login UI — Tela de Seleção de Perfil</h2>
+            <p>A interface web inclui uma tela de login demo que permite demonstrar o RBAC diretamente no navegador, sem necessidade de curl ou ferramentas de desenvolvedor:</p>
+            <div class="cards-grid">
+                <div class="card">
+                    <h3>💼 Financeiro &amp; Faturamento</h3>
+                    <p>Acesso total a todos os tópicos, incluindo Cartão de Crédito — Fatura e Pagamento e Cartão de Crédito — Bloqueio e Contestação.</p>
+                </div>
+                <div class="card">
+                    <h3>🎧 Operador de Callcenter</h3>
+                    <p>Acesso a todos os tópicos <strong>exceto</strong> tópicos de Cartão de Crédito. Ao tentar acessar tópicos restritos, recebe resposta de bloqueio educada.</p>
+                </div>
+                <div class="card">
+                    <h3>👁️ Visitante / Demo</h3>
+                    <p>Acesso padrão ao callcenter. Ideal para apresentações gerais da solução sem contexto de roles específicos.</p>
+                </div>
+            </div>
+            <p style="margin-top:20px;">A tela de login é gerenciada pelo componente React <code>LoginPage.tsx</code>. O papel selecionado é persistido em <code>localStorage[&quot;demo-role&quot;]</code> e injetado como header <code>x-demo-role</code> em toda chamada à API via <code>api.ts::apiFetch()</code>. O header do app exibe um badge com o perfil atual e um botão de logout que limpa o estado.</p>
+        </section>
+
+        <!-- E2E TESTS -->
+        <section id="e2e" class="section">
+            <h2>✅ Testes E2E</h2>
+            <p>Resultado da última bateria de testes de ponta a ponta (2026-05-28):</p>
+            <table class="data-table" style="margin-top:15px;">
+                <thead>
+                    <tr><th>#</th><th>Teste</th><th>Resultado</th><th>Detalhe</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>1</td><td>App carrega (HTTP 200, bundle correto)</td><td style="color:#107c10;font-weight:600;">✅ PASS</td><td>JS bundle <code>main.c897ac30.js</code> confirmado</td></tr>
+                    <tr><td>2</td><td>Perfil financeiro — tópico CC permitido</td><td style="color:#107c10;font-weight:600;">✅ PASS</td><td>HTTP 200, resposta sobre cartão de crédito</td></tr>
+                    <tr><td>3</td><td>Perfil operador — tópico CC bloqueado</td><td style="color:#107c10;font-weight:600;">✅ PASS</td><td>Bloqueio educado pelo guardrail/RBAC</td></tr>
+                    <tr><td>4</td><td>Guardrail — pergunta fora de contexto bloqueada</td><td style="color:#107c10;font-weight:600;">✅ PASS</td><td>"Fora do meu escopo" — receita de bolo rejeitada</td></tr>
+                    <tr><td>5</td><td>Perfil padrão — tópico consórcio permitido</td><td style="color:#107c10;font-weight:600;">✅ PASS</td><td>HTTP 200, resposta sobre consórcio</td></tr>
+                </tbody>
+            </table>
+            <p style="margin-top:15px;"><strong>URL da aplicação:</strong> <a href="https://app-financeirax01.azurewebsites.net" target="_blank">https://app-financeirax01.azurewebsites.net</a></p>
         </section>
 
         <section style="background: white; padding: 60px 20px; border-radius: 6px; text-align: center; margin: 40px 0;">

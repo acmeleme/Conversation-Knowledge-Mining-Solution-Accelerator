@@ -38,10 +38,31 @@ async function getIdToken(): Promise<string | null> {
   return fetchFreshIdToken();
 }
 
+// ── Demo RBAC helpers ──────────────────────────────────────────────────────
+export const DEMO_ROLE_KEY = "demo-role";
+
+export function getDemoRole(): string | null {
+  return localStorage.getItem(DEMO_ROLE_KEY);
+}
+
+export function setDemoRole(role: string): void {
+  localStorage.setItem(DEMO_ROLE_KEY, role);
+}
+
+export function clearDemoRole(): void {
+  localStorage.removeItem(DEMO_ROLE_KEY);
+}
+// ──────────────────────────────────────────────────────────────────────────
+
 async function apiFetch(url: string, options: RequestInit = {}): Promise<Response> {
   const token = await getIdToken();
   const headers = new Headers(options.headers as HeadersInit);
   if (token) headers.set("Authorization", `Bearer ${token}`);
+
+  // Inject demo role header so the API enforces RBAC in demo mode
+  const demoRole = getDemoRole();
+  if (demoRole) headers.set("x-demo-role", demoRole);
+
   const response = await fetch(url, { ...options, headers });
 
   // On 401, clear cached token and retry once with a refreshed token
@@ -51,6 +72,7 @@ async function apiFetch(url: string, options: RequestInit = {}): Promise<Respons
     if (freshToken) {
       const retryHeaders = new Headers(options.headers as HeadersInit);
       retryHeaders.set("Authorization", `Bearer ${freshToken}`);
+      if (demoRole) retryHeaders.set("x-demo-role", demoRole);
       return fetch(url, { ...options, headers: retryHeaders });
     }
   }

@@ -18,6 +18,8 @@ import {
 import { SparkleRegular, ArrowExitRegular, PersonRegular } from "@fluentui/react-icons";
 import "./App.css";
 import { ChatHistoryPanel } from "./components/ChatHistoryPanel/ChatHistoryPanel";
+import LoginPage, { DemoRole } from "./components/LoginPage/LoginPage";
+import { getDemoRole, setDemoRole, clearDemoRole } from "./api/api";
 
 import {
   getUserInfo,
@@ -57,7 +59,7 @@ const defaultPanelShowStates = {
   [panels.CHATHISTORY]: false,
 };
 
-const Dashboard: React.FC = () => {
+const Dashboard: React.FC<{ demoRole: DemoRole; demoUser: string; onLogout: () => void }> = ({ demoRole, demoUser, onLogout }) => {
   const { state, dispatch } = useAppContext();
   const { appConfig } = state.config;
   const [panelShowStates, setPanelShowStates] = useState<
@@ -324,8 +326,21 @@ const Dashboard: React.FC = () => {
         <div className="header-left-section">
           <AppLogo />
           <Subtitle2>
-            Woodgrove <Body2 style={{ gap: "10px" }}>| Call Analysis</Body2>
+            FinanceiraX S.A. <Body2 style={{ gap: "10px" }}>| Callcenter IA</Body2>
           </Subtitle2>
+          {/* Role badge */}
+          <Tag
+            shape="circular"
+            size="small"
+            style={{
+              marginLeft: 12,
+              backgroundColor: demoRole === "financeiro" ? "#dff6dd" : demoRole === "operador" ? "#dce9f8" : "#f3f2f1",
+              color: demoRole === "financeiro" ? "#107c10" : demoRole === "operador" ? "#0078d4" : "#616161",
+              fontWeight: 600,
+            }}
+          >
+            {demoRole === "financeiro" ? "💼 Financeiro" : demoRole === "operador" ? "🎧 Operador" : "👤 Demo"}
+          </Tag>
         </div>
         <div className="header-right-section">
           <Button
@@ -350,19 +365,19 @@ const Dashboard: React.FC = () => {
           >
             <PopoverTrigger>
               <div style={{ cursor: "pointer" }}>
-                <Avatar name={name} title={name} />
+                <Avatar name={demoUser || name} title={demoUser || name} />
               </div>
             </PopoverTrigger>
             <PopoverSurface style={{ padding: 0, minWidth: 240, borderRadius: 8, boxShadow: "0 4px 16px rgba(0,0,0,0.12)" }}>
               {/* Profile info */}
               <div style={{ padding: "16px", display: "flex", alignItems: "center", gap: 12 }}>
-                <Avatar name={name} size={40} />
+                <Avatar name={demoUser || name} size={40} />
                 <div style={{ display: "flex", flexDirection: "column", overflow: "hidden" }}>
                   <Text weight="semibold" style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                    {name || "Usuário"}
+                    {demoUser || name || "Usuário Demo"}
                   </Text>
                   <Text size={200} style={{ color: "#616161", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                    {email}
+                    Perfil: {demoRole}
                   </Text>
                 </div>
               </div>
@@ -379,13 +394,13 @@ const Dashboard: React.FC = () => {
                   Ver Perfil
                 </button>
                 <button
-                  onClick={() => { window.location.href = "/.auth/logout?post_logout_redirect_uri=/"; }}
+                  onClick={() => { setUserMenuOpen(false); onLogout(); }}
                   style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "8px 16px", background: "none", border: "none", cursor: "pointer", fontSize: 14, color: "#c50f1f" }}
                   onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#fdf3f4")}
                   onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
                 >
                   <ArrowExitRegular style={{ fontSize: 16 }} />
-                  Logout
+                  Trocar Perfil
                 </button>
               </div>
             </PopoverSurface>
@@ -455,4 +470,34 @@ const Dashboard: React.FC = () => {
   );
 };
 
-export default Dashboard;
+// App wrapper: gates Dashboard behind the demo login screen
+const App: React.FC = () => {
+  const [demoRole, setDemoRoleState] = useState<DemoRole | null>(
+    () => getDemoRole() as DemoRole | null
+  );
+  const [demoUser, setDemoUser] = useState<string>(
+    () => localStorage.getItem("demo-user") || ""
+  );
+
+  const handleLogin = (role: DemoRole, userName: string) => {
+    setDemoRole(role);
+    localStorage.setItem("demo-user", userName);
+    setDemoRoleState(role);
+    setDemoUser(userName);
+  };
+
+  const handleLogout = () => {
+    clearDemoRole();
+    localStorage.removeItem("demo-user");
+    setDemoRoleState(null);
+    setDemoUser("");
+  };
+
+  if (!demoRole) {
+    return <LoginPage onLogin={handleLogin} />;
+  }
+
+  return <Dashboard demoRole={demoRole} demoUser={demoUser} onLogout={handleLogout} />;
+};
+
+export default App;
