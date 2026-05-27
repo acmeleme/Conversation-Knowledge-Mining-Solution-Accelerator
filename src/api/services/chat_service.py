@@ -255,9 +255,10 @@ class ChatService:
 
         scope, reason = classify_query(query or "")
         if scope != QueryScope.IN_SCOPE:
-            message = get_guardrail_message(scope, session_language) or (
-                "I can only answer questions grounded in call center knowledge data. "
-                "Please ask about call transcripts, customer interactions, or call analytics."
+            # Always use PT-BR for guardrail messages (FinanceiraX S.A. is a Brazilian company)
+            message = get_guardrail_message(scope, "pt") or (
+                "Só consigo responder a perguntas baseadas nos dados de atendimento da FinanceiraX S.A. "
+                "Por favor, pergunte sobre transcrições, interações com clientes ou análises de chamadas."
             )
             logger.warning("Blocked query (%s): '%s' - %s", scope.value, (query or "")[:100], reason)
 

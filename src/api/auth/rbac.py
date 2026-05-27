@@ -7,8 +7,13 @@ from fastapi import Depends, HTTPException, Request, status
 
 from auth.auth_utils import DEFAULT_DEV_ROLE, can_access_billing, get_user_roles
 
-# Must match exactly the topic name stored in the SQL database processed_data table.
-RESTRICTED_TOPIC = "Billing Issues"
+# Tópicos de Cartão de Crédito restritos ao role 'financeiro'
+# Devem corresponder exatamente ao campo 'topic' na tabela processed_data do SQL.
+RESTRICTED_TOPIC = "Cartao de Credito — Fatura e Pagamento"  # compatibilidade legada
+RESTRICTED_TOPICS = [
+    "Cartao de Credito — Fatura e Pagamento",
+    "Cartao de Credito — Bloqueio e Contestacao",
+]
 
 
 def get_current_user_roles(request: Request) -> list[str]:
@@ -31,7 +36,7 @@ def require_role(required_roles: list[str]) -> Callable[[list[str]], list[str]]:
         if normalized_user_roles.isdisjoint(normalized_required_roles):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="You do not have permission to access this resource.",
+                detail="Você não tem permissão para acessar este recurso.",
             )
 
         return roles
@@ -40,8 +45,8 @@ def require_role(required_roles: list[str]) -> Callable[[list[str]], list[str]]:
 
 
 def filter_topics_by_role(topics: list[str], roles: list[str]) -> list[str]:
-    """Hide the restricted billing topic unless the user has the faturamento role."""
+    """Oculta os tópicos de Cartão de Crédito a menos que o usuário tenha o role 'financeiro'."""
     if can_access_billing(roles):
         return topics
 
-    return [topic for topic in topics if topic != RESTRICTED_TOPIC]
+    return [topic for topic in topics if topic not in RESTRICTED_TOPICS]

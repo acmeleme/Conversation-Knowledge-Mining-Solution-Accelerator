@@ -61,6 +61,22 @@ BILLING_KEYWORDS = [
     r"\bfaturamento\b",
     r"\bpagamento\b",
     r"\bcobrança\b",
+    r"\bcartao de credito\b",
+    r"\bcartão de crédito\b",
+    r"\bfatura do cartao\b",
+    r"\bfatura do cartão\b",
+    r"\blimite do cartao\b",
+    r"\blimite do cartão\b",
+    r"\bbloqueio de cartao\b",
+    r"\bbloqueio de cartão\b",
+    r"\bcontestacao\b",
+    r"\bcontestação\b",
+    r"\banuidade\b",
+    r"\bcashback\b",
+    r"\bpontos do cartao\b",
+    r"\bpontos do cartão\b",
+    r"\bsegunda via do cartao\b",
+    r"\bsegunda via do cartão\b",
 ]
 
 
@@ -113,10 +129,10 @@ async def fetch_chart_data_with_filters(chart_filters: ChartFilters, request: Re
     try:
         roles = get_current_user_roles(request)
         if not can_access_billing(roles):
-            from auth.rbac import RESTRICTED_TOPIC
+            from auth.rbac import RESTRICTED_TOPICS
             chart_filters.selected_filters.Topic = [
                 t for t in chart_filters.selected_filters.Topic
-                if t != RESTRICTED_TOPIC
+                if t not in RESTRICTED_TOPICS
             ]
         filters_json = json.dumps(chart_filters.model_dump(), ensure_ascii=False)
         filters_json = filters_json.replace('\r\n', '').replace('\n', '').replace('\r', '')
@@ -188,7 +204,7 @@ async def conversation(request: Request):
             )
             return JSONResponse(
                 content={
-                    "error": "Access denied. Billing and Payment Issues requires the faturamento role."
+                    "error": "Acesso negado. As informações sobre Cartão de Crédito (Fatura, Pagamento, Bloqueio e Contestação) requerem o perfil 'financeiro'. Entre em contato com o administrador para solicitar acesso."
                 },
                 status_code=403,
             )
@@ -208,6 +224,58 @@ async def conversation(request: Request):
             span.record_exception(ex)
             span.set_status(Status(StatusCode.ERROR, str(ex)))
         return JSONResponse(content={"error": "An internal error occurred while processing the conversation."}, status_code=500)
+
+
+@router.get("/debug-state")
+async def debug_state(request: Request):
+    """Debug endpoint to diagnose app state issues."""
+    import traceback
+    import sys
+    result = {
+        "python_version": sys.version,
+        "agent_present": False,
+        "agent_type": None,
+        "agent_is_none": None,
+        "chat_service_init": "not_tested",
+        "classify_query_test": "not_tested",
+        "chart_service_init": "not_tested",
+        "stream_chat_request_test": "not_tested",
+        "errors": [],
+    }
+    try:
+        agent = getattr(request.app.state, "agent", "MISSING")
+        result["agent_present"] = agent != "MISSING"
+        result["agent_is_none"] = agent is None
+        result["agent_type"] = type(agent).__name__
+    except Exception as e:
+        result["errors"].append(f"agent_state: {traceback.format_exc()}")
+    try:
+        from helpers.guardrails_enhanced import classify_query, QueryScope
+        scope, reason = classify_query("seguro sinistro")
+        result["classify_query_test"] = f"{scope.value}: {reason}"
+    except Exception as e:
+        result["errors"].append(f"classify_query: {traceback.format_exc()}")
+    try:
+        chat_svc = ChatService(request=request)
+        result["chat_service_init"] = "ok"
+    except Exception as e:
+        result["errors"].append(f"chat_service_init: {traceback.format_exc()}")
+    try:
+        chart_svc = ChartService()
+        result["chart_service_init"] = "ok"
+    except Exception as e:
+        result["errors"].append(f"chart_service_init: {traceback.format_exc()}")
+    try:
+        chat_svc2 = ChatService(request=request)
+        gen = await chat_svc2.stream_chat_request(
+            {"messages": [{"role": "user", "content": "seguro"}], "conversation_id": "debug-test"},
+            "debug-test",
+            "seguro"
+        )
+        result["stream_chat_request_test"] = f"ok (type={type(gen).__name__})"
+    except Exception as e:
+        result["errors"].append(f"stream_chat_request: {traceback.format_exc()}")
+    return JSONResponse(content=result)
 
 
 @router.get("/layout-config")
