@@ -652,7 +652,6 @@ const Chat: React.FC<ChatProps> = ({
                   displayContent = parsed.answer;
                 }
               } catch {
-                displayContent = content;
               }
               const errorMsg =
                 parsedChartResponse?.error ||
