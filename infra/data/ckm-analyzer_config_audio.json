@@ -1,39 +1,39 @@
 {
-  "analyzerId": "ckm-analyzer",
-  "name": "ckm-analyzer",
+  "analyzerId": "ckm-analyzer-financeiro",
+  "name": "ckm-analyzer-financeiro",
   "scenario": "conversation",
-  "description": "Conversation process",
+  "description": "Analise de audio de callcenter financeiro PT-BR — FinanceiraX S.A.",
   "tags": {
     "projectId": "",
     "templateId": "postCallAnalytics-2024-12-01"
   },
   "config": {
     "returnDetails": false,
-    "locales": ["en-US"]
+    "locales": ["pt-BR"]
   },
   "fieldSchema": {
     "name": "CallCenterConversationAnalysis",
-    "descriptions": "Content, Summary, sentiment, and more analyses from a call center conversation",
+    "descriptions": "Conteudo, resumo, sentimento e demais analises de conversas de callcenter financeiro em PT-BR",
     "fields": {
       "content": {
         "type": "string",
         "method": "generate",
-        "description": "Full text of the conversation"
+        "description": "Texto completo da conversa"
       },
       "Duration": {
         "type": "string",
         "method": "generate",
-        "description": "Find out how long the conversation lasted in seconds"
+        "description": "Duracao da conversa em segundos"
       },
       "summary": {
         "type": "string",
         "method": "generate",
-        "description": "Summarize the conversation"
+        "description": "Resumo da conversa em PT-BR"
       },
       "satisfied": {
         "type": "string",
         "method": "classify",
-        "description": "Is the customer satisfied with the agent interaction",
+        "description": "O cliente ficou satisfeito com o atendimento",
         "enum": [
           "Yes",
           "No"
@@ -42,7 +42,7 @@
       "sentiment": {
         "type": "string",
         "method": "classify",
-        "description": "Identify the sentiment of the conversation",
+        "description": "Sentimento geral da conversa",
         "enum": [
           "Positive",
           "Neutral",
@@ -52,17 +52,17 @@
       "topic": {
         "type": "string",
         "method": "generate",
-        "description": "Identify the single primary topic of the conversation in 6 words or less"
+        "description": "Topico principal da conversa em ate 6 palavras em PT-BR"
       },
       "keyPhrases": {
         "type": "string",
         "method": "generate",
-        "description": "Identify the top 10 key phrases as comma separated string excluding people names"
+        "description": "Top 10 frases-chave da conversa como string separada por virgulas em PT-BR, excluindo nomes proprios"
       },
       "complaint": {
         "type": "string",
         "method": "generate",
-        "description": "Identify the single primary complaint of the conversation in 3 words or less"
+        "description": "Principal reclamacao da conversa em ate 3 palavras em PT-BR"
       }
     }
   }
