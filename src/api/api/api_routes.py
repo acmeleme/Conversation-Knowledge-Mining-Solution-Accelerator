@@ -118,7 +118,9 @@ async def fetch_chart_data_with_filters(chart_filters: ChartFilters, request: Re
                 t for t in chart_filters.selected_filters.Topic
                 if t != RESTRICTED_TOPIC
             ]
-        logger.info(f"Received filters: {chart_filters}")
+        filters_json = json.dumps(chart_filters.model_dump(), ensure_ascii=False)
+        filters_json = filters_json.replace('\r\n', '').replace('\n', '').replace('\r', '')
+        logger.info("Received filters: %s", filters_json)
         chart_service = ChartService()
         response = await chart_service.fetch_chart_data_with_filters(chart_filters)
         track_event_if_configured(
