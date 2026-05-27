@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 
 
 class UserInfo(BaseModel):
@@ -7,3 +7,5 @@ class UserInfo(BaseModel):
     user_principal_id: str | None
     roles: List[str]
     can_access_billing: bool
+    tenant_id: Optional[str] = None
+    memory_scope: Optional[str] = None

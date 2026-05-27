@@ -12,10 +12,11 @@ import requests
 from common.config.config import Config
 from api.models.input_models import ChartFilters
 from api.models.rbac_models import UserInfo
-from auth.auth_utils import get_authenticated_user_details
+from auth.auth_utils import get_authenticated_user_details, get_tenantid
 from auth.rbac import can_access_billing, get_current_user_roles
 from services.chat_service import ChatService
 from services.chart_service import ChartService
+from services.foundry_memory_service import FoundryMemoryService
 from common.logging.event_utils import track_event_if_configured
 from helpers.azure_credential_utils import get_azure_credential
 from azure.monitor.opentelemetry import configure_azure_monitor
@@ -74,11 +75,17 @@ def _contains_billing_keywords(query: str | None) -> bool:
 def _build_user_info(request: Request) -> UserInfo:
     user_details = get_authenticated_user_details(request.headers)
     roles = get_current_user_roles(request)
+    user_principal_id = user_details.get("user_principal_id")
+    client_principal_b64 = user_details.get("client_principal_b64")
+    tenant_id = get_tenantid(client_principal_b64) or None
+    memory_scope = FoundryMemoryService.build_scope(user_principal_id, tenant_id) or None
     return UserInfo(
         user_name=user_details.get("user_name"),
-        user_principal_id=user_details.get("user_principal_id"),
+        user_principal_id=user_principal_id,
         roles=roles,
         can_access_billing=can_access_billing(roles),
+        tenant_id=tenant_id,
+        memory_scope=memory_scope,
     )
 
 

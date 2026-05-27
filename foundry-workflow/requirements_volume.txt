@@ -1,0 +1,17 @@
+# Volume conversation generation — dependencies
+# Install with: pip install -r requirements_volume.txt
+
+# Async HTTP client (for generate_chat_conversations.py)
+httpx==0.27.2
+
+# Progress bars
+tqdm==4.66.4
+
+# Azure AI Projects SDK (for generate_conversations.py)
+azure-ai-projects==1.0.0b10
+
+# Azure Identity (AzureCliCredential)
+azure-identity==1.17.1
+
+# Azure Core (transitive, pinned for stability)
+azure-core==1.30.2

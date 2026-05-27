@@ -1,0 +1,57 @@
+# ⚠️  DEPRECATED — Prompt Flow format (flow.dag.yaml)
+# ─────────────────────────────────────────────────────────────────────────────
+# This file uses the OLD Prompt Flow / Foundry (classic) schema.
+# Prompt Flow was retired on April 20, 2026 (read-only until April 20, 2027).
+#
+# ✅ USE INSTEAD: workflow.yaml (same folder)
+#    → New Azure AI Foundry Agent Workflows format (Agent Framework YAML)
+#    → Works with the "New Foundry" toggle ON at ai.azure.com
+#    → See README.md for full migration guide
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Original Prompt Flow schema kept below for reference only:
+# $schema: https://azuremlschemas.azureedge.net/promptflow/latest/Flow.schema.json
+environment:
+  python_requirements_txt: requirements.txt
+
+inputs:
+  user_question:
+    type: string
+    default: "What are the most common complaints about billing errors?"
+    description: "The analyst's question to query the call center knowledge base."
+
+outputs:
+  analysis_report:
+    type: string
+    reference: ${llm_analyst.output}
+  search_context:
+    type: string
+    reference: ${search_km_data.output}
+
+nodes:
+  # ── Node 2: Azure AI Search (vector + semantic hybrid, top-5) ──────────────
+  - name: search_km_data
+    type: python
+    source:
+      type: code
+      path: search_km_data.py
+    inputs:
+      user_question: ${inputs.user_question}
+
+  # ── Node 3: LLM — GPT-4o Call Center Analyst ──────────────────────────────
+  - name: llm_analyst
+    type: llm
+    source:
+      type: code
+      path: call_center_analyst_prompt.jinja2
+    inputs:
+      deployment_name: gpt-4o
+      max_tokens: 1200
+      temperature: 0.2
+      top_p: 0.95
+      question: ${inputs.user_question}
+      search_results: ${search_km_data.output}
+    provider: AzureOpenAI
+    connection: azure_openai_connection   # Set this in Foundry → Connections
+    api: chat
+    module: promptflow.tools.aoai

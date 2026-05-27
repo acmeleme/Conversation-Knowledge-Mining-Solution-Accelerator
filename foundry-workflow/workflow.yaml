@@ -1,0 +1,103 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Azure AI Foundry — Agent Workflow YAML
+# Format: Microsoft Agent Framework declarative schema (NEW Foundry, NOT Prompt Flow)
+# Targets: ai.azure.com → Workflows tab (New Foundry toggle ON)
+#
+# PREREQUISITES (two Foundry Agents must exist before running this workflow):
+#   1. KMSearchAgent          — Agent with Azure AI Search tool on call_transcripts index
+#   2. CallCenterAnalystAgent — Agent with gpt-4o-mini and the analyst system prompt
+# ─────────────────────────────────────────────────────────────────────────────
+
+kind: Workflow
+trigger:
+  kind: OnConversationStart
+  id: callcenter_workflow
+  actions:
+    # Create isolated conversation context for the search agent
+    - kind: CreateConversation
+      id: create_search_conv
+      displayName: Create search conversation
+      conversationId: Local.SearchConvId
+
+    # Step 1: KMSearchAgent retrieves relevant call records from the index
+    - kind: InvokeAzureAgent
+      id: invoke_search_agent
+      displayName: Search knowledge base for relevant calls
+      agent:
+        name: KMSearchAgent
+      conversationId: =Local.SearchConvId
+      input:
+        messages: =System.LastMessage
+      output:
+        messages: Local.SearchResults
+
+    # Create isolated conversation context for the analyst agent
+    - kind: CreateConversation
+      id: create_analyst_conv
+      displayName: Create analyst conversation
+      conversationId: Local.AnalystConvId
+
+    # Step 2: CallCenterAnalystAgent generates structured intelligence report
+    # autoSend: true sends the response directly to the user
+    - kind: InvokeAzureAgent
+      id: invoke_analyst_agent
+      displayName: Generate call center intelligence report
+      agent:
+        name: CallCenterAnalystAgent
+      conversationId: =Local.AnalystConvId
+      input:
+        messages: =Local.SearchResults
+      output:
+        autoSend: true
+
+# ─────────────────────────────────────────────────────────────────────────────
+# AGENT CONFIGURATION REFERENCE
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# KMSearchAgent
+# ─────────────────────────────────────────────────────────────────────────────
+#   Model:        gpt-4o  (or gpt-4o-mini — used only to summarise search hits)
+#   Instructions: "You are a search assistant. Retrieve the most relevant call
+#                  center records from the knowledge base for the user's query.
+#                  Return all results verbatim with chunk_id, source_file,
+#                  call_date, agent_id, and content. Do not summarise."
+#   Tools:
+#     - Type:     Azure AI Search
+#       Index:    km_processed_data
+#       Mode:     Hybrid (semantic + vector)
+#       Top-N:    5
+#       Fields:   chunk_id, content, source_file, call_date, agent_id
+#
+# CallCenterAnalystAgent
+# ─────────────────────────────────────────────────────────────────────────────
+#   Model:        gpt-4o
+#   Instructions: (paste full content of call_center_analyst_prompt.jinja2)
+#   Response format (optional structured JSON):
+#     {
+#       "name": "call_center_report",
+#       "schema": {
+#         "type": "object",
+#         "properties": {
+#           "question":          { "type": "string" },
+#           "top_issues":        { "type": "array",  "items": { "type": "object",
+#                                  "properties": { "title": {"type":"string"},
+#                                  "explanation": {"type":"string"},
+#                                  "source": {"type":"string"} },
+#                                  "required": ["title","explanation","source"],
+#                                  "additionalProperties": false } },
+#           "sentiment":         { "type": "object",
+#                                  "properties": { "overall": {"type":"string"},
+#                                  "emotion": {"type":"string"},
+#                                  "driver": {"type":"string"} },
+#                                  "required": ["overall","emotion","driver"],
+#                                  "additionalProperties": false },
+#           "recommendations":   { "type": "array", "items": {"type":"string"} },
+#           "representative_quote": { "type": "string" },
+#           "sources_used":      { "type": "array", "items": {"type":"string"} }
+#         },
+#         "required": ["question","top_issues","sentiment","recommendations",
+#                      "representative_quote","sources_used"],
+#         "additionalProperties": false
+#       },
+#       "strict": true
+#     }

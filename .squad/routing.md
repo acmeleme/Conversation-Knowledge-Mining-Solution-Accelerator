@@ -6,12 +6,14 @@ How to decide who handles what.
 
 | Work Type | Route To | Examples |
 |-----------|----------|----------|
-| {domain 1} | {Name} | {example tasks} |
-| {domain 2} | {Name} | {example tasks} |
-| {domain 3} | {Name} | {example tasks} |
-| Code review | {Name} | Review PRs, check quality, suggest improvements |
-| Testing | {Name} | Write tests, find edge cases, verify fixes |
-| Scope & priorities | {Name} | What to build next, trade-offs, decisions |
+| Frontend bugs (React/TypeScript) | alex | Topics list, chat UI, navigation, apiFetch auth |
+| Backend bugs (FastAPI/Python) | alex | API routes, CORS, auth middleware, agents |
+| Azure infrastructure | kai | App Services, SQL, CosmosDB, ACR, Easy Auth |
+| Docker builds & deployments | kai | Rebuild images, push to ACR, deploy to App Service |
+| Data ingestion & indexing | kai | process_data_scripts, index_scripts, SQL population |
+| Code review | morgan | Review PRs, check quality, suggest improvements |
+| Testing | morgan | Write tests, find edge cases, verify fixes |
+| Scope & priorities | alex | What to build next, trade-offs, decisions |
 | Session logging | Scribe | Automatic — never needs routing |
 
 ## Issue Routing

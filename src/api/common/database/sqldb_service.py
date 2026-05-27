@@ -39,10 +39,16 @@ async def get_db_connection():
         connection_string = f"DRIVER={driver};SERVER={server};DATABASE={database};"
         SQL_COPT_SS_ACCESS_TOKEN = 1256
 
-        for candidate_client_id in [mid_id, None]:
-            if candidate_client_id is None and not mid_id:
-                continue
+        # Build candidate list: always try with mid_id first; fall back to SAMI (None) only if mid_id differs.
+        candidates = [mid_id] if mid_id else []
+        if None not in candidates:
+            candidates.append(None)
 
+        if not candidates:
+            raise RuntimeError("No managed identity client ID configured and system-assigned identity not attempted.")
+
+        last_exc: Exception | None = None
+        for candidate_client_id in candidates:
             credential = await get_azure_credential_async(client_id=candidate_client_id)
             try:
                 token = await credential.get_token("https://database.windows.net/.default")
@@ -60,12 +66,14 @@ async def get_db_connection():
                 else:
                     logging.info("Connected using Azure Credential with system-assigned managed identity")
                 return conn
-            except Exception:
+            except Exception as exc:
+                last_exc = exc
                 if hasattr(credential, "close"):
                     await credential.close()
                 credential = None
-                if candidate_client_id is None:
-                    raise
+
+        if last_exc:
+            raise last_exc
     except pyodbc.Error as e:
         logging.error("Failed with Azure Credential: %s", str(e))
         if not username or not password:

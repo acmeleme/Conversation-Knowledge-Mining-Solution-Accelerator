@@ -44,5 +44,10 @@ class Config:
         self.azure_cosmosdb_conversations_container = os.getenv("AZURE_COSMOSDB_CONVERSATIONS_CONTAINER")
         self.azure_cosmosdb_enable_feedback = os.getenv("AZURE_COSMOSDB_ENABLE_FEEDBACK", "false").lower() == "true"
 
+        # Azure AI Memory configuration
+        self.azure_ai_memory_enabled = os.getenv("AZURE_AI_MEMORY_ENABLED", "false").strip().lower() == "true"
+        self.azure_ai_memory_store_name = os.getenv("AZURE_AI_MEMORY_STORE_NAME", "")
+        self.azure_ai_memory_update_delay_seconds = int(os.getenv("AZURE_AI_MEMORY_UPDATE_DELAY_SECONDS", "300"))
+
         self.solution_name = os.getenv("SOLUTION_NAME", "")
         self.azure_client_id = os.getenv("AZURE_CLIENT_ID", "")

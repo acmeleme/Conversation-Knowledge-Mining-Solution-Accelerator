@@ -54,7 +54,7 @@ const ChartFilter: React.FC<FilterComponentProps> = (props) => {
   const [isTopicsMenuOpen, setIsTopicsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredTopics = filtersMeta?.Topic?.filter((option) =>
+  const filteredTopics = (filtersMeta?.Topic ?? []).filter((option) =>
     option.displayValue.toLowerCase().includes(searchQuery.toLowerCase())
   );
 

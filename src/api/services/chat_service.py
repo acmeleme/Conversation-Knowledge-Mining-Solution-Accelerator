@@ -30,8 +30,10 @@ from azure.ai.agents.models import TruncationObject
 
 from cachetools import TTLCache
 
+from auth.auth_utils import get_authenticated_user_details, get_tenantid
 from helpers.utils import format_stream_response
 from common.config.config import Config
+from services.foundry_memory_service import FoundryMemoryService
 
 # Constants
 HOST_NAME = "CKM"
@@ -82,16 +84,21 @@ class ChatService:
 
     thread_cache = None
     language_cache = None
+    memory_service = None
 
     def __init__(self, request : Request):
         config = Config()
         self.azure_openai_deployment_name = config.azure_openai_deployment_model
         self.agent = request.app.state.agent
+        self.request = request
 
         if ChatService.thread_cache is None:
             ChatService.thread_cache = ExpCache(maxsize=1000, ttl=3600.0, agent=self.agent)
         if ChatService.language_cache is None:
             ChatService.language_cache = TTLCache(maxsize=5000, ttl=24 * 3600)
+        if ChatService.memory_service is None:
+            ChatService.memory_service = FoundryMemoryService()
+        self.memory_service = ChatService.memory_service
 
     @staticmethod
     def _detect_language(text: str) -> str:
@@ -158,12 +165,27 @@ class ChatService:
             return "No pude responder con los datos actuales. Puedes reformular la pregunta con mas detalles?"
         return "I could not answer with the current data. Please rephrase your question with more details."
 
-    async def stream_openai_text(self, conversation_id: str, query: str, language: str = "en") -> StreamingResponse:
+    def _get_memory_scope(self) -> str:
+        if not self.memory_service:
+            return ""
+
+        user_details = get_authenticated_user_details(self.request.headers)
+        user_principal_id = user_details.get("user_principal_id")
+        tenant_id = get_tenantid(user_details.get("client_principal_b64"))
+        return self.memory_service.build_scope(user_principal_id, tenant_id)
+
+    @staticmethod
+    def _build_memory_augmented_query(user_query: str, memory_context: str) -> str:
+        if not memory_context:
+            return user_query
+        return f"{memory_context}\n\nCurrent user question:\n{user_query}"
+
+    async def stream_openai_text(self, conversation_id: str, query: str, language: str = "en", guardrail_query: Optional[str] = None) -> StreamingResponse:
         """
         Get a streaming text response from OpenAI with enhanced guardrails.
         """
         # Guardrail Layer 1: Enhanced pre-query validation
-        scope, reason = classify_query(query)
+        scope, reason = classify_query(guardrail_query if guardrail_query is not None else query)
         logger.debug(f"Query classification: {scope.value} - Reason: {reason}")
         
         if scope != QueryScope.IN_SCOPE:
@@ -182,8 +204,9 @@ class ChatService:
             thread_id = None
             if ChatService.thread_cache is not None:
                 thread_id = ChatService.thread_cache.get(conversation_id, None)
-            if thread_id:
-                thread = AzureAIAgentThread(client=self.agent.client, thread_id=thread_id)
+            agent_client = getattr(self.agent, "client", None)
+            if thread_id and agent_client:
+                thread = AzureAIAgentThread(client=agent_client, thread_id=thread_id)
 
             truncation_strategy = TruncationObject(type="last_messages", last_messages=4)
 
@@ -228,6 +251,7 @@ class ChatService:
         """
         history_metadata = request_body.get("history_metadata", {})
         session_language = self._get_or_set_conversation_language(conversation_id, request_body)
+        memory_scope = self._get_memory_scope()
 
         scope, reason = classify_query(query or "")
         if scope != QueryScope.IN_SCOPE:
@@ -261,14 +285,26 @@ class ChatService:
             return blocked_generate()
 
         async def generate():
+            full_response_parts = []
             try:
+                memory_context = ""
+                if self.memory_service and memory_scope and query:
+                    memory_context = await self.memory_service.search_context(memory_scope, query)
+
                 enforced_query = self._build_language_enforced_query(query or "", session_language)
-                async for chunk in self.stream_openai_text(conversation_id, enforced_query, session_language):
+                enriched_query = self._build_memory_augmented_query(enforced_query, memory_context)
+                async for chunk in self.stream_openai_text(
+                    conversation_id,
+                    enriched_query,
+                    session_language,
+                    guardrail_query=query or "",
+                ):
                     if isinstance(chunk, dict):
                         chunk = json.dumps(chunk)  # Convert dict to JSON string
 
                     chunk_text = str(chunk)
                     if chunk_text:
+                        full_response_parts.append(chunk_text)
                         chat_completion_chunk = {
                             "id": "",
                             "model": "",
@@ -301,6 +337,12 @@ class ChatService:
                             object_hook=lambda d: SimpleNamespace(**d),
                         )
                         yield json.dumps(format_stream_response(completion_chunk_obj, history_metadata, "")) + "\n\n"
+
+                full_response = "".join(full_response_parts).strip()
+                if self.memory_service and memory_scope and query and full_response:
+                    asyncio.create_task(
+                        self.memory_service.update_from_turn(memory_scope, query, full_response)
+                    )
 
             except AgentException as e:
                 error_message = str(e)
