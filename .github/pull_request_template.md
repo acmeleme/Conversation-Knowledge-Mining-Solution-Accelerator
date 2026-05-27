@@ -1,53 +1,39 @@
-# GitHub Pull Request Template
+## Purpose
+<!-- Describe the intention of the changes being proposed. What problem does it solve or functionality does it add? -->
+* ...
 
-## Description
+## Does this introduce a breaking change?
+<!-- Mark one with an "x". -->
 
-<!-- Provide a brief description of your changes -->
+- [ ] Yes
+- [ ] No
 
-## Type of Change
+<!-- Please prefix your PR title with one of the following:
+  * `feat`: A new feature
+  * `fix`: A bug fix
+  * `docs`: Documentation only changes
+  * `style`: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
+  * `refactor`: A code change that neither fixes a bug nor adds a feature
+  * `perf`: A code change that improves performance
+  * `test`: Adding missing tests or correcting existing tests
+  * `build`: Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)
+  * `ci`: Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)
+  * `chore`: Other changes that don't modify src or test files
+  * `revert`: Reverts a previous commit
+  * !: A breaking change is indicated with a `!` after the listed prefixes above, e.g. `feat!`, `fix!`, `refactor!`, etc.
+-->
 
-- [ ] Bug fix (non-breaking change which fixes an issue)
-- [ ] New feature (non-breaking change which adds functionality)
-- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
-- [ ] Documentation update
-- [ ] Infrastructure change
-- [ ] Security fix
+## Golden Path Validation
+- [ ] I have tested the primary workflows (the "golden path") to ensure they function correctly without errors.
 
-## Related Issues
+## Deployment Validation
+- [ ] I have validated the deployment process successfully and all services are running as expected with this change.
 
-<!-- Link related issues: Fixes #123, Relates to #456 -->
+## What to Check
+Verify that the following are valid
+* ...
 
-## How Has This Been Tested?
+## Other Information
 
-<!-- Describe the tests you ran to verify your changes -->
+<!-- Add any other helpful information that may be needed here. -->
 
-- [ ] Unit tests
-- [ ] Integration tests
-- [ ] Manual testing
-- [ ] No testing needed (documentation only)
-
-## Checklist
-
-- [ ] My code follows the code style of this project
-- [ ] I have performed a self-review of my own code
-- [ ] I have commented my code, particularly in hard-to-understand areas
-- [ ] I have made corresponding changes to the documentation
-- [ ] My changes generate no new warnings
-- [ ] I have added tests that prove my fix is effective or that my feature works
-- [ ] New and existing unit tests pass locally with my changes
-- [ ] Any dependent changes have been merged and published
-
-## Security Considerations
-
-- [ ] No secrets or credentials are included in this PR
-- [ ] Security scanning has been performed (CodeQL, Trivy)
-- [ ] Dependencies have been reviewed for vulnerabilities
-- [ ] Authentication/authorization has been considered
-
-## Screenshots (if applicable)
-
-<!-- Add screenshots to help explain your changes -->
-
-## Additional Notes
-
-<!-- Add any other context about the PR here -->
