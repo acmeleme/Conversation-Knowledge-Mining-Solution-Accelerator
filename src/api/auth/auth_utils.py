@@ -12,6 +12,8 @@ CLIENT_PRINCIPAL_HEADER = "x-ms-client-principal"
 ROLE_CLAIM_TYPE = "roles"
 DEFAULT_DEV_ROLE = "callcenter"
 BILLING_ROLE = "faturamento"
+OPERADOR_ROLE = "operador"
+FINANCEIRO_ROLE = "financeiro"
 TENANT_ID_CLAIM_TYPES = {
     "tid",
     "http://schemas.microsoft.com/identity/claims/tenantid",
@@ -88,9 +90,26 @@ def get_tenantid(client_principal_b64: str | None) -> str:
     return ""
 
 
+DEMO_ROLE_HEADER = "x-demo-role"
+ALLOWED_DEMO_ROLES = {OPERADOR_ROLE, FINANCEIRO_ROLE, BILLING_ROLE, DEFAULT_DEV_ROLE}
+
+
 def get_user_roles(request_headers: Mapping[str, str]) -> list[str]:
-    """Extract app roles from the EasyAuth x-ms-client-principal claims payload."""
+    """Extract app roles from EasyAuth claims or X-Demo-Role header (demo mode).
+
+    Priority order:
+    1. EasyAuth x-ms-client-principal (production with Azure AD)
+    2. x-demo-role header (demo/testing without EasyAuth configured)
+    3. Default development role
+    """
     normalized_headers = _normalize_headers(request_headers)
+
+    # Demo mode: header x-demo-role allows simulating roles without EasyAuth
+    demo_role = normalized_headers.get(DEMO_ROLE_HEADER)
+    if demo_role and demo_role.casefold() in ALLOWED_DEMO_ROLES:
+        logger.info("Demo mode: using role '%s' from %s header.", demo_role, DEMO_ROLE_HEADER)
+        return [demo_role.casefold()]
+
     client_principal_b64 = normalized_headers.get(CLIENT_PRINCIPAL_HEADER)
 
     if not client_principal_b64:
@@ -117,10 +136,11 @@ def user_has_role(request_headers: Mapping[str, str], role: str) -> bool:
 
 
 def can_access_billing(roles_or_headers) -> bool:
-    """Return True when the effective roles include the faturamento role."""
+    """Return True when the effective roles include faturamento or financeiro role."""
     if isinstance(roles_or_headers, Mapping):
         roles = get_user_roles(roles_or_headers)
     else:
         roles = roles_or_headers or []
 
-    return any(str(role).casefold() == BILLING_ROLE for role in roles)
+    valid_billing_roles = {BILLING_ROLE, FINANCEIRO_ROLE}
+    return any(str(role).casefold() in valid_billing_roles for role in roles)

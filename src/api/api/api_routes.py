@@ -61,6 +61,22 @@ BILLING_KEYWORDS = [
     r"\bfaturamento\b",
     r"\bpagamento\b",
     r"\bcobrança\b",
+    r"\bcartao de credito\b",
+    r"\bcartão de crédito\b",
+    r"\bfatura do cartao\b",
+    r"\bfatura do cartão\b",
+    r"\blimite do cartao\b",
+    r"\blimite do cartão\b",
+    r"\bbloqueio de cartao\b",
+    r"\bbloqueio de cartão\b",
+    r"\bcontestacao\b",
+    r"\bcontestação\b",
+    r"\banuidade\b",
+    r"\bcashback\b",
+    r"\bpontos do cartao\b",
+    r"\bpontos do cartão\b",
+    r"\bsegunda via do cartao\b",
+    r"\bsegunda via do cartão\b",
 ]
 
 
@@ -113,10 +129,10 @@ async def fetch_chart_data_with_filters(chart_filters: ChartFilters, request: Re
     try:
         roles = get_current_user_roles(request)
         if not can_access_billing(roles):
-            from auth.rbac import RESTRICTED_TOPIC
+            from auth.rbac import RESTRICTED_TOPICS
             chart_filters.selected_filters.Topic = [
                 t for t in chart_filters.selected_filters.Topic
-                if t != RESTRICTED_TOPIC
+                if t not in RESTRICTED_TOPICS
             ]
         filters_json = json.dumps(chart_filters.model_dump(), ensure_ascii=False)
         filters_json = filters_json.replace('\r\n', '').replace('\n', '').replace('\r', '')
@@ -188,7 +204,7 @@ async def conversation(request: Request):
             )
             return JSONResponse(
                 content={
-                    "error": "Access denied. Billing and Payment Issues requires the faturamento role."
+                    "error": "Acesso negado. As informações sobre Cartão de Crédito (Fatura, Pagamento, Bloqueio e Contestação) requerem o perfil 'financeiro'. Entre em contato com o administrador para solicitar acesso."
                 },
                 status_code=403,
             )
