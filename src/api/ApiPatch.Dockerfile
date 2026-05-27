@@ -6,3 +6,5 @@ COPY ./helpers /app/helpers/
 COPY ./auth /app/auth/
 COPY ./services /app/services/
 COPY ./api /app/api/
+COPY ./common /app/common/
+COPY ./app.py /app/app.py

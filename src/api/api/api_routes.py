@@ -226,6 +226,58 @@ async def conversation(request: Request):
         return JSONResponse(content={"error": "An internal error occurred while processing the conversation."}, status_code=500)
 
 
+@router.get("/debug-state")
+async def debug_state(request: Request):
+    """Debug endpoint to diagnose app state issues."""
+    import traceback
+    import sys
+    result = {
+        "python_version": sys.version,
+        "agent_present": False,
+        "agent_type": None,
+        "agent_is_none": None,
+        "chat_service_init": "not_tested",
+        "classify_query_test": "not_tested",
+        "chart_service_init": "not_tested",
+        "stream_chat_request_test": "not_tested",
+        "errors": [],
+    }
+    try:
+        agent = getattr(request.app.state, "agent", "MISSING")
+        result["agent_present"] = agent != "MISSING"
+        result["agent_is_none"] = agent is None
+        result["agent_type"] = type(agent).__name__
+    except Exception as e:
+        result["errors"].append(f"agent_state: {traceback.format_exc()}")
+    try:
+        from helpers.guardrails_enhanced import classify_query, QueryScope
+        scope, reason = classify_query("seguro sinistro")
+        result["classify_query_test"] = f"{scope.value}: {reason}"
+    except Exception as e:
+        result["errors"].append(f"classify_query: {traceback.format_exc()}")
+    try:
+        chat_svc = ChatService(request=request)
+        result["chat_service_init"] = "ok"
+    except Exception as e:
+        result["errors"].append(f"chat_service_init: {traceback.format_exc()}")
+    try:
+        chart_svc = ChartService()
+        result["chart_service_init"] = "ok"
+    except Exception as e:
+        result["errors"].append(f"chart_service_init: {traceback.format_exc()}")
+    try:
+        chat_svc2 = ChatService(request=request)
+        gen = await chat_svc2.stream_chat_request(
+            {"messages": [{"role": "user", "content": "seguro"}], "conversation_id": "debug-test"},
+            "debug-test",
+            "seguro"
+        )
+        result["stream_chat_request_test"] = f"ok (type={type(gen).__name__})"
+    except Exception as e:
+        result["errors"].append(f"stream_chat_request: {traceback.format_exc()}")
+    return JSONResponse(content=result)
+
+
 @router.get("/layout-config")
 async def get_layout_config():
     layout_config_str = os.getenv("REACT_APP_LAYOUT_CONFIG", "")

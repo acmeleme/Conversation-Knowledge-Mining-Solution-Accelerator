@@ -255,7 +255,8 @@ class ChatService:
 
         scope, reason = classify_query(query or "")
         if scope != QueryScope.IN_SCOPE:
-            message = get_guardrail_message(scope, session_language) or (
+            # Always use PT-BR for guardrail messages (FinanceiraX S.A. is a Brazilian company)
+            message = get_guardrail_message(scope, "pt") or (
                 "Só consigo responder a perguntas baseadas nos dados de atendimento da FinanceiraX S.A. "
                 "Por favor, pergunte sobre transcrições, interações com clientes ou análises de chamadas."
             )
