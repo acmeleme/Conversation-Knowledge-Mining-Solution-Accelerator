@@ -127,8 +127,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         </button>
 
         <p className="login-footer-note">
-          ⚠️ Este é um ambiente de demonstração. O RBAC é simulado via header HTTP <code>x-demo-role</code>.
-          Os usuários Entra ID são fictícios para fins de demonstração do controle de acesso.
+          ℹ️ Em produção, o acesso é controlado pelo <strong>Microsoft Entra ID (EasyAuth)</strong> — o perfil é determinado automaticamente pelo UPN autenticado.
+          Este seletor é utilizado apenas para <strong>desenvolvimento local</strong> sem EasyAuth.
         </p>
       </div>
     </div>

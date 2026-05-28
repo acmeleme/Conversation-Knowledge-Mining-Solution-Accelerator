@@ -622,19 +622,24 @@
                 <li><strong>Busca na web:</strong> Agente restrito à base de conhecimento local (sem acesso externo)</li>
             </ul>
 
-            <h3 style="margin-top:30px;">👥 RBAC — Controle de Acesso por Perfil</h3>
-            <p>Três perfis de acesso controlam quais tópicos cada usuário pode consultar:</p>
+            <h3 style="margin-top:30px;">👥 RBAC — Controle de Acesso por Perfil (Entra ID)</h3>
+            <p>O controle de acesso é baseado em <strong>identidade real do Entra ID</strong>. O papel é derivado do UPN autenticado via EasyAuth — não existe perfil anônimo ou "Visitante/Demo" em produção.</p>
             <table class="data-table" style="margin-top:15px;">
                 <thead>
-                    <tr><th>Perfil</th><th>Email</th><th>Acesso</th><th>Restrições</th></tr>
+                    <tr><th>Perfil</th><th>Email (UPN)</th><th>Acesso</th><th>Restrições</th></tr>
                 </thead>
                 <tbody>
                     <tr><td>💼 Financeiro &amp; Faturamento</td><td>financeiro-faturamento@MngEnvMCAP197214.onmicrosoft.com</td><td style="color:#107c10;font-weight:600;">Completo</td><td>Nenhuma</td></tr>
-                    <tr><td>🎧 Operador de Callcenter</td><td>operador-callcenter@MngEnvMCAP197214.onmicrosoft.com</td><td style="color:#e67e00;font-weight:600;">Parcial</td><td>Sem acesso a Cartão de Crédito — Fatura/Bloqueio</td></tr>
-                    <tr><td>👁️ Visitante / Demo</td><td>—</td><td style="color:#555;">Padrão</td><td>Acesso geral ao callcenter</td></tr>
+                    <tr style="background:#f8f9fa;"><td>🎧 Operador de Callcenter</td><td>operador-callcenter@MngEnvMCAP197214.onmicrosoft.com</td><td style="color:#e67e00;font-weight:600;">Parcial</td><td>Sem acesso a Cartão de Crédito — Fatura/Bloqueio</td></tr>
+                    <tr><td>👤 Demais usuários autenticados</td><td>qualquer UPN não mapeado</td><td style="color:#0078d4;font-weight:600;">Padrão</td><td>Acesso geral (sem Cartão de Crédito)</td></tr>
                 </tbody>
             </table>
-            <p style="margin-top:15px;font-size:14px;color:#666;">⚙️ Implementado via header <code>x-demo-role</code> no backend Python. A seleção de perfil no frontend armazena o papel em <code>localStorage</code> e injeta o header em cada chamada à API.</p>
+            <div style="background:#fff4e5;border-left:4px solid #e67e00;padding:12px 16px;border-radius:6px;margin-top:16px;font-size:14px;">
+                <strong>⚙️ Implementação:</strong> EasyAuth intercepta toda requisição antes de chegar ao React.
+                O <code>App.tsx</code> lê <code>/.auth/me</code> e mapeia o UPN ao papel (<code>operador</code>, <code>financeiro</code> ou <code>callcenter</code>).
+                O backend Python valida o mesmo UPN via header <code>X-MS-CLIENT-PRINCIPAL</code> em <code>auth_utils.py</code>.
+                O mecanismo anterior de simulação (<code>x-demo-role</code> + <code>localStorage</code>) foi <strong>removido da produção</strong> e existe apenas como fallback de desenvolvimento local.
+            </div>
         </section>
 
         <!-- LOGIN UI -->
