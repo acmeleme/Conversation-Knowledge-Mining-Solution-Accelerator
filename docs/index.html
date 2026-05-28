@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8"><!-- Updated 2026-05-28 -->
+    <meta charset="UTF-8"><!-- Updated 2026-05-29 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Conversation Knowledge Mining Solution Accelerator</title>
     <style>
@@ -638,23 +638,68 @@
 
         <!-- LOGIN UI -->
         <section id="login-ui" class="section" style="background:white;">
-            <h2>🔐 Login UI — Tela de Seleção de Perfil</h2>
-            <p>A interface web inclui uma tela de login demo que permite demonstrar o RBAC diretamente no navegador, sem necessidade de curl ou ferramentas de desenvolvedor:</p>
+            <h2>🔐 Autenticação Real — Microsoft Entra ID (EasyAuth)</h2>
+            <p>A aplicação utiliza autenticação <strong>real</strong> via <strong>Azure App Service EasyAuth</strong> integrado ao <strong>Microsoft Entra ID (Azure AD)</strong>. Toda tentativa de acesso sem autenticação é redirecionada automaticamente para o portal de login Microsoft, com suporte obrigatório a <strong>senha + MFA</strong>.</p>
+
+            <div style="background:#e8f4fd;border-left:4px solid #0078D4;padding:16px;border-radius:6px;margin:20px 0;">
+                <strong>🔗 URL de Produção:</strong>
+                <a href="https://app-financeirax01.azurewebsites.net" target="_blank" style="color:#0078D4;margin-left:8px;">https://app-financeirax01.azurewebsites.net</a>
+                <br><small style="color:#555;">⟶ Redireciona para login Microsoft se não autenticado (HTTP 302 → login.microsoftonline.com)</small>
+            </div>
+
             <div class="cards-grid">
                 <div class="card">
-                    <h3>💼 Financeiro &amp; Faturamento</h3>
-                    <p>Acesso total a todos os tópicos, incluindo Cartão de Crédito — Fatura e Pagamento e Cartão de Crédito — Bloqueio e Contestação.</p>
+                    <h3>💼 financeiro-faturamento</h3>
+                    <p><code>financeiro-faturamento@MngEnvMCAP197214.onmicrosoft.com</code></p>
+                    <p>Acesso <strong>total</strong> a todos os tópicos, incluindo Cartão de Crédito — Fatura, Pagamento, Bloqueio e Contestação.</p>
+                    <p style="margin-top:8px;"><span style="background:#d4edda;color:#155724;padding:2px 8px;border-radius:4px;font-size:12px;">roles: financeiro, billing</span></p>
                 </div>
                 <div class="card">
-                    <h3>🎧 Operador de Callcenter</h3>
-                    <p>Acesso a todos os tópicos <strong>exceto</strong> tópicos de Cartão de Crédito. Ao tentar acessar tópicos restritos, recebe resposta de bloqueio educada.</p>
+                    <h3>🎧 operador-callcenter</h3>
+                    <p><code>operador-callcenter@MngEnvMCAP197214.onmicrosoft.com</code></p>
+                    <p>Acesso a todos os tópicos <strong>exceto</strong> Cartão de Crédito. Ao consultar tópicos restritos, recebe resposta educada de bloqueio.</p>
+                    <p style="margin-top:8px;"><span style="background:#fff3cd;color:#856404;padding:2px 8px;border-radius:4px;font-size:12px;">role: operador</span></p>
                 </div>
                 <div class="card">
-                    <h3>👁️ Visitante / Demo</h3>
-                    <p>Acesso padrão ao callcenter. Ideal para apresentações gerais da solução sem contexto de roles específicos.</p>
+                    <h3>🔒 Como funciona o fluxo</h3>
+                    <p>1. Usuário acessa a URL da app<br>
+                    2. EasyAuth detecta sessão ausente → HTTP 302<br>
+                    3. Redirect para <code>login.microsoftonline.com</code><br>
+                    4. Usuário autentica com senha + MFA<br>
+                    5. EasyAuth emite cookie de sessão<br>
+                    6. App lê <code>/.auth/me</code> → extrai UPN → aplica RBAC</p>
                 </div>
             </div>
-            <p style="margin-top:20px;">A tela de login é gerenciada pelo componente React <code>LoginPage.tsx</code>. O papel selecionado é persistido em <code>localStorage[&quot;demo-role&quot;]</code> e injetado como header <code>x-demo-role</code> em toda chamada à API via <code>api.ts::apiFetch()</code>. O header do app exibe um badge com o perfil atual e um botão de logout que limpa o estado.</p>
+
+            <h3 style="margin-top:28px;">Detalhes Técnicos</h3>
+            <table style="width:100%;border-collapse:collapse;font-size:14px;margin-top:12px;">
+                <tr style="background:#0078D4;color:white;">
+                    <th style="padding:10px;text-align:left;">Componente</th>
+                    <th style="padding:10px;text-align:left;">Detalhe</th>
+                </tr>
+                <tr style="background:#f9f9f9;">
+                    <td style="padding:10px;border-bottom:1px solid #eee;"><strong>App Registration</strong></td>
+                    <td style="padding:10px;border-bottom:1px solid #eee;">FinanceiraX-Callcenter — clientId <code>95b6f7a3-5492-41a5-a0a8-174d0f145600</code></td>
+                </tr>
+                <tr>
+                    <td style="padding:10px;border-bottom:1px solid #eee;"><strong>Tenant</strong></td>
+                    <td style="padding:10px;border-bottom:1px solid #eee;"><code>2e50c5c4-4293-4a30-8a9c-0d9fb964a55a</code></td>
+                </tr>
+                <tr style="background:#f9f9f9;">
+                    <td style="padding:10px;border-bottom:1px solid #eee;"><strong>RBAC Backend</strong></td>
+                    <td style="padding:10px;border-bottom:1px solid #eee;"><code>auth_utils.py</code> — <code>UPN_ROLE_MAP</code> mapeia email → roles</td>
+                </tr>
+                <tr>
+                    <td style="padding:10px;border-bottom:1px solid #eee;"><strong>Frontend</strong></td>
+                    <td style="padding:10px;border-bottom:1px solid #eee;"><code>App.tsx</code> — chama <code>/.auth/me</code> no mount; redireciona se não autenticado</td>
+                </tr>
+                <tr style="background:#f9f9f9;">
+                    <td style="padding:10px;"><strong>Imagens ACR</strong></td>
+                    <td style="padding:10px;"><code>webapp-financeirax:easyauth</code> / <code>km-api:easyauth</code></td>
+                </tr>
+            </table>
+
+            <p style="margin-top:20px;color:#555;font-size:13px;">⚠️ A tela de seleção de perfil demo (<code>LoginPage.tsx</code>) foi desativada em produção. O RBAC é controlado exclusivamente pela identidade Entra ID do usuário autenticado.</p>
         </section>
 
         <!-- E2E TESTS -->
