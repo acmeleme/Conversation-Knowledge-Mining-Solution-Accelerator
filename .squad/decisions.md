@@ -41,6 +41,18 @@
   - `AZURE_AI_MEMORY_UPDATE_DELAY_SECONDS=300`
 - **Verified:** Settings applied; awaiting next app restart for effect
 
+### 2026-05-28 · Easy Auth Encryption Loop — app-financeirax01 (Kai)
+- **Root Cause (P0 Fixed):** F1 Free tier + ephemeral storage caused two compounding failures:
+  1. **Ephemeral Encryption Key:** `WEBSITE_AUTH_ENCRYPTION_KEY` was not set; Easy Auth generated random keys at startup. Container spin-down (inactivity, CPU limit, maintenance) creates new key → nonce cookies from old key cannot be decrypted → "We couldn't sign you in"
+  2. **Ephemeral Token Store:** `tokenStore.enabled: true` with `WEBSITES_ENABLE_APP_SERVICE_STORAGE=false` caused session tokens to vanish on restart → immediate re-login forced → auth loop
+- **Fixes Applied:**
+  1. Set stable `WEBSITE_AUTH_ENCRYPTION_KEY` (32-byte base64): survives container restarts
+  2. Set `tokenStore.enabled: false`: sessions stored in client cookies (no filesystem dependency)
+  3. Verified `azureActiveDirectory.clientId`, `openIdIssuer` v2.0, and `allowedAudiences` are correct
+  4. Verified redirect URIs on App Registration include both app and api service callbacks
+- **Verified:** Post-fix; `/.auth/login/aad` returns `302 → login.microsoftonline.com` with correct `client_id=35f4b07f-...` ✅
+- **Recommendations:** Always set `WEBSITE_AUTH_ENCRYPTION_KEY` on F1/ephemeral storage; upgrade to B1+ for `alwaysOn: true` in production.
+
 ## Governance
 
 - All meaningful changes require team consensus
