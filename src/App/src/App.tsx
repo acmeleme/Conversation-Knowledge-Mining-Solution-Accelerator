@@ -478,9 +478,22 @@ const App: React.FC = () => {
 
   useEffect(() => {
     // Tenta obter identidade via EasyAuth (/.auth/me)
-    fetch("/.auth/me")
-      .then((r) => r.json())
-      .then((data: any[]) => {
+    const authenticate = async () => {
+      try {
+        const r = await fetch("/.auth/me");
+        if (!r.ok) {
+          // 401/403/outros: sessão inválida ou expirada → redireciona para login
+          window.location.href = `/.auth/login/aad?post_login_redirect_uri=${encodeURIComponent(window.location.pathname)}`;
+          return;
+        }
+        let data: any[];
+        try {
+          data = await r.json();
+        } catch {
+          // Body não-JSON apesar de 2xx → redireciona para login
+          window.location.href = `/.auth/login/aad?post_login_redirect_uri=${encodeURIComponent(window.location.pathname)}`;
+          return;
+        }
         const principal = data?.[0];
         if (!principal || !principal.user_id) {
           // Não autenticado → redireciona para login Entra ID
@@ -502,13 +515,14 @@ const App: React.FC = () => {
 
         setUserInfo({ name: name || email, email, role });
         setLoading(false);
-      })
-      .catch(() => {
-        // Fallback local dev: usa demo role de localStorage
+      } catch {
+        // Apenas falhas de rede reais chegam aqui → fallback local dev
         const demoRole = (getDemoRole() as DemoRole) || "callcenter";
         setUserInfo({ name: "Dev Local", email: "", role: demoRole });
         setLoading(false);
-      });
+      }
+    };
+    authenticate();
   }, []);
 
   if (loading) {
