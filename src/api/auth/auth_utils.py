@@ -93,14 +93,21 @@ def get_tenantid(client_principal_b64: str | None) -> str:
 DEMO_ROLE_HEADER = "x-demo-role"
 ALLOWED_DEMO_ROLES = {OPERADOR_ROLE, FINANCEIRO_ROLE, BILLING_ROLE, DEFAULT_DEV_ROLE}
 
+# Mapeamento de UPN (email Entra ID) → papéis RBAC
+UPN_ROLE_MAP: dict[str, list[str]] = {
+    "operador-callcenter@mngenvmcap197214.onmicrosoft.com": [OPERADOR_ROLE],
+    "financeiro-faturamento@mngenvmcap197214.onmicrosoft.com": [FINANCEIRO_ROLE, BILLING_ROLE],
+}
+
 
 def get_user_roles(request_headers: Mapping[str, str]) -> list[str]:
     """Extract app roles from EasyAuth claims or X-Demo-Role header (demo mode).
 
     Priority order:
-    1. EasyAuth x-ms-client-principal (production with Azure AD)
-    2. x-demo-role header (demo/testing without EasyAuth configured)
-    3. Default development role
+    1. x-demo-role header (demo/testing override)
+    2. UPN-based mapping via x-ms-client-principal-name (EasyAuth production)
+    3. EasyAuth x-ms-client-principal roles claims
+    4. Default development role
     """
     normalized_headers = _normalize_headers(request_headers)
 
@@ -109,6 +116,13 @@ def get_user_roles(request_headers: Mapping[str, str]) -> list[str]:
     if demo_role and demo_role.casefold() in ALLOWED_DEMO_ROLES:
         logger.info("Demo mode: using role '%s' from %s header.", demo_role, DEMO_ROLE_HEADER)
         return [demo_role.casefold()]
+
+    # EasyAuth: resolve role via UPN mapping (email do Entra ID)
+    upn = normalized_headers.get("x-ms-client-principal-name", "").casefold().strip()
+    if upn and upn in UPN_ROLE_MAP:
+        mapped_roles = UPN_ROLE_MAP[upn]
+        logger.info("EasyAuth UPN '%s' mapped to roles: %s", upn, mapped_roles)
+        return list(mapped_roles)
 
     client_principal_b64 = normalized_headers.get(CLIENT_PRINCIPAL_HEADER)
 
@@ -119,6 +133,7 @@ def get_user_roles(request_headers: Mapping[str, str]) -> list[str]:
         )
         return [DEFAULT_DEV_ROLE]
 
+    # Fallback: extract roles from EasyAuth JWT claims
     roles: list[str] = []
     for claim in _extract_claims(client_principal_b64):
         claim_type = str(claim.get("typ") or "").casefold()
@@ -126,7 +141,11 @@ def get_user_roles(request_headers: Mapping[str, str]) -> list[str]:
         if claim_type == ROLE_CLAIM_TYPE and isinstance(claim_value, str) and claim_value not in roles:
             roles.append(claim_value)
 
-    return roles
+    if roles:
+        return roles
+
+    logger.info("Authenticated user '%s' has no mapped role; defaulting to %s.", upn or "unknown", DEFAULT_DEV_ROLE)
+    return [DEFAULT_DEV_ROLE]
 
 
 def user_has_role(request_headers: Mapping[str, str], role: str) -> bool:

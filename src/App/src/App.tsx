@@ -18,8 +18,8 @@ import {
 import { SparkleRegular, ArrowExitRegular, PersonRegular } from "@fluentui/react-icons";
 import "./App.css";
 import { ChatHistoryPanel } from "./components/ChatHistoryPanel/ChatHistoryPanel";
-import LoginPage, { DemoRole } from "./components/LoginPage/LoginPage";
-import { getDemoRole, setDemoRole, clearDemoRole } from "./api/api";
+import { DemoRole } from "./components/LoginPage/LoginPage";
+import { getDemoRole, clearDemoRole } from "./api/api";
 
 import {
   getUserInfo,
@@ -470,34 +470,62 @@ const Dashboard: React.FC<{ demoRole: DemoRole; demoUser: string; onLogout: () =
   );
 };
 
-// App wrapper: gates Dashboard behind the demo login screen
+// App wrapper: autentica via Azure EasyAuth (Entra ID) em produção
+// ou usa x-demo-role do localStorage em desenvolvimento local
 const App: React.FC = () => {
-  const [demoRole, setDemoRoleState] = useState<DemoRole | null>(
-    () => getDemoRole() as DemoRole | null
-  );
-  const [demoUser, setDemoUser] = useState<string>(
-    () => localStorage.getItem("demo-user") || ""
-  );
+  const [userInfo, setUserInfo] = useState<{ name: string; email: string; role: DemoRole } | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const handleLogin = (role: DemoRole, userName: string) => {
-    setDemoRole(role);
-    localStorage.setItem("demo-user", userName);
-    setDemoRoleState(role);
-    setDemoUser(userName);
-  };
+  useEffect(() => {
+    // Tenta obter identidade via EasyAuth (/.auth/me)
+    fetch("/.auth/me")
+      .then((r) => r.json())
+      .then((data: any[]) => {
+        const principal = data?.[0];
+        if (!principal || !principal.userId) {
+          // Não autenticado → redireciona para login Entra ID
+          window.location.href = `/.auth/login/aad?post_login_redirect_uri=${encodeURIComponent(window.location.pathname)}`;
+          return;
+        }
+        const claims: any[] = principal.userClaims ?? [];
+        const name: string =
+          claims.find((c: any) => c.typ === "name")?.val ??
+          principal.userDetails ??
+          "";
+        const email: string = (principal.userDetails ?? "").toLowerCase().trim();
+
+        // Mapeamento UPN → papel RBAC (espelha UPN_ROLE_MAP do auth_utils.py)
+        let role: DemoRole = "callcenter";
+        if (email.startsWith("operador-callcenter@")) role = "operador";
+        else if (email.startsWith("financeiro-faturamento@")) role = "financeiro";
+
+        setUserInfo({ name: name || email, email, role });
+        setLoading(false);
+      })
+      .catch(() => {
+        // Fallback local dev: usa demo role de localStorage
+        const demoRole = (getDemoRole() as DemoRole) || "callcenter";
+        setUserInfo({ name: "Dev Local", email: "", role: demoRole });
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return (
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", fontFamily: "Segoe UI, sans-serif", color: "#0078d4" }}>
+        Autenticando...
+      </div>
+    );
+  }
+
+  if (!userInfo) return null;
 
   const handleLogout = () => {
     clearDemoRole();
-    localStorage.removeItem("demo-user");
-    setDemoRoleState(null);
-    setDemoUser("");
+    window.location.href = `/.auth/logout?post_logout_redirect_uri=${encodeURIComponent(window.location.origin)}`;
   };
 
-  if (!demoRole) {
-    return <LoginPage onLogin={handleLogin} />;
-  }
-
-  return <Dashboard demoRole={demoRole} demoUser={demoUser} onLogout={handleLogout} />;
+  return <Dashboard demoRole={userInfo.role} demoUser={userInfo.name} onLogout={handleLogout} />;
 };
 
 export default App;
