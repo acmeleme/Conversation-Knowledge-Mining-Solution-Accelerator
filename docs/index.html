@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8"><!-- Updated 2026-05-29 -->
+    <meta charset="UTF-8"><!-- Updated 2026-06-02 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Conversation Knowledge Mining Solution Accelerator</title>
     <style>
@@ -297,13 +297,14 @@
 <body>
     <header>
         <div class="header-content">
-            <a href="#" class="logo">💬 CKM Accelerator</a>
+            <a href="#" class="logo" style="color:#1B2A6B;">🏦 FinanceiraX01 Bank</a>
             <nav>
                 <a href="#visao-geral">Visão Geral</a>
                 <a href="#cenario">Cenário</a>
                 <a href="#dados">Dados</a>
                 <a href="#agents">Agents</a>
                 <a href="#guardrails">Guardrails & RBAC</a>
+                <a href="#branding">Logo & UI</a>
                 <a href="#login-ui">Login UI</a>
                 <a href="#e2e">E2E Tests</a>
                 <a href="#arquitetura">Arquitetura</a>
@@ -695,17 +696,66 @@
                 </tr>
                 <tr style="background:#f9f9f9;">
                     <td style="padding:10px;"><strong>Imagens ACR</strong></td>
-                    <td style="padding:10px;"><code>webapp-financeirax:easyauth</code> / <code>km-api:easyauth</code></td>
+                    <td style="padding:10px;"><code>webapp-financeirax:logo</code> / <code>km-api:easyauth</code></td>
                 </tr>
             </table>
 
             <p style="margin-top:20px;color:#555;font-size:13px;">⚠️ A tela de seleção de perfil demo (<code>LoginPage.tsx</code>) foi desativada em produção. O RBAC é controlado exclusivamente pela identidade Entra ID do usuário autenticado.</p>
         </section>
 
+        <!-- LOGO & UI BRANDING -->
+        <section id="branding" class="section">
+            <h2>🎨 Logo &amp; UI — FinanceiraX01 Bank</h2>
+            <p>O header da aplicação foi atualizado com identidade visual oficial do <strong>FinanceiraX01 Bank</strong>, substituindo os assets genéricos do projeto base (Woodgrove/Contoso).</p>
+
+            <div class="card-grid" style="margin-top:20px;">
+                <div class="card">
+                    <h3>🖼️ Novo Logo</h3>
+                    <ul class="feature-list">
+                        <li>Logo PNG 1080×1080px — navy/gold FinanceiraX01</li>
+                        <li>Renderizado a 40×40px no header</li>
+                        <li>Import direto via CRA asset pipeline (sem base64)</li>
+                        <li>Componente: <code>Svg.tsx</code> → <code>&lt;img src={logo}&gt;</code></li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>🎨 Cores da Marca</h3>
+                    <ul class="feature-list">
+                        <li>Navy: <code style="background:#1B2A6B;color:white;padding:1px 6px;border-radius:3px;">#1B2A6B</code></li>
+                        <li>Gold: <code style="background:#C8972B;color:white;padding:1px 6px;border-radius:3px;">#C8972B</code></li>
+                        <li>Borda dourada no header (3px solid)</li>
+                        <li>Título: <em>"FinanceiraX01 Bank | Seu Futuro, Nosso Compromisso"</em></li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>⭐ Favicons</h3>
+                    <ul class="feature-list">
+                        <li>favicon.ico — multi-size (16 + 32px)</li>
+                        <li>favicon-16x16.png</li>
+                        <li>favicon-32x32.png</li>
+                        <li>favicon-192x192.png (PWA)</li>
+                        <li>favicon-512x512.png (PWA)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3 style="margin-top:28px;">Rastreabilidade</h3>
+            <table class="data-table">
+                <thead><tr><th>Item</th><th>Detalhe</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Issue</strong></td><td>#32 — trocar logo e nome para FinanceiraX01 Bank</td></tr>
+                    <tr style="background:#f8f9fa;"><td><strong>Branch</strong></td><td><code>feat/logo-financeirax01-bank-32</code></td></tr>
+                    <tr><td><strong>PR</strong></td><td>#33 — feat: logo e branding FinanceiraX01 Bank (mergeado)</td></tr>
+                    <tr style="background:#f8f9fa;"><td><strong>Imagem ACR</strong></td><td><code>ckmcc0522172320.azurecr.io/webapp-financeirax:logo</code></td></tr>
+                    <tr><td><strong>Commit</strong></td><td><code>6332fb4</code> — 9 arquivos alterados</td></tr>
+                </tbody>
+            </table>
+        </section>
+
         <!-- E2E TESTS -->
         <section id="e2e" class="section">
             <h2>✅ Testes E2E</h2>
-            <p>Resultado da última bateria de testes de ponta a ponta (2026-05-28):</p>
+            <p>Resultado da última bateria de testes de ponta a ponta (2026-06-02):</p>
             <table class="data-table" style="margin-top:15px;">
                 <thead>
                     <tr><th>#</th><th>Teste</th><th>Resultado</th><th>Detalhe</th></tr>
@@ -716,6 +766,9 @@
                     <tr><td>3</td><td>Perfil operador — tópico CC bloqueado</td><td style="color:#107c10;font-weight:600;">✅ PASS</td><td>Bloqueio educado pelo guardrail/RBAC</td></tr>
                     <tr><td>4</td><td>Guardrail — pergunta fora de contexto bloqueada</td><td style="color:#107c10;font-weight:600;">✅ PASS</td><td>"Fora do meu escopo" — receita de bolo rejeitada</td></tr>
                     <tr><td>5</td><td>Perfil padrão — tópico consórcio permitido</td><td style="color:#107c10;font-weight:600;">✅ PASS</td><td>HTTP 200, resposta sobre consórcio</td></tr>
+                    <tr><td>6</td><td>EasyAuth — redirect para login Microsoft</td><td style="color:#107c10;font-weight:600;">✅ PASS</td><td>HTTP 302 → login.microsoftonline.com (autenticação com senha + MFA)</td></tr>
+                    <tr><td>7</td><td>Logo FinanceiraX01 Bank — header atualizado</td><td style="color:#107c10;font-weight:600;">✅ PASS</td><td>Imagem <code>webapp-financeirax:logo</code> no ACR; App Service reiniciado com novo container</td></tr>
+                    <tr><td>8</td><td>Favicons — aba do browser com logo correto</td><td style="color:#107c10;font-weight:600;">✅ PASS</td><td>16, 32, 192, 512px + ICO gerados via Pillow</td></tr>
                 </tbody>
             </table>
             <p style="margin-top:15px;"><strong>URL da aplicação:</strong> <a href="https://app-financeirax01.azurewebsites.net" target="_blank">https://app-financeirax01.azurewebsites.net</a></p>
