@@ -482,17 +482,18 @@ const App: React.FC = () => {
       .then((r) => r.json())
       .then((data: any[]) => {
         const principal = data?.[0];
-        if (!principal || !principal.userId) {
+        if (!principal || !principal.user_id) {
           // Não autenticado → redireciona para login Entra ID
           window.location.href = `/.auth/login/aad?post_login_redirect_uri=${encodeURIComponent(window.location.pathname)}`;
           return;
         }
-        const claims: any[] = principal.userClaims ?? [];
+        // Azure Easy Auth retorna snake_case: user_id, user_claims
+        const claims: any[] = principal.user_claims ?? [];
         const name: string =
           claims.find((c: any) => c.typ === "name")?.val ??
-          principal.userDetails ??
+          principal.user_id ??
           "";
-        const email: string = (principal.userDetails ?? "").toLowerCase().trim();
+        const email: string = (principal.user_id ?? "").toLowerCase().trim();
 
         // Mapeamento UPN → papel RBAC (espelha UPN_ROLE_MAP do auth_utils.py)
         let role: DemoRole = "callcenter";
