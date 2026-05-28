@@ -3,6 +3,7 @@ param(
     [string[]]$AppNames,
     [string]$ClientId,
     [string]$TenantId,
+    [string]$EncryptionKey,
     [string]$OutputFile = (Join-Path $PSScriptRoot '.rbac-output.json')
 )
 
@@ -122,6 +123,39 @@ foreach ($appName in $AppNames) {
     # app-* (frontend) apps use RedirectToLoginPage for browser navigation.
     $unauthAction = if ($appName -like 'api-*') { 'Return401' } else { 'RedirectToLoginPage' }
 
+    # WHY WEBSITE_AUTH_ENCRYPTION_KEY: On Free/Shared tier (F1/D1), alwaysOn is not available and
+    # containers spin down after inactivity. Easy Auth generates a new ephemeral encryption key on
+    # every container restart when this setting is absent. Nonce cookies from pre-restart requests
+    # become unreadable with the new key → callback validation fails → "We couldn't sign you in" loop.
+    # We preserve any existing key to avoid invalidating active sessions.
+    $existingSettings = Invoke-AzJson -Arguments @(
+        'webapp', 'config', 'appsettings', 'list',
+        '--resource-group', $ResourceGroup,
+        '--name', $appName,
+        '--subscription', $SubscriptionId,
+        '--output', 'json'
+    )
+    $encKeyExists = @($existingSettings | Where-Object { $_.name -eq 'WEBSITE_AUTH_ENCRYPTION_KEY' }).Count -gt 0
+
+    if (-not $encKeyExists) {
+        if (-not [string]::IsNullOrWhiteSpace($EncryptionKey)) {
+            $keyToApply = $EncryptionKey
+        } else {
+            $keyToApply = [Convert]::ToBase64String([System.Security.Cryptography.RandomNumberGenerator]::GetBytes(32))
+        }
+        Invoke-AzCommand -Arguments @(
+            'webapp', 'config', 'appsettings', 'set',
+            '--resource-group', $ResourceGroup,
+            '--name', $appName,
+            '--subscription', $SubscriptionId,
+            '--settings', "WEBSITE_AUTH_ENCRYPTION_KEY=$keyToApply",
+            '--output', 'json'
+        ) | Out-Null
+        Write-Warn "WEBSITE_AUTH_ENCRYPTION_KEY set for $appName. SAVE THIS KEY SECURELY — re-running the script without this key will invalidate all existing sessions."
+    } else {
+        Write-Info "WEBSITE_AUTH_ENCRYPTION_KEY já existe em $appName — chave preservada."
+    }
+
     Invoke-AzCommand -Arguments @(
         'webapp', 'auth', 'update',
         '--resource-group', $ResourceGroup,
@@ -131,7 +165,7 @@ foreach ($appName in $AppNames) {
         '--action', 'LoginWithAzureActiveDirectory',
         '--aad-client-id', $ClientId,
         '--aad-token-issuer-url', $issuerUrl,
-        '--token-store', 'true',
+        '--token-store', 'false',
         '--output', 'json'
     ) | Out-Null
 
@@ -144,6 +178,18 @@ foreach ($appName in $AppNames) {
         'rest', '--method', 'GET', '--url', $authV2Url, '--output', 'json'
     )
     $currentAuthConfig.properties.login.nonce.nonceExpirationInterval = "00:15:00"
+
+    # WHY tokenStore.enabled=false: tokenStore.enabled=true writes session tokens to
+    # /home/data/.auth/tokens/ on the container filesystem. On Free/Shared tier (or any app
+    # with WEBSITES_ENABLE_APP_SERVICE_STORAGE=false), this storage is ephemeral — it is wiped
+    # on container restart, causing session loss and immediate redirect loops.
+    # With tokenStore disabled, sessions are stored entirely in client cookies (~4KB, sufficient
+    # for standard AAD scopes including openid, profile, email, offline_access).
+    if ($null -eq $currentAuthConfig.properties.tokenStore) {
+        $currentAuthConfig.properties | Add-Member -NotePropertyName 'tokenStore' -NotePropertyValue ([PSCustomObject]@{}) -Force
+    }
+    $currentAuthConfig.properties.tokenStore.enabled = $false
+
     # Set unauthenticatedClientAction: api-* apps return 401 so JS fetch() works; frontend apps redirect.
     if ($null -eq $currentAuthConfig.properties.globalValidation) {
         $currentAuthConfig.properties.globalValidation = [PSCustomObject]@{}
@@ -258,5 +304,6 @@ Write-Host '2. Faça login com os usuários de teste (incluindo a troca de senha
 Write-Host '3. Inspecione /.auth/me ou o token JWT para validar a claim roles.' -ForegroundColor White
 Write-Host '4. Garanta que a aplicação trate faturamento como role superset de callcenter.' -ForegroundColor White
 Write-Host '5. O nonce de login está configurado para 15 min (suporte ao fluxo force-change-password).' -ForegroundColor White
+Write-Host '6. Em planos sem alwaysOn (F1/D1), confirme que WEBSITE_AUTH_ENCRYPTION_KEY está configurado para prevenir loops de autenticação após reinicializações do container.' -ForegroundColor White
 Write-Host ''
 Write-Success 'Configuração do Easy Auth concluída.'

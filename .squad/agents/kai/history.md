@@ -154,3 +154,39 @@ Created two Python scripts + requirements file for generating 500 call-center co
 ## Cross-Agent Update (2026-05-26)
 
 Scribe processed `.squad/decisions/inbox/` and consolidated decision entries, including Kai's data ingestion recommendation. The data ingestion options (Option A: seed from sample data; Option B: fix pipeline + full run) are now formally recorded in `.squad/decisions.md`. Data ingestion decision marked as **proposed — awaiting Leme approval**.
+
+---
+
+### Easy Auth Verification — app-financeirax01 (2026-05-28)
+
+Post-fix verification of all Easy Auth settings on `app-financeirax01`. All checks PASSED.
+
+**Checks performed:**
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| `WEBSITE_AUTH_ENCRYPTION_KEY` | ✅ Present | `WNZZGn+PeoOyN4u6HRztjFW7718jMpVcB1/T5n/AZ5M=` (32-byte base64) |
+| `tokenStore.enabled` | ✅ False | Sessions stored in client cookies — no filesystem dependency |
+| Easy Auth enabled | ✅ True | `platform.enabled: true`, `runtimeVersion: ~2` |
+| clientId | ✅ Correct | `35f4b07f-cee7-46d7-8193-906d1dc961b1` |
+| openIdIssuer | ✅ Correct | `https://login.microsoftonline.com/2e50c5c4-.../v2.0` |
+| allowedAudiences | ✅ Both set | `35f4b07f-...` AND `api://35f4b07f-...` |
+| `/.auth/login/aad` | ✅ 302→AAD | Redirects to `login.microsoftonline.com` with correct `client_id` |
+| `/.auth/me` (unauthenticated) | ✅ 302→Login | Expected: `unauthenticatedClientAction=RedirectToLoginPage` |
+
+**Note on `/.auth/me` returning 302 vs 401:**  
+The app is configured with `globalValidation.unauthenticatedClientAction: "RedirectToLoginPage"`, which redirects ALL unauthenticated requests — including `/.auth/me` — to the login page. This is correct behavior. If `unauthenticatedClientAction` were `"Return401"`, then `/.auth/me` would return 401. Both indicate Easy Auth is working properly.
+
+**Learnings (added 2026-05-28):**
+
+11. **`unauthenticatedClientAction` affects `/.auth/me` response code**
+    - `"RedirectToLoginPage"` → `/.auth/me` returns 302 (unauthenticated requests redirected to login)
+    - `"Return401"` or `"Return403"` → `/.auth/me` returns 401/403
+    - Both are valid; 302 from `/.auth/me` does NOT indicate a problem when `RedirectToLoginPage` is set
+
+12. **`configure-easy-auth.ps1` is now idempotent for Free-tier encryption key and token store**
+    - Added `-EncryptionKey` optional parameter; if omitted, a 32-byte random key is generated on first run
+    - Script checks `WEBSITE_AUTH_ENCRYPTION_KEY` existence before writing — preserves a stable key across re-runs
+    - `--token-store false` passed to `az webapp auth update` and `tokenStore.enabled = false` set in authsettingsV2 PUT body
+    - Both changes together prevent the F1 auth loop: stable nonce encryption + no filesystem session dependency
+    - Comment blocks added inline explaining WHY each setting is required (F1 restart scenario)
