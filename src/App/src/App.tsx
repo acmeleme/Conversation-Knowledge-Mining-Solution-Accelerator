@@ -326,7 +326,7 @@ const Dashboard: React.FC<{ demoRole: DemoRole; demoUser: string; onLogout: () =
         <div className="header-left-section">
           <AppLogo />
           <Subtitle2>
-            FinanceiraX S.A. <Body2 style={{ gap: "10px" }}>| Callcenter IA</Body2>
+            FinanceiraX01 Bank <Body2 style={{ gap: "10px" }}>| Seu Futuro, Nosso Compromisso</Body2>
           </Subtitle2>
           {/* Role badge */}
           <Tag

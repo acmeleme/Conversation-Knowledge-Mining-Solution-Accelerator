@@ -35,11 +35,12 @@ body {
   height: 6vh;
   justify-content: space-between;
   background-color: #fff;
+  border-bottom: 3px solid #C8972B;
 }
 
 .header-logo {
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
   margin-right: 10px;
 }
 
