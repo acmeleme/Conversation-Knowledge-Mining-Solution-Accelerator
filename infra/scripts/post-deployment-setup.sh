@@ -130,8 +130,15 @@ az role assignment create --role "Search Index Data Contributor" \
     --scope "/subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.Search/searchServices/$SEARCH_SERVICE_NAME" \
     > /dev/null 2>&1 || echo "   ⚠️  Search role may already exist"
 
-echo "   ✅ RBAC roles assigned (waiting for propagation...)"
-sleep 45
+echo "   ✅ RBAC roles assigned"
+
+# Also set Key Vault access policy (handles vaults in non-RBAC/access-policy mode)
+az keyvault set-policy --name "$KEY_VAULT_NAME" --resource-group "$RESOURCE_GROUP" \
+    --object-id "$CURRENT_USER_OBJECT_ID" \
+    --secret-permissions get list > /dev/null 2>&1 \
+    || echo "   ⚠️  KV access policy may already exist or KV is in RBAC mode"
+echo "   ✅ Key Vault access policy set (waiting for propagation...)"
+sleep 120
 echo ""
 
 # Step 5: Install Python dependencies
