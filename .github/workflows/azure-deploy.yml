@@ -141,19 +141,27 @@ jobs:
     - name: Verify deployment
       run: |
         echo "🔍 Verifying deployment..."
-        WEB_APP_NAME=$(az webapp list --resource-group ${{ env.RESOURCE_GROUP }} \
-          --query "[?contains(name, 'app-')].name" -o tsv | grep -v api)
-        API_APP_NAME=$(az webapp list --resource-group ${{ env.RESOURCE_GROUP }} \
-          --query "[?contains(name, 'api-')].name" -o tsv)
+        WEB_APP_NAME="app-callcenter100"
+        API_APP_NAME="api-callcenter100"
         
         echo "✅ UI URL: https://$WEB_APP_NAME.azurewebsites.net"
         echo "✅ API URL: https://$API_APP_NAME.azurewebsites.net"
         
-        # Health check
-        HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "https://$API_APP_NAME.azurewebsites.net/health")
-        if [ "$HTTP_STATUS" = "200" ]; then
-          echo "✅ API health check passed"
-        else
+        # Health check with retries (app may be restarting after container update)
+        for i in 1 2 3; do
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 \
+            "https://$API_APP_NAME.azurewebsites.net/health" || echo "000")
+          echo "  Attempt $i: HTTP $HTTP_STATUS"
+          if [ "$HTTP_STATUS" = "200" ]; then
+            echo "✅ API health check passed"
+            break
+          fi
+          if [ $i -lt 3 ]; then
+            echo "  Waiting 20s before retry..."
+            sleep 20
+          fi
+        done
+        if [ "$HTTP_STATUS" != "200" ]; then
           echo "❌ API health check failed with status: $HTTP_STATUS"
           exit 1
         fi
