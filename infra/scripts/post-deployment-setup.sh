@@ -223,7 +223,7 @@ server = os.environ.get("SETUP_SQL_SERVER") or "$SQL_FQDN"
 db = os.environ.get("SETUP_SQL_DATABASE") or "$SQL_DATABASE"
 credential = get_azure_credential(client_id=None)  # Use CLI credentials
 token = credential.get_token("https://database.windows.net/.default").token.encode("utf-16-LE")
-conn = pyodbc.connect(f"DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={server};DATABASE={db};", 
+conn = pyodbc.connect(f"DRIVER={{ODBC Driver 18 for SQL Server}};SERVER={server};DATABASE={db};Encrypt=yes;TrustServerCertificate=no;", 
                       attrs_before={1256: struct.pack(f"<I{len(token)}s", len(token), token)})
 cursor = conn.cursor()
 
@@ -270,7 +270,7 @@ server = os.environ.get("SETUP_SQL_SERVER") or get_secret("SQLDB-SERVER")
 db = os.environ.get("SETUP_SQL_DATABASE") or get_secret("SQLDB-DATABASE")
 credential = get_azure_credential(client_id=MANAGED_IDENTITY_CLIENT_ID)
 token = credential.get_token("https://database.windows.net/.default").token.encode("utf-16-LE")
-conn = pyodbc.connect(f"DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={server};DATABASE={db};", 
+conn = pyodbc.connect(f"DRIVER={{ODBC Driver 18 for SQL Server}};SERVER={server};DATABASE={db};Encrypt=yes;TrustServerCertificate=no;", 
                       attrs_before={1256: struct.pack(f"<I{len(token)}s", len(token), token)}, timeout=60)
 cursor = conn.cursor()
 
