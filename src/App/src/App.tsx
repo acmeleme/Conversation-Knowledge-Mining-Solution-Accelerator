@@ -19,7 +19,7 @@ import { SparkleRegular, ArrowExitRegular, PersonRegular } from "@fluentui/react
 import "./App.css";
 import { ChatHistoryPanel } from "./components/ChatHistoryPanel/ChatHistoryPanel";
 import { DemoRole } from "./components/LoginPage/LoginPage";
-import { getDemoRole, clearDemoRole } from "./api/api";
+import { clearDemoRole } from "./api/api";
 
 import {
   getUserInfo,
@@ -59,7 +59,7 @@ const defaultPanelShowStates = {
   [panels.CHATHISTORY]: false,
 };
 
-const Dashboard: React.FC<{ demoRole: DemoRole; demoUser: string; onLogout: () => void }> = ({ demoRole, demoUser, onLogout }) => {
+const Dashboard: React.FC<{ demoRole: DemoRole; demoUser: string; userEmail: string; onLogout: () => void }> = ({ demoRole, demoUser, userEmail, onLogout }) => {
   const { state, dispatch } = useAppContext();
   const { appConfig } = state.config;
   const [panelShowStates, setPanelShowStates] = useState<
@@ -78,8 +78,6 @@ const Dashboard: React.FC<{ demoRole: DemoRole; demoUser: string; onLogout: () =
   const [offset, setOffset] = useState<number>(0);
   const OFFSET_INCREMENT = 25;
   const [hasMoreRecords, setHasMoreRecords] = useState<boolean>(true);
-  const [name, setName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
   const [userMenuOpen, setUserMenuOpen] = useState<boolean>(false);
 
   useEffect(() => {
@@ -112,22 +110,10 @@ const Dashboard: React.FC<{ demoRole: DemoRole; demoUser: string; onLogout: () =
     getUserInfoList();
   }, []);
 
-  useEffect(() => {
-    getUserInfo().then((res) => {
-      const claims = res[0]?.user_claims ?? [];
-      const name: string = claims.find((claim: any) => claim.typ === 'name')?.val ?? ''
-      const email: string = claims.find((claim: any) =>
-        claim.typ === 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress' ||
-        claim.typ === 'preferred_username' ||
-        claim.typ === 'emails' ||
-        claim.typ === 'email'
-      )?.val ?? ''
-      setName(name)
-      setEmail(email)
-    }).catch((err) => {
-      console.error('Error fetching user info: ', err)
-    })
-  }, [])
+  const roleLabel =
+    demoRole === "financeiro"
+      ? "💼 Financeiro & Faturamento"
+      : "🎧 Operador de Callcenter";
 
   const updateLayoutWidths = (newState: Record<string, boolean>) => {
     const noOfWidgetsOpen = Object.values(newState).filter((val) => val).length;
@@ -334,12 +320,12 @@ const Dashboard: React.FC<{ demoRole: DemoRole; demoUser: string; onLogout: () =
             size="small"
             style={{
               marginLeft: 12,
-              backgroundColor: demoRole === "financeiro" ? "#dff6dd" : demoRole === "operador" ? "#dce9f8" : "#f3f2f1",
-              color: demoRole === "financeiro" ? "#107c10" : demoRole === "operador" ? "#0078d4" : "#616161",
+                backgroundColor: demoRole === "financeiro" ? "#dff6dd" : "#dce9f8",
+                color: demoRole === "financeiro" ? "#107c10" : "#0078d4",
               fontWeight: 600,
             }}
           >
-            {demoRole === "financeiro" ? "💼 Financeiro" : demoRole === "operador" ? "🎧 Operador" : "👤 Demo"}
+              {demoRole === "financeiro" ? "💼 Financeiro" : "🎧 Operador"}
           </Tag>
         </div>
         <div className="header-right-section">
@@ -365,19 +351,24 @@ const Dashboard: React.FC<{ demoRole: DemoRole; demoUser: string; onLogout: () =
           >
             <PopoverTrigger>
               <div style={{ cursor: "pointer" }}>
-                <Avatar name={demoUser || name} title={demoUser || name} />
+                <Avatar name={demoUser || userEmail} title={demoUser || userEmail} />
               </div>
             </PopoverTrigger>
             <PopoverSurface style={{ padding: 0, minWidth: 240, borderRadius: 8, boxShadow: "0 4px 16px rgba(0,0,0,0.12)" }}>
               {/* Profile info */}
               <div style={{ padding: "16px", display: "flex", alignItems: "center", gap: 12 }}>
-                <Avatar name={demoUser || name} size={40} />
+                <Avatar name={demoUser || userEmail} size={40} />
                 <div style={{ display: "flex", flexDirection: "column", overflow: "hidden" }}>
                   <Text weight="semibold" style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                    {demoUser || name || "Usuário Demo"}
+                    {demoUser || userEmail || "Usuário"}
                   </Text>
-                  <Text size={200} style={{ color: "#616161", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                    Perfil: {demoRole}
+                  {userEmail && (
+                    <Text size={200} style={{ color: "#616161", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                      {userEmail}
+                    </Text>
+                  )}
+                  <Text size={200} style={{ color: "#616161" }}>
+                    {roleLabel}
                   </Text>
                 </div>
               </div>
@@ -482,23 +473,20 @@ const App: React.FC = () => {
       try {
         const r = await fetch("/.auth/me");
         if (!r.ok) {
-          // 401/403/outros: sessão inválida ou expirada → redireciona para login
-          window.location.href = `/.auth/login/aad?post_login_redirect_uri=${encodeURIComponent(window.location.pathname)}`;
-          return;
+          // /.auth/me indisponível — com requireAuthentication=true o usuário já está
+          // autenticado; qualquer falha aqui é infra, não sessão expirada → não redirecionar.
+          throw new Error(`/.auth/me: status ${r.status}`);
         }
         let data: any[];
         try {
           data = await r.json();
         } catch {
-          // Body não-JSON apesar de 2xx → redireciona para login
-          window.location.href = `/.auth/login/aad?post_login_redirect_uri=${encodeURIComponent(window.location.pathname)}`;
-          return;
+          throw new Error("/.auth/me: JSON inválido");
         }
         const principal = data?.[0];
-        if (!principal || !principal.user_id) {
-          // Não autenticado → redireciona para login Entra ID
-          window.location.href = `/.auth/login/aad?post_login_redirect_uri=${encodeURIComponent(window.location.pathname)}`;
-          return;
+        if (!principal?.user_id) {
+          // Headers Easy Auth ausentes (ambiente local sem Easy Auth)
+          throw new Error("/.auth/me: principal ou user_id ausente");
         }
         // Azure Easy Auth retorna snake_case: user_id, user_claims
         const claims: any[] = principal.user_claims ?? [];
@@ -512,14 +500,20 @@ const App: React.FC = () => {
         let role: DemoRole = "callcenter";
         if (email.startsWith("operador-callcenter@")) role = "operador";
         else if (email.startsWith("financeiro-faturamento@")) role = "financeiro";
+        // "callcenter" permanece como sentinela de acesso negado — será bloqueado na render
 
         setUserInfo({ name: name || email, email, role });
         setLoading(false);
       } catch {
-        // Apenas falhas de rede reais chegam aqui → fallback local dev
-        const demoRole = (getDemoRole() as DemoRole) || "callcenter";
-        setUserInfo({ name: "Dev Local", email: "", role: demoRole });
-        setLoading(false);
+        const isLocal =
+          window.location.hostname === "localhost" ||
+          window.location.hostname === "127.0.0.1";
+        if (isLocal) {
+          setUserInfo({ name: "Dev Local", email: "", role: "operador" });
+          setLoading(false);
+        } else {
+          window.location.href = `/.auth/login/aad?post_login_redirect_uri=${encodeURIComponent(window.location.href)}`;
+        }
       }
     };
     authenticate();
@@ -540,7 +534,35 @@ const App: React.FC = () => {
     window.location.href = `/.auth/logout?post_logout_redirect_uri=${encodeURIComponent(window.location.origin)}`;
   };
 
-  return <Dashboard demoRole={userInfo.role} demoUser={userInfo.name} onLogout={handleLogout} />;
+  if (userInfo.role === "callcenter") {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh", fontFamily: "Segoe UI, sans-serif", backgroundColor: "#f5f5f5" }}>
+        <div style={{ background: "#fff", borderRadius: 12, padding: "48px 40px", maxWidth: 480, width: "100%", boxShadow: "0 4px 24px rgba(0,0,0,0.10)", textAlign: "center" }}>
+          <div style={{ fontSize: 56, marginBottom: 16 }}>🚫</div>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#c50f1f", marginBottom: 8 }}>Acesso Negado</h1>
+          <p style={{ color: "#424242", marginBottom: 8 }}>
+            Seu perfil não possui permissão para acessar este sistema.
+          </p>
+          {userInfo.email && (
+            <p style={{ color: "#616161", fontSize: 13, marginBottom: 24, wordBreak: "break-all" }}>
+              Email autenticado: <strong>{userInfo.email}</strong>
+            </p>
+          )}
+          <p style={{ color: "#616161", fontSize: 13, marginBottom: 32 }}>
+            Entre em contato com o administrador do sistema para solicitar acesso.
+          </p>
+          <button
+            onClick={handleLogout}
+            style={{ background: "#c50f1f", color: "#fff", border: "none", borderRadius: 6, padding: "10px 32px", fontSize: 15, fontWeight: 600, cursor: "pointer" }}
+          >
+            Sair
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return <Dashboard demoRole={userInfo.role} demoUser={userInfo.name} userEmail={userInfo.email} onLogout={handleLogout} />;
 };
 
 export default App;

@@ -35,16 +35,6 @@ const ROLES: RoleCard[] = [
     topics: ["Seguro", "Empréstimos", "Crédito Especial", "Consórcio"],
     icon: "🎧",
   },
-  {
-    role: "callcenter",
-    user: "visitante@demo",
-    label: "Visitante / Demo",
-    description: "Perfil padrão de demonstração com acesso geral ao sistema.",
-    badge: "Demo",
-    badgeColor: "#8a8886",
-    topics: ["Seguro", "Empréstimos", "Crédito Especial", "Consórcio"],
-    icon: "👤",
-  },
 ];
 
 interface LoginPageProps {
@@ -70,7 +60,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
           </div>
           <h1 className="login-title">FinanceiraX S.A.</h1>
           <p className="login-subtitle">Callcenter Inteligente — Plataforma de IA</p>
-          <div className="login-demo-badge">🔒 Modo Demonstração — Selecione seu perfil de acesso</div>
+          <div className="login-demo-badge">🔒 Selecione seu perfil de acesso</div>
         </div>
 
         {/* Role cards */}

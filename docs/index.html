@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8"><!-- Updated 2026-06-02 -->
+    <meta charset="UTF-8"><!-- Updated 2026-06-03 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Conversation Knowledge Mining Solution Accelerator</title>
     <style>
@@ -631,7 +631,7 @@
                 <tbody>
                     <tr><td>💼 Financeiro &amp; Faturamento</td><td>financeiro-faturamento@MngEnvMCAP197214.onmicrosoft.com</td><td style="color:#107c10;font-weight:600;">Completo</td><td>Nenhuma</td></tr>
                     <tr style="background:#f8f9fa;"><td>🎧 Operador de Callcenter</td><td>operador-callcenter@MngEnvMCAP197214.onmicrosoft.com</td><td style="color:#e67e00;font-weight:600;">Parcial</td><td>Sem acesso a Cartão de Crédito — Fatura/Bloqueio</td></tr>
-                    <tr><td>👤 Demais usuários autenticados</td><td>qualquer UPN não mapeado</td><td style="color:#0078d4;font-weight:600;">Padrão</td><td>Acesso geral (sem Cartão de Crédito)</td></tr>
+                    <tr><td>🚫 Demais usuários autenticados</td><td>qualquer UPN não mapeado</td><td style="color:#c50500;font-weight:600;">Negado</td><td>Tela "🚫 Acesso Negado" — usuário deve solicitar acesso ao administrador</td></tr>
                 </tbody>
             </table>
             <div style="background:#fff4e5;border-left:4px solid #e67e00;padding:12px 16px;border-radius:6px;margin-top:16px;font-size:14px;">
@@ -759,9 +759,26 @@
 
         <!-- E2E TESTS -->
         <section id="e2e" class="section">
-            <h2>✅ Testes E2E</h2>
-            <p>Resultado da última bateria de testes de ponta a ponta (2026-06-02):</p>
+            <h2>✅ Testes E2E — Critérios de Sucesso Entra ID</h2>
+            <p>Suíte Playwright (<code>test_entra_auth_e2e.py</code>) validando os critérios de autenticação Entra ID (2026-06-03). Coleta: <strong>6 testes coletados com sucesso</strong> em 0.16s.</p>
             <table class="data-table" style="margin-top:15px;">
+                <thead>
+                    <tr><th>#</th><th>Critério</th><th>Teste</th><th>Status</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>C1</td><td>Autenticação via Entra ID</td><td>App carrega sem seletor de papel Demo — <code>is_role_selector_visible() == False</code></td><td style="color:#107c10;font-weight:600;">✅ Coletado</td></tr>
+                    <tr style="background:#f8f9fa;"><td>C2</td><td>Sem texto "Demo" na UI</td><td>Nenhum elemento com texto literal "Demo" visível — <code>is_demo_text_visible() == False</code></td><td style="color:#107c10;font-weight:600;">✅ Coletado</td></tr>
+                    <tr><td>C3</td><td>Avatar exibe perfil Entra ID</td><td>Clique no círculo cinza abre popover com nome + e-mail + papel reais — <code>get_profile_popover_text()</code></td><td style="color:#107c10;font-weight:600;">✅ Coletado</td></tr>
+                    <tr style="background:#f8f9fa;"><td>C3b</td><td>Nome não é "Dev Local"</td><td>Nome exibido no popover não é label de fallback de desenvolvimento</td><td style="color:#107c10;font-weight:600;">✅ Coletado</td></tr>
+                    <tr><td>C4</td><td>Sem card "Visitante" no login</td><td>Apenas "Financeiro &amp; Faturamento" + "Operador de Callcenter" existem — <code>is_visitor_card_visible() == False</code></td><td style="color:#107c10;font-weight:600;">✅ Coletado</td></tr>
+                    <tr style="background:#f8f9fa;"><td>C5</td><td>Acesso Negado para usuários não mapeados</td><td>Tela "🚫 Acesso Negado" + botão "Sair" renderizados para UPNs fora da lista autorizada</td><td style="color:#107c10;font-weight:600;">✅ Coletado</td></tr>
+                </tbody>
+            </table>
+            <div style="background:#e8f4fd;border-left:4px solid #0078D4;padding:12px 16px;border-radius:6px;margin-top:16px;font-size:14px;">
+                <strong>ℹ️ Execução completa:</strong> Requer App Service em execução com EasyAuth configurado. Execute <code>pytest tests/test_entra_auth_e2e.py -v</code> a partir de <code>tests/e2e-test/</code> com um arquivo <code>.env</code> contendo <code>url=&lt;app-url&gt;</code>.
+            </div>
+            <h3 style="margin-top:24px;">📋 Testes de Integração anteriores (2026-06-02)</h3>
+            <table class="data-table" style="margin-top:10px;">
                 <thead>
                     <tr><th>#</th><th>Teste</th><th>Resultado</th><th>Detalhe</th></tr>
                 </thead>
@@ -770,10 +787,8 @@
                     <tr><td>2</td><td>Perfil financeiro — tópico CC permitido</td><td style="color:#107c10;font-weight:600;">✅ PASS</td><td>HTTP 200, resposta sobre cartão de crédito</td></tr>
                     <tr><td>3</td><td>Perfil operador — tópico CC bloqueado</td><td style="color:#107c10;font-weight:600;">✅ PASS</td><td>Bloqueio educado pelo guardrail/RBAC</td></tr>
                     <tr><td>4</td><td>Guardrail — pergunta fora de contexto bloqueada</td><td style="color:#107c10;font-weight:600;">✅ PASS</td><td>"Fora do meu escopo" — receita de bolo rejeitada</td></tr>
-                    <tr><td>5</td><td>Perfil padrão — tópico consórcio permitido</td><td style="color:#107c10;font-weight:600;">✅ PASS</td><td>HTTP 200, resposta sobre consórcio</td></tr>
-                    <tr><td>6</td><td>EasyAuth — redirect para login Microsoft</td><td style="color:#107c10;font-weight:600;">✅ PASS</td><td>HTTP 302 → login.microsoftonline.com (autenticação com senha + MFA)</td></tr>
-                    <tr><td>7</td><td>Logo FinanceiraX01 Bank — header atualizado</td><td style="color:#107c10;font-weight:600;">✅ PASS</td><td>Imagem <code>webapp-financeirax:logo</code> no ACR; App Service reiniciado com novo container</td></tr>
-                    <tr><td>8</td><td>Favicons — aba do browser com logo correto</td><td style="color:#107c10;font-weight:600;">✅ PASS</td><td>16, 32, 192, 512px + ICO gerados via Pillow</td></tr>
+                    <tr><td>5</td><td>EasyAuth — redirect para login Microsoft</td><td style="color:#107c10;font-weight:600;">✅ PASS</td><td>HTTP 302 → login.microsoftonline.com</td></tr>
+                    <tr><td>6</td><td>Logo FinanceiraX01 Bank — header atualizado</td><td style="color:#107c10;font-weight:600;">✅ PASS</td><td>Imagem <code>webapp-financeirax:logo</code> no ACR</td></tr>
                 </tbody>
             </table>
             <p style="margin-top:15px;"><strong>URL da aplicação:</strong> <a href="https://app-financeirax01.azurewebsites.net" target="_blank">https://app-financeirax01.azurewebsites.net</a></p>
