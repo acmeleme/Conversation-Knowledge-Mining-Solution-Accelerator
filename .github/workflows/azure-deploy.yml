@@ -80,34 +80,22 @@ jobs:
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
     
-    - name: Install Azure Developer CLI
-      if: ${{ github.event.inputs.deployment_mode == 'full' }}
-      uses: Azure/setup-azd@v1.0.0
-    
-    - name: Deploy with azd (application-only or full)
+    - name: Deploy Infrastructure and Application
       run: |
         if [ "${{ env.DEPLOYMENT_MODE }}" = "full" ]; then
-          echo "Running full deployment (provision + deploy)"
-          azd auth login --client-id ${{ secrets.AZURE_CLIENT_ID }} \
-            --federated-credential-provider "github" \
-            --tenant-id ${{ secrets.AZURE_TENANT_ID }}
-
-          azd env new ${{ github.event.inputs.environment || 'dev' }} || true
-          azd env select ${{ github.event.inputs.environment || 'dev' }}
-
-          # Set environment variables
-          azd env set AZURE_LOCATION ${{ env.LOCATION }}
-          azd env set AZURE_RESOURCE_GROUP ${{ env.RESOURCE_GROUP }}
-
-          azd up --no-prompt
-        else
-          echo "Running application-only deployment (build/push and update existing App Services)"
-          chmod +x infra/scripts/deploy-app-only.sh
-          bash infra/scripts/deploy-app-only.sh "${{ env.RESOURCE_GROUP }}"
+          echo "Running full deployment (Bicep provision + container build/push)"
+          az deployment group create \
+            --resource-group "${{ env.RESOURCE_GROUP }}" \
+            --template-file infra/main.bicep \
+            --parameters infra/main.parameters.json \
+            --no-prompt true 2>&1 | tail -20
+          echo "✅ Infrastructure provisioned"
         fi
+        echo "Deploying application containers..."
+        chmod +x infra/scripts/deploy-app-only.sh
+        bash infra/scripts/deploy-app-only.sh "${{ env.RESOURCE_GROUP }}"
       env:
         AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        AZURE_ENV_NAME: ${{ github.event.inputs.environment || 'dev' }}
 
   post-deployment-setup:
     name: Post-Deployment Data Setup
