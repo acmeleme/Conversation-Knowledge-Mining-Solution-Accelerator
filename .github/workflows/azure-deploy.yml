@@ -113,7 +113,7 @@ jobs:
     name: Post-Deployment Data Setup
     runs-on: ubuntu-latest
     needs: deploy-application
-    if: ${{ env.DEPLOYMENT_MODE == 'full' }}
+    if: ${{ github.event.inputs.deployment_mode == 'full' }}
     
     steps:
     - name: Checkout code
