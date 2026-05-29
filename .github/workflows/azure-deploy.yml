@@ -81,6 +81,7 @@ jobs:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
     
     - name: Install Azure Developer CLI
+      if: ${{ github.event.inputs.deployment_mode == 'full' }}
       uses: Azure/setup-azd@v1.0.0
     
     - name: Deploy with azd (application-only or full)
