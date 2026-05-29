@@ -1,0 +1,6 @@
+# Test dependencies — install with: pip install -r requirements-test.txt
+# Not included in production Docker image (ApiApp.Dockerfile)
+-r requirements.txt
+pytest>=8.0.0
+pytest-cov>=4.0.0
+pytest-asyncio>=0.23.0
