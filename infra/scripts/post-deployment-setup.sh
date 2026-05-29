@@ -137,8 +137,28 @@ az keyvault set-policy --name "$KEY_VAULT_NAME" --resource-group "$RESOURCE_GROU
     --object-id "$CURRENT_USER_OBJECT_ID" \
     --secret-permissions get list > /dev/null 2>&1 \
     || echo "   ⚠️  KV access policy may already exist or KV is in RBAC mode"
-echo "   ✅ Key Vault access policy set (waiting for propagation...)"
-sleep 120
+echo "   ✅ Key Vault access policy set"
+echo ""
+
+# Step 4b: Discover configuration from Azure management plane (bypasses KV RBAC)
+echo "🔍 Step 4b: Discovering configuration from Azure resources (bypass KV)..."
+SEARCH_ENDPOINT="https://$(az search service show --resource-group "$RESOURCE_GROUP" --name "$SEARCH_SERVICE_NAME" --query "hostName" -o tsv | tr -d '\r')"
+SEARCH_ADMIN_KEY=$(az search admin-key show --resource-group "$RESOURCE_GROUP" --service-name "$SEARCH_SERVICE_NAME" --query "primaryKey" -o tsv 2>/dev/null | tr -d '\r')
+OPENAI_ACCOUNT=$(az cognitiveservices account list --resource-group "$RESOURCE_GROUP" --query "[?kind=='OpenAI'].name" -o tsv | tr -d '\r' | head -1)
+OPENAI_ENDPOINT=$(az cognitiveservices account show --resource-group "$RESOURCE_GROUP" --name "$OPENAI_ACCOUNT" --query "properties.endpoint" -o tsv | tr -d '\r')
+OPENAI_EMBEDDING_MODEL=$(az cognitiveservices account deployment list --resource-group "$RESOURCE_GROUP" --name "$OPENAI_ACCOUNT" --query "[?contains(name,'embed')].name" -o tsv 2>/dev/null | tr -d '\r' | head -1)
+OPENAI_EMBEDDING_MODEL="${OPENAI_EMBEDDING_MODEL:-text-embedding-ada-002}"
+SQL_FQDN=$(az sql server show --resource-group "$RESOURCE_GROUP" --name "$SQL_SERVER_NAME" --query "fullyQualifiedDomainName" -o tsv | tr -d '\r')
+SQL_DATABASE=$(az sql db list --resource-group "$RESOURCE_GROUP" --server "$SQL_SERVER_NAME" --query "[?name!='master'].name" -o tsv | tr -d '\r' | head -1)
+export SETUP_SEARCH_ENDPOINT="$SEARCH_ENDPOINT"
+export SETUP_SEARCH_ADMIN_KEY="$SEARCH_ADMIN_KEY"
+export SETUP_OPENAI_ENDPOINT="$OPENAI_ENDPOINT"
+export SETUP_OPENAI_EMBEDDING_MODEL="$OPENAI_EMBEDDING_MODEL"
+export SETUP_SQL_SERVER="$SQL_FQDN"
+export SETUP_SQL_DATABASE="$SQL_DATABASE"
+echo "   ✅ Search: $SEARCH_ENDPOINT"
+echo "   ✅ OpenAI: $OPENAI_ENDPOINT (embedding: $OPENAI_EMBEDDING_MODEL)"
+echo "   ✅ SQL: $SQL_FQDN / $SQL_DATABASE"
 echo ""
 
 # Step 5: Install Python dependencies
@@ -163,24 +183,16 @@ echo ""
 # Step 8: Load sample data to search index
 echo "📊 Step 8: Loading sample data to search index..."
 "$PYTHON_CMD" << PYEOF
-import sys, json
+import sys, json, os
 sys.path.append('infra/scripts/index_scripts')
-from azure.keyvault.secrets import SecretClient
+from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
-from azure_credential_utils import get_azure_credential
 
-KEY_VAULT_NAME = "$KEY_VAULT_NAME"
-MANAGED_IDENTITY_CLIENT_ID = "$MANAGED_IDENTITY_CLIENT_ID"
 INDEX_NAME = "call_transcripts_index"
+search_endpoint = "$SEARCH_ENDPOINT"
+search_admin_key = "$SEARCH_ADMIN_KEY"
 
-def get_secret(secret_name):
-    credential = get_azure_credential(client_id=MANAGED_IDENTITY_CLIENT_ID)
-    secret_client = SecretClient(vault_url=f"https://{KEY_VAULT_NAME}.vault.azure.net/", credential=credential)
-    return secret_client.get_secret(secret_name).value
-
-search_endpoint = get_secret("AZURE-SEARCH-ENDPOINT")
-credential = get_azure_credential(client_id=MANAGED_IDENTITY_CLIENT_ID)
-search_client = SearchClient(search_endpoint, INDEX_NAME, credential)
+search_client = SearchClient(search_endpoint, INDEX_NAME, AzureKeyCredential(search_admin_key))
 
 with open('infra/data/sample_search_index_data.json', 'r') as file:
     documents = json.load(file)
@@ -195,20 +207,15 @@ echo ""
 # Step 9: Create SQL user for managed identity
 echo "🗄️  Step 9: Creating SQL user for managed identity..."
 "$PYTHON_CMD" << PYEOF
-import sys, struct, pyodbc
+import sys, struct, pyodbc, os
 sys.path.append('infra/scripts/index_scripts')
-from azure.keyvault.secrets import SecretClient
 from azure_credential_utils import get_azure_credential
 
-KEY_VAULT_NAME = "$KEY_VAULT_NAME"
 MANAGED_IDENTITY_CLIENT_ID = "$MANAGED_IDENTITY_CLIENT_ID"
 MANAGED_IDENTITY_NAME = "$MANAGED_IDENTITY_NAME"
 
-def get_secret(s):
-    credential = get_azure_credential(client_id=MANAGED_IDENTITY_CLIENT_ID)
-    return SecretClient(vault_url=f"https://{KEY_VAULT_NAME}.vault.azure.net/", credential=credential).get_secret(s).value
-
-server, db = get_secret("SQLDB-SERVER"), get_secret("SQLDB-DATABASE")
+server = os.environ.get("SETUP_SQL_SERVER") or "$SQL_FQDN"
+db = os.environ.get("SETUP_SQL_DATABASE") or "$SQL_DATABASE"
 credential = get_azure_credential(client_id=None)  # Use CLI credentials
 token = credential.get_token("https://database.windows.net/.default").token.encode("utf-16-LE")
 conn = pyodbc.connect(f"DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={server};DATABASE={db};", 
@@ -254,7 +261,8 @@ def get_secret(s):
     credential = get_azure_credential(client_id=MANAGED_IDENTITY_CLIENT_ID)
     return SecretClient(vault_url=f"https://{KEY_VAULT_NAME}.vault.azure.net/", credential=credential).get_secret(s).value
 
-server, db = get_secret("SQLDB-SERVER"), get_secret("SQLDB-DATABASE")
+server = os.environ.get("SETUP_SQL_SERVER") or get_secret("SQLDB-SERVER")
+db = os.environ.get("SETUP_SQL_DATABASE") or get_secret("SQLDB-DATABASE")
 credential = get_azure_credential(client_id=MANAGED_IDENTITY_CLIENT_ID)
 token = credential.get_token("https://database.windows.net/.default").token.encode("utf-16-LE")
 conn = pyodbc.connect(f"DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={server};DATABASE={db};", 

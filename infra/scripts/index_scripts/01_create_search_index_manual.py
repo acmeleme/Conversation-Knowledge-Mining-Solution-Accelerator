@@ -1,4 +1,6 @@
+import os
 from azure.keyvault.secrets import SecretClient
+from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.indexes import SearchIndexClient
 from azure.search.documents.indexes.models import (
     SearchField,
@@ -51,15 +53,17 @@ def create_search_index():
     - Vector search using Azure OpenAI embeddings
     - Semantic search using prioritized fields
     """
-    # Shared credential
-    credential = get_azure_credential(client_id=MANAGED_IDENTITY_CLIENT_ID)
+    # Prefer env vars exported by post-deployment-setup.sh Step 4b (bypasses KV RBAC)
+    search_endpoint = os.environ.get("SETUP_SEARCH_ENDPOINT") or get_secrets_from_kv("AZURE-SEARCH-ENDPOINT")
+    openai_resource_url = os.environ.get("SETUP_OPENAI_ENDPOINT") or get_secrets_from_kv("AZURE-OPENAI-ENDPOINT")
+    embedding_model = os.environ.get("SETUP_OPENAI_EMBEDDING_MODEL") or get_secrets_from_kv("AZURE-OPENAI-EMBEDDING-MODEL")
+    search_admin_key = os.environ.get("SETUP_SEARCH_ADMIN_KEY")
 
-    # Retrieve secrets from Key Vault
-    search_endpoint = get_secrets_from_kv("AZURE-SEARCH-ENDPOINT")
-    openai_resource_url = get_secrets_from_kv("AZURE-OPENAI-ENDPOINT")
-    embedding_model = get_secrets_from_kv("AZURE-OPENAI-EMBEDDING-MODEL")
-
-    index_client = SearchIndexClient(endpoint=search_endpoint, credential=credential)
+    if search_admin_key:
+        index_client = SearchIndexClient(endpoint=search_endpoint, credential=AzureKeyCredential(search_admin_key))
+    else:
+        credential = get_azure_credential(client_id=MANAGED_IDENTITY_CLIENT_ID)
+        index_client = SearchIndexClient(endpoint=search_endpoint, credential=credential)
 
     # Define index schema
     fields = [
