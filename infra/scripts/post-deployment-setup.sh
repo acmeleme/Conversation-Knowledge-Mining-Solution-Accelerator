@@ -60,13 +60,25 @@ KEY_VAULT_NAME=$(az keyvault list --resource-group "$RESOURCE_GROUP" --query "[0
 MANAGED_IDENTITY_NAME=$(az identity list --resource-group "$RESOURCE_GROUP" --query "[?contains(name, 'id-')].name" -o tsv | tr -d '\r' | head -1)
 MANAGED_IDENTITY_CLIENT_ID=$(az identity show --name "$MANAGED_IDENTITY_NAME" --resource-group "$RESOURCE_GROUP" --query "clientId" -o tsv | tr -d '\r')
 SQL_SERVER_NAME=$(az sql server list --resource-group "$RESOURCE_GROUP" --query "[0].name" -o tsv | tr -d '\r')
-CURRENT_USER_OBJECT_ID=$(az ad signed-in-user show --query "id" -o tsv | tr -d '\r')
+
+# Detect auth type: delegated user vs service principal (OIDC/CI)
+USER_TYPE=$(az account show --query "user.type" -o tsv 2>/dev/null | tr -d '\r')
+if [ "$USER_TYPE" = "servicePrincipal" ]; then
+    CLIENT_ID=$(az account show --query "user.name" -o tsv | tr -d '\r')
+    CURRENT_USER_OBJECT_ID=$(az ad sp show --id "$CLIENT_ID" --query "id" -o tsv | tr -d '\r')
+    CURRENT_USER_EMAIL="$CLIENT_ID"
+    echo "  Auth type: Service Principal (CI/CD)"
+else
+    CURRENT_USER_OBJECT_ID=$(az ad signed-in-user show --query "id" -o tsv | tr -d '\r')
+    CURRENT_USER_EMAIL=$(az ad signed-in-user show --query "userPrincipalName" -o tsv | tr -d '\r')
+    echo "  Auth type: Delegated User"
+fi
 
 echo "  Key Vault: $KEY_VAULT_NAME"
 echo "  Managed Identity: $MANAGED_IDENTITY_NAME"
 echo "  Managed Identity Client ID: $MANAGED_IDENTITY_CLIENT_ID"
 echo "  SQL Server: $SQL_SERVER_NAME"
-echo "  Current User Object ID: $CURRENT_USER_OBJECT_ID"
+echo "  Current User/SP Object ID: $CURRENT_USER_OBJECT_ID"
 echo ""
 
 # Step 1: Enable Key Vault public access (temporary for data loading)
@@ -86,9 +98,8 @@ az sql server firewall-rule create --resource-group "$RESOURCE_GROUP" \
 echo "   ✅ SQL Server public access enabled"
 echo ""
 
-# Step 3: Set current user as SQL admin temporarily
-echo "👤 Step 3: Adding current user as SQL admin..."
-CURRENT_USER_EMAIL=$(az ad signed-in-user show --query "userPrincipalName" -o tsv | tr -d '\r')
+# Step 3: Set current user/SP as SQL admin temporarily
+echo "👤 Step 3: Adding current user/SP as SQL admin..."
 az sql server ad-admin create --resource-group "$RESOURCE_GROUP" \
     --server "$SQL_SERVER_NAME" --display-name "$CURRENT_USER_EMAIL" \
     --object-id "$CURRENT_USER_OBJECT_ID" > /dev/null 2>&1
