@@ -142,10 +142,15 @@ echo ""
 
 # Step 4b: Discover configuration from Azure management plane (bypasses KV RBAC)
 echo "🔍 Step 4b: Discovering configuration from Azure resources (bypass KV)..."
-SEARCH_ENDPOINT="https://$(az search service show --resource-group "$RESOURCE_GROUP" --name "$SEARCH_SERVICE_NAME" --query "hostName" -o tsv | tr -d '\r')"
+# Search: construct URL from service name (hostName property unreliable in CLI output)
+SEARCH_ENDPOINT="https://${SEARCH_SERVICE_NAME}.search.windows.net"
 SEARCH_ADMIN_KEY=$(az search admin-key show --resource-group "$RESOURCE_GROUP" --service-name "$SEARCH_SERVICE_NAME" --query "primaryKey" -o tsv 2>/dev/null | tr -d '\r')
-OPENAI_ACCOUNT=$(az cognitiveservices account list --resource-group "$RESOURCE_GROUP" --query "[?kind=='OpenAI'].name" -o tsv | tr -d '\r' | head -1)
-OPENAI_ENDPOINT=$(az cognitiveservices account show --resource-group "$RESOURCE_GROUP" --name "$OPENAI_ACCOUNT" --query "properties.endpoint" -o tsv | tr -d '\r')
+# OpenAI: resource may have kind='AIServices' (AI Foundry) or kind='OpenAI'
+OPENAI_ACCOUNT=$(az cognitiveservices account list --resource-group "$RESOURCE_GROUP" --query "[?kind=='AIServices'].name" -o tsv 2>/dev/null | tr -d '\r' | head -1)
+if [ -z "$OPENAI_ACCOUNT" ]; then
+    OPENAI_ACCOUNT=$(az cognitiveservices account list --resource-group "$RESOURCE_GROUP" --query "[?kind=='OpenAI'].name" -o tsv 2>/dev/null | tr -d '\r' | head -1)
+fi
+OPENAI_ENDPOINT=$(az cognitiveservices account show --resource-group "$RESOURCE_GROUP" --name "$OPENAI_ACCOUNT" --query "properties.endpoint" -o tsv 2>/dev/null | tr -d '\r')
 OPENAI_EMBEDDING_MODEL=$(az cognitiveservices account deployment list --resource-group "$RESOURCE_GROUP" --name "$OPENAI_ACCOUNT" --query "[?contains(name,'embed')].name" -o tsv 2>/dev/null | tr -d '\r' | head -1)
 OPENAI_EMBEDDING_MODEL="${OPENAI_EMBEDDING_MODEL:-text-embedding-ada-002}"
 SQL_FQDN=$(az sql server show --resource-group "$RESOURCE_GROUP" --name "$SQL_SERVER_NAME" --query "fullyQualifiedDomainName" -o tsv | tr -d '\r')
