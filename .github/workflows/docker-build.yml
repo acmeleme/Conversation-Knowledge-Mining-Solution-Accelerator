@@ -29,8 +29,19 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Check if ACR credentials are configured
+        id: acr_check
+        run: |
+          if [[ -n "${{ secrets.ACR_USERNAME }}" && -n "${{ secrets.ACR_LOGIN_SERVER }}" ]]; then
+            echo "configured=true" >> $GITHUB_OUTPUT
+            echo "✅ ACR credentials found — build + push mode"
+          else
+            echo "configured=false" >> $GITHUB_OUTPUT
+            echo "⚠️ ACR secrets not configured — build-only mode (skipping login and push)"
+          fi
+
       - name: Log in to Azure Container Registry
-        if: ${{ (github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'dev' || github.ref_name == 'demo')) || (github.event_name == 'workflow_dispatch' && (github.ref_name == 'dependabotchanges'||github.ref_name == 'main' || github.ref_name == 'dev' || github.ref_name == 'demo')) }}
+        if: ${{ steps.acr_check.outputs.configured == 'true' && ((github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'dev' || github.ref_name == 'demo')) || (github.event_name == 'workflow_dispatch' && (github.ref_name == 'dependabotchanges'||github.ref_name == 'main' || github.ref_name == 'dev' || github.ref_name == 'demo'))) }}
         uses: azure/docker-login@v2 
         with:
           login-server: ${{ secrets.ACR_LOGIN_SERVER }}
@@ -65,7 +76,7 @@ jobs:
         with:
           context: ./src/App
           file: ./src/App/WebApp.Dockerfile
-          push: ${{ github.ref_name == 'main' || github.ref_name == 'dev' || github.ref_name == 'demo'  || github.ref_name == 'dependabotchanges'  }}
+          push: ${{ steps.acr_check.outputs.configured == 'true' && (github.ref_name == 'main' || github.ref_name == 'dev' || github.ref_name == 'demo' || github.ref_name == 'dependabotchanges') }}
           tags: |
             ${{ secrets.ACR_LOGIN_SERVER || 'acrlogin.azurecr.io' }}/km-app:${{ steps.determine_tag.outputs.tagname }}
             ${{ secrets.ACR_LOGIN_SERVER || 'acrlogin.azurecr.io' }}/km-app:${{ steps.determine_tag.outputs.tagname }}_${{ steps.date.outputs.date }}_${{ github.run_number }}
@@ -75,7 +86,7 @@ jobs:
         with:
           context: ./src/api
           file: ./src/api/ApiApp.Dockerfile
-          push: ${{ github.ref_name == 'main' || github.ref_name == 'dev' || github.ref_name == 'demo'  || github.ref_name == 'dependabotchanges' }}
+          push: ${{ steps.acr_check.outputs.configured == 'true' && (github.ref_name == 'main' || github.ref_name == 'dev' || github.ref_name == 'demo' || github.ref_name == 'dependabotchanges') }}
           tags: |
             ${{ secrets.ACR_LOGIN_SERVER || 'acrlogin.azurecr.io' }}/km-api:${{ steps.determine_tag.outputs.tagname }}
             ${{ secrets.ACR_LOGIN_SERVER || 'acrlogin.azurecr.io' }}/km-api:${{ steps.determine_tag.outputs.tagname }}_${{ steps.date.outputs.date }}_${{ github.run_number }}
