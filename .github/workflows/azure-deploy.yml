@@ -34,7 +34,7 @@ on:
 
 env:
   AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-  RESOURCE_GROUP: ${{ github.event.inputs.resource_group || 'rg-ckmsa' }}
+  RESOURCE_GROUP: ${{ github.event.inputs.resource_group || 'rg-callcenter-100' }}
   LOCATION: 'eastus2'
   DEPLOYMENT_MODE: ${{ github.event.inputs.deployment_mode || 'application-only' }}
 

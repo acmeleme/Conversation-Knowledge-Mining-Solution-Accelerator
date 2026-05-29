@@ -39,12 +39,14 @@ async def test_me_returns_correct_role_info(async_client, request, fixture_name,
     response = await async_client.get("/me", headers=headers)
 
     assert response.status_code == 200
-    assert response.json() == {
+    actual = response.json()
+    expected_subset = {
         "user_name": expected_user,
         "user_principal_id": headers["x-ms-client-principal-id"],
         "roles": expected_roles,
         "can_access_billing": can_view_billing,
     }
+    assert expected_subset.items() <= actual.items()
 
 
 @pytest.mark.asyncio

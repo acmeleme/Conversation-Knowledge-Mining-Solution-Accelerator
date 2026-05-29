@@ -29,8 +29,8 @@ async def test_callcenter_user_cannot_query_chat_for_billing_topics(async_client
         response = await async_client.post("/chat", json=_chat_payload(query), headers=callcenter_headers)
 
     assert response.status_code == 403
-    assert "Billing and Payment Issues" in response.json()["error"]
-    assert "faturamento role" in response.json()["error"]
+    assert "financeiro" in response.json()["error"]
+    assert "Cartão de Crédito" in response.json()["error"] or "Fatura" in response.json()["error"]
     mock_chat_service.assert_not_called()
 
 

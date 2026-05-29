@@ -14,21 +14,33 @@ import atexit
 
 @pytest.fixture(scope="session")
 def login_logout():
-    # perform login and browser close once in a session
+    load_dotenv()
+    headless = os.getenv("PLAYWRIGHT_HEADLESS", "false").lower() == "true"
+    storage_state_path = os.getenv("PLAYWRIGHT_STORAGE_STATE", "")
+
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False, args=["--start-maximized"])
-        context = browser.new_context(no_viewport=True)
+        launch_args = [] if headless else ["--start-maximized"]
+        browser = p.chromium.launch(headless=headless, args=launch_args)
+
+        if storage_state_path and os.path.exists(storage_state_path):
+            # CI mode: reuse saved auth state (cookies + localStorage)
+            context = browser.new_context(
+                no_viewport=None,
+                storage_state=storage_state_path,
+            )
+        else:
+            # Interactive mode: open browser and wait for manual Entra ID login
+            context = browser.new_context(no_viewport=True)
+
         context.set_default_timeout(150000)
         page = context.new_page()
-        # Navigate to the login URL
         page.goto(URL, wait_until="domcontentloaded")
-        # Wait for the login form to appear
-        page.wait_for_timeout(60000)
-        #page.wait_for_load_state('networkidle')
 
+        if not (storage_state_path and os.path.exists(storage_state_path)):
+            wait_ms = int(os.getenv("PLAYWRIGHT_LOGIN_WAIT_MS", "60000"))
+            page.wait_for_timeout(wait_ms)
 
         yield page
-        # perform close the browser
         browser.close()
 
 log_streams = {}
