@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import "./LoginPage.css";
 
-export type DemoRole = "financeiro" | "operador" | "callcenter";
+export type UserRole = "financeiro" | "operador";
 
 interface RoleCard {
-  role: DemoRole;
+  role: UserRole;
   user: string;
   label: string;
   description: string;
@@ -38,11 +38,11 @@ const ROLES: RoleCard[] = [
 ];
 
 interface LoginPageProps {
-  onLogin: (role: DemoRole, userName: string) => void;
+  onLogin: (role: UserRole, userName: string) => void;
 }
 
 const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
-  const [selected, setSelected] = useState<DemoRole | null>(null);
+  const [selected, setSelected] = useState<UserRole | null>(null);
 
   const handleLogin = () => {
     if (!selected) return;

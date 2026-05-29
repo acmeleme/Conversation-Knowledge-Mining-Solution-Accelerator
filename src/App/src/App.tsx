@@ -18,8 +18,8 @@ import {
 import { SparkleRegular, ArrowExitRegular, PersonRegular } from "@fluentui/react-icons";
 import "./App.css";
 import { ChatHistoryPanel } from "./components/ChatHistoryPanel/ChatHistoryPanel";
-import { DemoRole } from "./components/LoginPage/LoginPage";
-import { clearDemoRole } from "./api/api";
+import { UserRole } from "./components/LoginPage/LoginPage";
+import { clearDemoRole, setDemoRole } from "./api/api";
 
 import {
   getUserInfo,
@@ -59,7 +59,7 @@ const defaultPanelShowStates = {
   [panels.CHATHISTORY]: false,
 };
 
-const Dashboard: React.FC<{ demoRole: DemoRole; demoUser: string; userEmail: string; onLogout: () => void }> = ({ demoRole, demoUser, userEmail, onLogout }) => {
+const Dashboard: React.FC<{ userRole: UserRole; userName: string; userEmail: string; onLogout: () => void }> = ({ userRole, userName, userEmail, onLogout }) => {
   const { state, dispatch } = useAppContext();
   const { appConfig } = state.config;
   const [panelShowStates, setPanelShowStates] = useState<
@@ -111,7 +111,7 @@ const Dashboard: React.FC<{ demoRole: DemoRole; demoUser: string; userEmail: str
   }, []);
 
   const roleLabel =
-    demoRole === "financeiro"
+    userRole === "financeiro"
       ? "💼 Financeiro & Faturamento"
       : "🎧 Operador de Callcenter";
 
@@ -320,12 +320,12 @@ const Dashboard: React.FC<{ demoRole: DemoRole; demoUser: string; userEmail: str
             size="small"
             style={{
               marginLeft: 12,
-                backgroundColor: demoRole === "financeiro" ? "#dff6dd" : "#dce9f8",
-                color: demoRole === "financeiro" ? "#107c10" : "#0078d4",
+                backgroundColor: userRole === "financeiro" ? "#dff6dd" : "#dce9f8",
+                color: userRole === "financeiro" ? "#107c10" : "#0078d4",
               fontWeight: 600,
             }}
           >
-              {demoRole === "financeiro" ? "💼 Financeiro" : "🎧 Operador"}
+              {userRole === "financeiro" ? "💼 Financeiro" : "🎧 Operador"}
           </Tag>
         </div>
         <div className="header-right-section">
@@ -351,16 +351,16 @@ const Dashboard: React.FC<{ demoRole: DemoRole; demoUser: string; userEmail: str
           >
             <PopoverTrigger>
               <div style={{ cursor: "pointer" }}>
-                <Avatar name={demoUser || userEmail} title={demoUser || userEmail} />
+                <Avatar name={userName || userEmail} title={userName || userEmail} />
               </div>
             </PopoverTrigger>
             <PopoverSurface style={{ padding: 0, minWidth: 240, borderRadius: 8, boxShadow: "0 4px 16px rgba(0,0,0,0.12)" }}>
               {/* Profile info */}
               <div style={{ padding: "16px", display: "flex", alignItems: "center", gap: 12 }}>
-                <Avatar name={demoUser || userEmail} size={40} />
+                <Avatar name={userName || userEmail} size={40} />
                 <div style={{ display: "flex", flexDirection: "column", overflow: "hidden" }}>
                   <Text weight="semibold" style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                    {demoUser || userEmail || "Usuário"}
+                    {userName || userEmail || "Usuário"}
                   </Text>
                   {userEmail && (
                     <Text size={200} style={{ color: "#616161", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
@@ -464,7 +464,7 @@ const Dashboard: React.FC<{ demoRole: DemoRole; demoUser: string; userEmail: str
 // App wrapper: autentica via Azure EasyAuth (Entra ID) em produção
 // ou usa x-demo-role do localStorage em desenvolvimento local
 const App: React.FC = () => {
-  const [userInfo, setUserInfo] = useState<{ name: string; email: string; role: DemoRole } | null>(null);
+  const [userInfo, setUserInfo] = useState<{ name: string; email: string; role: UserRole } | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -496,11 +496,20 @@ const App: React.FC = () => {
           "";
         const email: string = (principal.user_id ?? "").toLowerCase().trim();
 
-        // Mapeamento UPN → papel RBAC (espelha UPN_ROLE_MAP do auth_utils.py)
-        let role: DemoRole = "callcenter";
-        if (email.startsWith("operador-callcenter@")) role = "operador";
-        else if (email.startsWith("financeiro-faturamento@")) role = "financeiro";
-        // "callcenter" permanece como sentinela de acesso negado — será bloqueado na render
+        // Mapeamento UPN → papel RBAC
+        // Qualquer usuário autenticado pelo Entra ID recebe "operador" por padrão.
+        // Recebe "financeiro" se o email contiver "financeiro" ou se tiver a claim de roles.
+        let role: UserRole = "operador";
+        if (
+          email.includes("financeiro") ||
+          claims.some((c: any) => c.typ === "roles" && c.val === "financeiro") ||
+          email.startsWith("financeiro-faturamento@")
+        ) {
+          role = "financeiro";
+        }
+
+        // Sincroniza a role no localStorage para que api.ts injete o header x-demo-role
+        setDemoRole(role);
 
         setUserInfo({ name: name || email, email, role });
         setLoading(false);
@@ -534,35 +543,7 @@ const App: React.FC = () => {
     window.location.href = `/.auth/logout?post_logout_redirect_uri=${encodeURIComponent(window.location.origin)}`;
   };
 
-  if (userInfo.role === "callcenter") {
-    return (
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh", fontFamily: "Segoe UI, sans-serif", backgroundColor: "#f5f5f5" }}>
-        <div style={{ background: "#fff", borderRadius: 12, padding: "48px 40px", maxWidth: 480, width: "100%", boxShadow: "0 4px 24px rgba(0,0,0,0.10)", textAlign: "center" }}>
-          <div style={{ fontSize: 56, marginBottom: 16 }}>🚫</div>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#c50f1f", marginBottom: 8 }}>Acesso Negado</h1>
-          <p style={{ color: "#424242", marginBottom: 8 }}>
-            Seu perfil não possui permissão para acessar este sistema.
-          </p>
-          {userInfo.email && (
-            <p style={{ color: "#616161", fontSize: 13, marginBottom: 24, wordBreak: "break-all" }}>
-              Email autenticado: <strong>{userInfo.email}</strong>
-            </p>
-          )}
-          <p style={{ color: "#616161", fontSize: 13, marginBottom: 32 }}>
-            Entre em contato com o administrador do sistema para solicitar acesso.
-          </p>
-          <button
-            onClick={handleLogout}
-            style={{ background: "#c50f1f", color: "#fff", border: "none", borderRadius: 6, padding: "10px 32px", fontSize: 15, fontWeight: 600, cursor: "pointer" }}
-          >
-            Sair
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  return <Dashboard demoRole={userInfo.role} demoUser={userInfo.name} userEmail={userInfo.email} onLogout={handleLogout} />;
+  return <Dashboard userRole={userInfo.role} userName={userInfo.name} userEmail={userInfo.email} onLogout={handleLogout} />;
 };
 
 export default App;

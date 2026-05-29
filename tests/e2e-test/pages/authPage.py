@@ -105,6 +105,9 @@ class AuthPage(BasePage):
                 continue
             if any(role_label in line for role_label in self.ROLE_LABEL_PARTS):
                 continue
+            # Skip avatar initials rendered by the Avatar component (e.g. "RL", "RLM")
+            if len(line) <= 4 and line.replace(" ", "").isupper():
+                continue
             return line
 
         return ""

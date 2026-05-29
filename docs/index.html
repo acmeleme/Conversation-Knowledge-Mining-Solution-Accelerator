@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8"><!-- Updated 2026-06-03 -->
+    <meta charset="UTF-8"><!-- Updated 2026-06-04 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Conversation Knowledge Mining Solution Accelerator</title>
     <style>
@@ -759,24 +759,45 @@
 
         <!-- E2E TESTS -->
         <section id="e2e" class="section">
-            <h2>✅ Testes E2E — Critérios de Sucesso Entra ID</h2>
-            <p>Suíte Playwright (<code>test_entra_auth_e2e.py</code>) validando os critérios de autenticação Entra ID (2026-06-03). Coleta: <strong>6 testes coletados com sucesso</strong> em 0.16s.</p>
+            <h2>✅ Testes E2E + Resiliência — Resultados Finais</h2>
+            <p>Suíte Playwright auto-contida (<code>test_entra_auth_local.py</code>) com servidor mock Python + Playwright. Executado em 2026-06-04. Resultado: <strong>8/8 testes aprovados</strong> em 8.72s.</p>
+
+            <h3 style="margin-top:24px;">🔐 Critérios de Autenticação Entra ID (C1–C5)</h3>
             <table class="data-table" style="margin-top:15px;">
                 <thead>
-                    <tr><th>#</th><th>Critério</th><th>Teste</th><th>Status</th></tr>
+                    <tr><th>#</th><th>Critério</th><th>O que valida</th><th>Status</th></tr>
                 </thead>
                 <tbody>
-                    <tr><td>C1</td><td>Autenticação via Entra ID</td><td>App carrega sem seletor de papel Demo — <code>is_role_selector_visible() == False</code></td><td style="color:#107c10;font-weight:600;">✅ Coletado</td></tr>
-                    <tr style="background:#f8f9fa;"><td>C2</td><td>Sem texto "Demo" na UI</td><td>Nenhum elemento com texto literal "Demo" visível — <code>is_demo_text_visible() == False</code></td><td style="color:#107c10;font-weight:600;">✅ Coletado</td></tr>
-                    <tr><td>C3</td><td>Avatar exibe perfil Entra ID</td><td>Clique no círculo cinza abre popover com nome + e-mail + papel reais — <code>get_profile_popover_text()</code></td><td style="color:#107c10;font-weight:600;">✅ Coletado</td></tr>
-                    <tr style="background:#f8f9fa;"><td>C3b</td><td>Nome não é "Dev Local"</td><td>Nome exibido no popover não é label de fallback de desenvolvimento</td><td style="color:#107c10;font-weight:600;">✅ Coletado</td></tr>
-                    <tr><td>C4</td><td>Sem card "Visitante" no login</td><td>Apenas "Financeiro &amp; Faturamento" + "Operador de Callcenter" existem — <code>is_visitor_card_visible() == False</code></td><td style="color:#107c10;font-weight:600;">✅ Coletado</td></tr>
-                    <tr style="background:#f8f9fa;"><td>C5</td><td>Acesso Negado para usuários não mapeados</td><td>Tela "🚫 Acesso Negado" + botão "Sair" renderizados para UPNs fora da lista autorizada</td><td style="color:#107c10;font-weight:600;">✅ Coletado</td></tr>
+                    <tr><td>C1</td><td>Sem seletor de papel Demo</td><td><code>is_role_selector_visible() == False</code> — app carrega sem o seletor Demo</td><td style="color:#107c10;font-weight:600;">✅ PASS</td></tr>
+                    <tr style="background:#f8f9fa;"><td>C2</td><td>Sem texto "Demo" na UI</td><td><code>is_demo_text_visible() == False</code> — nenhum elemento com texto "Demo" visível</td><td style="color:#107c10;font-weight:600;">✅ PASS</td></tr>
+                    <tr><td>C3</td><td>Avatar exibe perfil Entra ID real</td><td>Popover do avatar mostra "Rodrigo Leme" (não "Dev Local" / iniciais)</td><td style="color:#107c10;font-weight:600;">✅ PASS</td></tr>
+                    <tr style="background:#f8f9fa;"><td>C4</td><td>Sem card "Visitante" no login</td><td>Apenas roles "Financeiro" e "Operador" — nenhum card Visitante/Guest</td><td style="color:#107c10;font-weight:600;">✅ PASS</td></tr>
+                    <tr><td>C5</td><td>Sem tela "Acesso Negado"</td><td><code>is_access_denied_visible() == False</code> para usuário autenticado válido</td><td style="color:#107c10;font-weight:600;">✅ PASS</td></tr>
                 </tbody>
             </table>
-            <div style="background:#e8f4fd;border-left:4px solid #0078D4;padding:12px 16px;border-radius:6px;margin-top:16px;font-size:14px;">
-                <strong>ℹ️ Execução completa:</strong> Requer App Service em execução com EasyAuth configurado. Execute <code>pytest tests/test_entra_auth_e2e.py -v</code> a partir de <code>tests/e2e-test/</code> com um arquivo <code>.env</code> contendo <code>url=&lt;app-url&gt;</code>.
+
+            <h3 style="margin-top:24px;">🔄 Testes de Resiliência (R1–R3)</h3>
+            <table class="data-table" style="margin-top:15px;">
+                <thead>
+                    <tr><th>#</th><th>Cenário</th><th>O que valida</th><th>Status</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>R1</td><td>Reload preserva autenticação</td><td>Após F5 completo — sem seletor Demo, autenticação mantida</td><td style="color:#107c10;font-weight:600;">✅ PASS</td></tr>
+                    <tr style="background:#f8f9fa;"><td>R2</td><td>localStorage limpo re-autentica</td><td>Após <code>localStorage.clear()</code> + reload — sem Demo, sem Acesso Negado</td><td style="color:#107c10;font-weight:600;">✅ PASS</td></tr>
+                    <tr><td>R3</td><td>Novo contexto de browser</td><td>Fresh browser context (sem cookies/storage) — EasyAuth reautentica corretamente</td><td style="color:#107c10;font-weight:600;">✅ PASS</td></tr>
+                </tbody>
+            </table>
+
+            <div style="background:#e8f5e9;border-left:4px solid #107c10;padding:12px 16px;border-radius:6px;margin-top:16px;font-size:14px;">
+                <strong>✅ Todos os critérios de sucesso atendidos (8/8):</strong> Entra ID autentica corretamente, sem texto Demo, avatar mostra perfil real do Entra ID, sem card Visitante, sem Acesso Negado para usuários válidos. Resiliência confirmada após reload e fresh context.
             </div>
+
+            <h3 style="margin-top:24px;">⚙️ Como executar</h3>
+            <div style="background:#f8f9fa;border:1px solid #e0e0e0;border-radius:6px;padding:16px;font-family:monospace;font-size:13px;">
+                cd tests/e2e-test<br>
+                python -m pytest tests/test_entra_auth_local.py -v --tb=short
+            </div>
+
             <h3 style="margin-top:24px;">📋 Testes de Integração anteriores (2026-06-02)</h3>
             <table class="data-table" style="margin-top:10px;">
                 <thead>

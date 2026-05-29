@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/static/css/main.7dab1982.css",
+    "main.js": "/static/js/main.d932388c.js",
+    "static/js/488.9ee3404b.chunk.js": "/static/js/488.9ee3404b.chunk.js",
+    "static/media/financeirax01_logo.png": "/static/media/financeirax01_logo.0dd6749ab16bcfe9a40f.png",
+    "index.html": "/index.html",
+    "main.7dab1982.css.map": "/static/css/main.7dab1982.css.map",
+    "main.d932388c.js.map": "/static/js/main.d932388c.js.map",
+    "488.9ee3404b.chunk.js.map": "/static/js/488.9ee3404b.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.7dab1982.css",
+    "static/js/main.d932388c.js"
+  ]
+}
