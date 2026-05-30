@@ -6,9 +6,7 @@
     },
     "redirectUris": [
       "https://api-financeirax01.azurewebsites.net/.auth/login/aad/callback",
-      "https://app-financeirax01.azurewebsites.net/.auth/login/aad/callback",
-      "https://api-financeira01.azurewebsites.net/.auth/login/aad/callback",
-      "https://app-financeira01.azurewebsites.net/.auth/login/aad/callback"
+      "https://app-financeirax01.azurewebsites.net/.auth/login/aad/callback"
     ]
   },
   "signInAudience": "AzureADMyOrg",
