@@ -1,4 +1,5 @@
 import asyncio
+import base64
 import json
 import logging
 import math
@@ -103,6 +104,60 @@ def _build_user_info(request: Request) -> UserInfo:
         tenant_id=tenant_id,
         memory_scope=memory_scope,
     )
+
+
+def _decode_jwt_payload(token: str) -> dict:
+    """Decode the payload segment of a JWT without verifying the signature."""
+    try:
+        parts = token.split(".")
+        if len(parts) < 2:
+            return {}
+        payload = parts[1]
+        # Restore base64 padding
+        padding = 4 - len(payload) % 4
+        if padding != 4:
+            payload += "=" * padding
+        payload = payload.replace("-", "+").replace("_", "/")
+        return json.loads(base64.b64decode(payload).decode("utf-8", errors="replace"))
+    except Exception:
+        return {}
+
+
+def _first_email(*values: str | None) -> str:
+    """Return the first value that looks like an email address (contains '@')."""
+    for v in values:
+        if v and isinstance(v, str) and "@" in v:
+            return v
+    return ""
+
+
+@router.get("/me")
+async def get_me(request: Request):
+    """Return authenticated user email and name extracted from the raw AAD ID token.
+
+    Azure Easy Auth forwards the raw ID token via the X-MS-TOKEN-AAD-ID-TOKEN header
+    to the backend. This header contains the full JWT with claims (unique_name, email,
+    preferred_username) that Easy Auth strips from the /.auth/me response seen by the
+    frontend. This endpoint decodes those claims and exposes them to the React app.
+    """
+    headers = request.headers
+    raw_id_token = headers.get("x-ms-token-aad-id-token", "")
+    payload = _decode_jwt_payload(raw_id_token) if raw_id_token else {}
+
+    email = _first_email(
+        payload.get("preferred_username"),
+        payload.get("email"),
+        payload.get("unique_name"),
+        payload.get("upn"),
+        payload.get("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn"),
+        payload.get("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"),
+        # Fallback: x-ms-client-principal-name may be the UPN in some Easy Auth configs
+        headers.get("x-ms-client-principal-name", ""),
+    )
+    name = payload.get("name") or payload.get("given_name") or ""
+
+    logger.info("[/api/me] email=%s name=%s (token_present=%s)", email or "(none)", name or "(none)", bool(raw_id_token))
+    return JSONResponse(content={"email": email, "name": name})
 
 
 @router.get("/fetchChartData")

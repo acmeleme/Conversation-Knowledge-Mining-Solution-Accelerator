@@ -113,6 +113,24 @@ echo "Restarting App Services..."
 az webapp restart --resource-group "$RESOURCE_GROUP" --name "$APP_NAME" >/dev/null
 az webapp restart --resource-group "$RESOURCE_GROUP" --name "$API_NAME" >/dev/null
 
+# Update Easy Auth on the frontend App Service to use AAD v2.0 tokens and request the
+# 'email' scope. This ensures the email claim appears in /.auth/me user_claims so the
+# React app can read it directly without needing the backend /api/me fallback.
+# Effect is immediate — existing sessions will be revalidated on next request.
+echo "Configuring Easy Auth email scope on ${APP_NAME}..."
+TENANT_ID="$(az account show --query tenantId -o tsv 2>/dev/null || true)"
+if [ -n "$TENANT_ID" ]; then
+  az webapp auth microsoft update \
+    --resource-group "$RESOURCE_GROUP" \
+    --name "$APP_NAME" \
+    --issuer "https://login.microsoftonline.com/${TENANT_ID}/v2.0" \
+    --login-parameters "scope=openid profile email" \
+    --output none 2>/dev/null || \
+    echo "WARN: Could not update Easy Auth scope (non-fatal — /api/me fallback is active)"
+else
+  echo "WARN: Could not determine tenant ID — skipping Easy Auth scope update"
+fi
+
 echo "Application-only deployment completed."
 echo "Frontend URL: https://${APP_NAME}.azurewebsites.net"
 echo "API URL: https://${API_NAME}.azurewebsites.net"

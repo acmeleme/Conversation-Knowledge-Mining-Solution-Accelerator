@@ -550,9 +550,27 @@ const App: React.FC = () => {
         console.debug("[Auth] emailFromIdToken:", emailFromIdToken || "(none)");
         console.debug("[Auth] emailFromClaims:", emailFromClaims || "(none)");
 
+        // Fallback: call backend /api/me which decodes the raw AAD ID token
+        // (x-ms-token-aad-id-token header) — contains claims Easy Auth strips from /.auth/me
+        let emailFromBackend = "";
+        if (!emailFromIdToken && !emailFromClaims) {
+          try {
+            const apiBase = process.env.REACT_APP_API_BASE_URL || "";
+            const meResp = await fetch(`${apiBase}/api/me`, { credentials: "include" });
+            if (meResp.ok) {
+              const meData = await meResp.json();
+              emailFromBackend = asEmail(meData.email) || "";
+            }
+          } catch {
+            // silent — backend may be unreachable
+          }
+          console.debug("[Auth] emailFromBackend:", emailFromBackend || "(none)");
+        }
+
         const email: string = (
           emailFromIdToken ||
           emailFromClaims ||
+          emailFromBackend ||
           principal.user_id ||
           ""
         ).toLowerCase().trim();
