@@ -549,8 +549,7 @@ const App: React.FC = () => {
         ).toLowerCase().trim();
 
         // Extrai nome de exibição — prefere display name do id_token, depois user_claims
-        const rawName: string =
-          idToken.name ||
+        const rawNameFromClaims: string =
           findClaim(
             "name",
             "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name",
@@ -558,8 +557,8 @@ const App: React.FC = () => {
             "preferred_username",
             "email",
             "unique_name"
-          ) ??
-          principal.user_id ?? "";
+          ) ?? principal.user_id ?? "";
+        const rawName: string = idToken.name || rawNameFromClaims;
         // Se o nome for idêntico ao OID (GUID), usa o email em seu lugar
         const isGuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(rawName);
         const name: string = isGuid ? (email || rawName) : rawName;
