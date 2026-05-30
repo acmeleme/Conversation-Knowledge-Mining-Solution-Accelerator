@@ -492,9 +492,18 @@ const App: React.FC = () => {
         const claims: any[] = principal.user_claims ?? [];
         const name: string =
           claims.find((c: any) => c.typ === "name")?.val ??
+          claims.find((c: any) => c.typ === "preferred_username")?.val ??
           principal.user_id ??
           "";
-        const email: string = (principal.user_id ?? "").toLowerCase().trim();
+        // user_id no Easy Auth com AAD retorna o Object ID (GUID), nao o e-mail.
+        // O e-mail/UPN esta no claim preferred_username.
+        const email: string = (
+          claims.find((c: any) => c.typ === "preferred_username")?.val ??
+          claims.find((c: any) => c.typ === "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.val ??
+          claims.find((c: any) => c.typ === "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.val ??
+          principal.user_id ??
+          ""
+        ).toLowerCase().trim();
 
         // Mapeamento UPN → papel RBAC
         // Qualquer usuário autenticado pelo Entra ID recebe "operador" por padrão.
