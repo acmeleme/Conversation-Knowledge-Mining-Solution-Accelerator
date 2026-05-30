@@ -586,21 +586,19 @@ const App: React.FC = () => {
             "unique_name"
           ) ?? principal.user_id ?? "";
         const rawName: string = idToken.name || rawNameFromClaims;
-        // Se o nome for idêntico ao OID (GUID), usa o email em seu lugar
-        const isGuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(rawName);
-        const name: string = isGuid ? (email || rawName) : rawName;
 
-        // Mapeamento UPN → papel RBAC
-        // Qualquer usuário autenticado pelo Entra ID recebe "operador" por padrão.
-        // Recebe "financeiro" se o email contiver "financeiro" ou se tiver a claim de roles.
-        let role: UserRole = "operador";
-        if (
-          email.includes("financeiro") ||
-          claims.some((c: any) => c.typ === "roles" && c.val === "financeiro") ||
-          email.startsWith("financeiro-faturamento@")
-        ) {
-          role = "financeiro";
-        }
+        // Mapeamento simples: usa qualquer identificador disponível (rawName, email)
+        // para determinar o nome amigável e o papel RBAC.
+        // rawName = claim "name" do Easy Auth, e.g. "Operador Call Center" ou "Financeiro Faturamento"
+        // email = UPN quando extraído com sucesso, e.g. "financeiro-faturamento@..."
+        const identifier = (rawName + " " + email).toLowerCase();
+        const isFaturamento =
+          identifier.includes("financeiro") ||
+          identifier.includes("faturamento") ||
+          claims.some((c: any) => c.typ === "roles" && c.val === "financeiro");
+
+        const name: string = isFaturamento ? "Financeiro" : "Operador";
+        let role: UserRole = isFaturamento ? "financeiro" : "operador";
 
         // Sincroniza a role no localStorage para que api.ts injete o header x-demo-role
         setDemoRole(role);
