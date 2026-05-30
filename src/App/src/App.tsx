@@ -490,20 +490,48 @@ const App: React.FC = () => {
         }
         // Azure Easy Auth retorna snake_case: user_id, user_claims
         const claims: any[] = principal.user_claims ?? [];
-        const name: string =
-          claims.find((c: any) => c.typ === "name")?.val ??
-          claims.find((c: any) => c.typ === "preferred_username")?.val ??
-          principal.user_id ??
-          "";
-        // user_id no Easy Auth com AAD retorna o Object ID (GUID), nao o e-mail.
-        // O e-mail/UPN esta no claim preferred_username.
+
+        // Log para diagnosticar quais claims o Easy Auth está retornando neste tenant
+        console.debug("[Auth] /.auth/me claims:", claims.map((c: any) => `${c.typ}=${c.val}`));
+
+        // Extrai email/UPN — tenta todos os claim types conhecidos do AAD v1 e v2.
+        // AAD v1.0: unique_name, upn, emailaddress (WS-Fed long URIs)
+        // AAD v2.0: preferred_username, email (curtos/OIDC)
+        const findClaim = (...types: string[]) =>
+          types.reduce<string | undefined>(
+            (found, t) => found ?? claims.find((c: any) => c.typ === t)?.val,
+            undefined
+          );
+
         const email: string = (
-          claims.find((c: any) => c.typ === "preferred_username")?.val ??
-          claims.find((c: any) => c.typ === "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.val ??
-          claims.find((c: any) => c.typ === "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.val ??
+          findClaim(
+            "preferred_username",
+            "email",
+            "unique_name",
+            "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn",
+            "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress",
+            "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name",
+            "http://schemas.microsoft.com/identity/claims/preferred_username"
+          ) ??
+          // Último recurso: procura qualquer claim cujo valor contenha '@' (email-like)
+          claims.find((c: any) => typeof c.val === "string" && c.val.includes("@"))?.val ??
           principal.user_id ??
           ""
         ).toLowerCase().trim();
+
+        // Extrai nome de exibição — prefere display name, mas usa email se nome for o GUID/OID
+        const rawName: string =
+          findClaim(
+            "name",
+            "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name",
+            "http://schemas.microsoft.com/identity/claims/displayname",
+            "preferred_username",
+            "email",
+            "unique_name"
+          ) ?? principal.user_id ?? "";
+        // Se o nome for idêntico ao OID (GUID), usa o email em seu lugar
+        const isGuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(rawName);
+        const name: string = isGuid ? (email || rawName) : rawName;
 
         // Mapeamento UPN → papel RBAC
         // Qualquer usuário autenticado pelo Entra ID recebe "operador" por padrão.
