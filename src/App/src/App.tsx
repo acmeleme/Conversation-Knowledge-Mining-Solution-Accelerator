@@ -510,15 +510,21 @@ const App: React.FC = () => {
         // Log para diagnóstico — visível no DevTools Console
         console.debug("[Auth] id_token payload:", idToken);
         console.debug("[Auth] user_claims:", claims.map((c: any) => `${c.typ}=${c.val}`));
+        console.debug("[Auth] principal keys:", Object.keys(principal));
+
+        // Valida se um valor parece um endereço de e-mail (contém '@')
+        const asEmail = (v: unknown): string =>
+          typeof v === "string" && v.includes("@") ? v : "";
 
         // Extrai email/UPN — tenta primeiro o id_token (fonte mais confiável),
         // depois os user_claims com todos os claim types conhecidos do AAD v1/v2.
+        // IMPORTANTE: valida que o valor contém '@' para evitar GUIDs / OIDs.
         const emailFromIdToken: string =
-          idToken.preferred_username ||
-          idToken.email ||
-          idToken.unique_name ||
-          idToken.upn ||
-          idToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn"] ||
+          asEmail(idToken.preferred_username) ||
+          asEmail(idToken.email) ||
+          asEmail(idToken.unique_name) ||
+          asEmail(idToken.upn) ||
+          asEmail(idToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn"]) ||
           "";
 
         const findClaim = (...types: string[]) =>
@@ -527,8 +533,9 @@ const App: React.FC = () => {
             undefined
           );
 
+        // Também aplica validação '@' nas claims do user_claims
         const emailFromClaims: string =
-          findClaim(
+          asEmail(findClaim(
             "preferred_username",
             "email",
             "unique_name",
@@ -536,10 +543,12 @@ const App: React.FC = () => {
             "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress",
             "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name",
             "http://schemas.microsoft.com/identity/claims/preferred_username"
-          ) ??
+          )) ||
           // Último recurso: qualquer claim com '@' no valor (email-like)
-          claims.find((c: any) => typeof c.val === "string" && c.val.includes("@"))?.val ??
-          "";
+          (claims.find((c: any) => typeof c.val === "string" && c.val.includes("@"))?.val ?? "");
+
+        console.debug("[Auth] emailFromIdToken:", emailFromIdToken || "(none)");
+        console.debug("[Auth] emailFromClaims:", emailFromClaims || "(none)");
 
         const email: string = (
           emailFromIdToken ||
