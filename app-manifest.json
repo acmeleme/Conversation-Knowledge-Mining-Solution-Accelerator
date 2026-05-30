@@ -1,0 +1,38 @@
+{
+  "web": {
+    "implicitGrantSettings": {
+      "enableAccessTokenIssuance": false,
+      "enableIdTokenIssuance": true
+    },
+    "redirectUris": [
+      "https://api-financeirax01.azurewebsites.net/.auth/login/aad/callback",
+      "https://app-financeirax01.azurewebsites.net/.auth/login/aad/callback",
+      "https://api-financeira01.azurewebsites.net/.auth/login/aad/callback",
+      "https://app-financeira01.azurewebsites.net/.auth/login/aad/callback"
+    ]
+  },
+  "signInAudience": "AzureADMyOrg",
+  "displayName": "FinanceiraX-CallCenter",
+  "appRoles": [
+    {
+      "allowedMemberTypes": [
+        "User"
+      ],
+      "displayName": "Operador Callcenter",
+      "description": "Operador de Callcenter - acesso a todos os topicos exceto Cartao de Credito",
+      "value": "operador",
+      "isEnabled": true,
+      "id": "c6e57751-503e-46d3-87e0-349c6621ec69"
+    },
+    {
+      "allowedMemberTypes": [
+        "User"
+      ],
+      "displayName": "Financeiro Faturamento",
+      "description": "Financeiro Faturamento - acesso completo incluindo Cartao de Credito",
+      "value": "financeiro",
+      "isEnabled": true,
+      "id": "98bb3730-30a0-473d-801c-bbd5cee67f03"
+    }
+  ]
+}
