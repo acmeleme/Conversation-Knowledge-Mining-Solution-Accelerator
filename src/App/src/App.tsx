@@ -488,22 +488,46 @@ const App: React.FC = () => {
           // Headers Easy Auth ausentes (ambiente local sem Easy Auth)
           throw new Error("/.auth/me: principal ou user_id ausente");
         }
-        // Azure Easy Auth retorna snake_case: user_id, user_claims
+        // Azure Easy Auth retorna snake_case: user_id, user_claims, id_token
         const claims: any[] = principal.user_claims ?? [];
 
-        // Log para diagnosticar quais claims o Easy Auth está retornando neste tenant
-        console.debug("[Auth] /.auth/me claims:", claims.map((c: any) => `${c.typ}=${c.val}`));
+        // Decodifica o payload do id_token JWT (sem verificar assinatura)
+        // para obter os claims diretamente do token AAD — mais confiável que user_claims
+        const decodeJwtPayload = (token: string | undefined): Record<string, any> => {
+          if (!token) return {};
+          try {
+            const [, payload] = token.split(".");
+            if (!payload) return {};
+            const padded = payload.replace(/-/g, "+").replace(/_/g, "/");
+            const decoded = atob(padded.padEnd(padded.length + (4 - (padded.length % 4)) % 4, "="));
+            return JSON.parse(decoded);
+          } catch {
+            return {};
+          }
+        };
+        const idToken = decodeJwtPayload(principal.id_token);
 
-        // Extrai email/UPN — tenta todos os claim types conhecidos do AAD v1 e v2.
-        // AAD v1.0: unique_name, upn, emailaddress (WS-Fed long URIs)
-        // AAD v2.0: preferred_username, email (curtos/OIDC)
+        // Log para diagnóstico — visível no DevTools Console
+        console.debug("[Auth] id_token payload:", idToken);
+        console.debug("[Auth] user_claims:", claims.map((c: any) => `${c.typ}=${c.val}`));
+
+        // Extrai email/UPN — tenta primeiro o id_token (fonte mais confiável),
+        // depois os user_claims com todos os claim types conhecidos do AAD v1/v2.
+        const emailFromIdToken: string =
+          idToken.preferred_username ||
+          idToken.email ||
+          idToken.unique_name ||
+          idToken.upn ||
+          idToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn"] ||
+          "";
+
         const findClaim = (...types: string[]) =>
           types.reduce<string | undefined>(
             (found, t) => found ?? claims.find((c: any) => c.typ === t)?.val,
             undefined
           );
 
-        const email: string = (
+        const emailFromClaims: string =
           findClaim(
             "preferred_username",
             "email",
@@ -513,14 +537,20 @@ const App: React.FC = () => {
             "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name",
             "http://schemas.microsoft.com/identity/claims/preferred_username"
           ) ??
-          // Último recurso: procura qualquer claim cujo valor contenha '@' (email-like)
+          // Último recurso: qualquer claim com '@' no valor (email-like)
           claims.find((c: any) => typeof c.val === "string" && c.val.includes("@"))?.val ??
-          principal.user_id ??
+          "";
+
+        const email: string = (
+          emailFromIdToken ||
+          emailFromClaims ||
+          principal.user_id ||
           ""
         ).toLowerCase().trim();
 
-        // Extrai nome de exibição — prefere display name, mas usa email se nome for o GUID/OID
+        // Extrai nome de exibição — prefere display name do id_token, depois user_claims
         const rawName: string =
+          idToken.name ||
           findClaim(
             "name",
             "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name",
@@ -528,7 +558,8 @@ const App: React.FC = () => {
             "preferred_username",
             "email",
             "unique_name"
-          ) ?? principal.user_id ?? "";
+          ) ??
+          principal.user_id ?? "";
         // Se o nome for idêntico ao OID (GUID), usa o email em seu lugar
         const isGuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(rawName);
         const name: string = isGuid ? (email || rawName) : rawName;
