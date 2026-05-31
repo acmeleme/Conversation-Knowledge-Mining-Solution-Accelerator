@@ -161,13 +161,16 @@ async def get_me(request: Request):
 
 
 @router.get("/fetchChartData")
-async def fetch_chart_data():
+async def fetch_chart_data(request: Request):
     try:
+        # Extract X-User-Id for APIM rate-limiting and audit logging (issue #40)
+        user_id_header = request.headers.get("X-User-Id", "anonymous")
+        logger.info("Request from user: %s (route=/fetchChartData)", user_id_header)
         chart_service = ChartService()
         response = await chart_service.fetch_chart_data()
         track_event_if_configured(
             "FetchChartDataSuccess",
-            {"status": "success", "source": "/fetchChartData"}
+            {"status": "success", "source": "/fetchChartData", "user_id": user_id_header}
         )
         return JSONResponse(content=response)
     except Exception as e:
@@ -250,6 +253,10 @@ async def conversation(request: Request):
         query = last_message.get("content") or ""
         roles = get_current_user_roles(request)
 
+        # Extract X-User-Id for APIM rate-limiting and audit logging (issue #40)
+        user_id_header = request.headers.get("X-User-Id", "anonymous")
+        logger.info("Request from user: %s (route=/chat, conversation_id=%s)", user_id_header, conversation_id)
+
         if _contains_billing_keywords(query) and not can_access_billing(roles):
             logger.warning(
                 "Denied billing chat access for user %s with roles %s and query %s",
@@ -268,7 +275,7 @@ async def conversation(request: Request):
         result = await chat_service.stream_chat_request(request_json, conversation_id, query)
         track_event_if_configured(
             "ChatStreamSuccess",
-            {"conversation_id": conversation_id, "query": query}
+            {"conversation_id": conversation_id, "query": query, "user_id": user_id_header}
         )
         return StreamingResponse(result, media_type="application/json-lines")
 

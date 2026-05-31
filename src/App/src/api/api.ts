@@ -16,6 +16,8 @@ const baseURL = process.env.REACT_APP_API_BASE_URL;// base API URL
 
 // Cached Easy Auth id_token used as Bearer for cross-domain API calls.
 let _cachedIdToken: string | null = null;
+// Cached Easy Auth user_id (UPN/email) forwarded as X-User-Id for APIM governance.
+let _cachedUserId: string | null = null;
 
 async function fetchFreshIdToken(): Promise<string | null> {
   try {
@@ -27,6 +29,9 @@ async function fetchFreshIdToken(): Promise<string | null> {
     // Prefer id_token; fall back to access_token if id_token absent
     const token = payload?.[0]?.id_token ?? payload?.[0]?.access_token ?? null;
     if (token) _cachedIdToken = token;
+    // Cache the user_id (UPN/email) for X-User-Id header propagation
+    const userId = payload?.[0]?.user_id ?? null;
+    if (userId) _cachedUserId = userId;
     return token;
   } catch {
     return null;
@@ -36,6 +41,13 @@ async function fetchFreshIdToken(): Promise<string | null> {
 async function getIdToken(): Promise<string | null> {
   if (_cachedIdToken) return _cachedIdToken;
   return fetchFreshIdToken();
+}
+
+async function getUserId(): Promise<string | null> {
+  if (_cachedUserId) return _cachedUserId;
+  // fetchFreshIdToken also populates _cachedUserId as a side-effect
+  await fetchFreshIdToken();
+  return _cachedUserId;
 }
 
 // ── Demo RBAC helpers ──────────────────────────────────────────────────────
@@ -56,8 +68,11 @@ export function clearDemoRole(): void {
 
 async function apiFetch(url: string, options: RequestInit = {}): Promise<Response> {
   const token = await getIdToken();
+  // Also fetch user_id for APIM rate-limiting and audit logging (issue #40)
+  const userId = await getUserId();
   const headers = new Headers(options.headers as HeadersInit);
   if (token) headers.set("Authorization", `Bearer ${token}`);
+  if (userId) headers.set("X-User-Id", userId);
 
   // Inject demo role header so the API enforces RBAC in demo mode
   const demoRole = getDemoRole();
@@ -68,10 +83,13 @@ async function apiFetch(url: string, options: RequestInit = {}): Promise<Respons
   // On 401, clear cached token and retry once with a refreshed token
   if (response.status === 401) {
     _cachedIdToken = null;
+    _cachedUserId = null;
     const freshToken = await fetchFreshIdToken();
     if (freshToken) {
       const retryHeaders = new Headers(options.headers as HeadersInit);
       retryHeaders.set("Authorization", `Bearer ${freshToken}`);
+      // Re-attach the (possibly refreshed) user ID on retry
+      if (_cachedUserId) retryHeaders.set("X-User-Id", _cachedUserId);
       if (demoRole) retryHeaders.set("x-demo-role", demoRole);
       return fetch(url, { ...options, headers: retryHeaders });
     }
