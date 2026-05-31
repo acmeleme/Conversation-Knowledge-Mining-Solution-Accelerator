@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8"><!-- Updated 2026-06-04 -->
+    <meta charset="UTF-8"><!-- Updated 2026-05-31 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Conversation Knowledge Mining Solution Accelerator</title>
     <style>
@@ -308,6 +308,7 @@
                 <a href="#login-ui">Login UI</a>
                 <a href="#e2e">E2E Tests</a>
                 <a href="#arquitetura">Arquitetura</a>
+                <a href="#ai-gateway">AI Gateway</a>
                 <a href="#recursos">Recursos</a>
             </nav>
         </div>
@@ -813,6 +814,229 @@
                 </tbody>
             </table>
             <p style="margin-top:15px;"><strong>URL da aplicação:</strong> <a href="https://app-financeirax01.azurewebsites.net" target="_blank">https://app-financeirax01.azurewebsites.net</a></p>
+        </section>
+
+        <section id="ai-gateway" class="section">
+            <h2>🔄 Azure AI Gateway — APIM Integration</h2>
+            <div class="card-grid">
+                <div class="card" style="border-top: 4px solid #0078D4;">
+                    <h3>Visão Geral</h3>
+                    <p>A solução utiliza o Azure API Management (APIM) como camada de AI Gateway entre a aplicação e os serviços Azure OpenAI / Azure AI Foundry Agent, entregando governança corporativa, observabilidade ponta a ponta e controle de custos sem alterar a experiência do frontend React e do backend FastAPI.</p>
+                    <div>
+                        <span class="badge">APIM</span>
+                        <span class="badge">Managed Identity</span>
+                        <span class="badge">Azure OpenAI</span>
+                        <span class="badge">AI Foundry Agent</span>
+                    </div>
+                </div>
+                <div class="card" style="background: linear-gradient(135deg, #E8F4FD 0%, #F8FBFF 100%); border: 1px solid #B9D7F2;">
+                    <h3>Escopo da Integração</h3>
+                    <ul class="feature-list">
+                        <li><strong>Frontend:</strong> React App Service <code>app-callcenter100</code></li>
+                        <li><strong>Backend:</strong> FastAPI App Service <code>api-callcenter100</code></li>
+                        <li><strong>Streaming:</strong> Chat policy preserva SSE com <code>buffer-request-body="false"</code></li>
+                        <li><strong>Governança:</strong> políticas de rate limit, cache, auditoria e compliance por fases</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>Roadmap de Implementação</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Fase</th>
+                        <th>Período</th>
+                        <th>Objetivo</th>
+                        <th>Status</th>
+                        <th>Issue</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Fase 1</strong></td>
+                        <td>Semanas 1-2</td>
+                        <td>APIM básico — proxy transparente com Managed Identity</td>
+                        <td>🚧 Em andamento</td>
+                        <td><a href="https://github.com/acmeleme/Conversation-Knowledge-Mining-Solution-Accelerator/issues/37" target="_blank" style="color:#0078D4;">#37</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Fase 2</strong></td>
+                        <td>Semanas 3-4</td>
+                        <td>Rate limiting, Azure Monitor dashboard, Application Insights</td>
+                        <td>📋 Planejada</td>
+                        <td><a href="https://github.com/acmeleme/Conversation-Knowledge-Mining-Solution-Accelerator/issues/40" target="_blank" style="color:#0078D4;">#40</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Fase 3</strong></td>
+                        <td>Semanas 5-6</td>
+                        <td>Semantic cache (Redis), load balancing multi-região</td>
+                        <td>📋 Planejada</td>
+                        <td><a href="https://github.com/acmeleme/Conversation-Knowledge-Mining-Solution-Accelerator/issues/38" target="_blank" style="color:#0078D4;">#38</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Fase 4</strong></td>
+                        <td>Semanas 7-8</td>
+                        <td>Content Safety, audit log LGPD/ISO 27001, Key Vault</td>
+                        <td>📋 Planejada</td>
+                        <td><a href="https://github.com/acmeleme/Conversation-Knowledge-Mining-Solution-Accelerator/issues/39" target="_blank" style="color:#0078D4;">#39</a></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Arquitetura de Referência</h3>
+            <div style="background: #0f172a; color: #E2E8F0; padding: 24px; border-radius: 8px; border: 1px solid #1E3A8A; overflow-x: auto; box-shadow: 0 4px 14px rgba(15, 23, 42, 0.18);">
+                <pre style="margin: 0; font-size: 13px; line-height: 1.5; font-family: Consolas, 'Courier New', monospace; white-space: pre;">┌─────────────────────────────────────────────────────────────────┐
+│                     Azure Subscription                          │
+│                                                                 │
+│  ┌──────────────┐    ┌─────────────────────────────────────┐   │
+│  │   Frontend   │    │     Azure API Management (APIM)     │   │
+│  │   React App  │───▶│  ┌─────────────┐ ┌──────────────┐  │   │
+│  │ app-callcenter│    │  │ Chat Policy │ │ Chart Policy │  │   │
+│  └──────────────┘    │  │ (streaming) │ │  (cacheable) │  │   │
+│                      │  └──────┬──────┘ └──────┬───────┘  │   │
+│  ┌──────────────┐    │         │                │          │   │
+│  │   Backend    │    │  Managed Identity Auth   │          │   │
+│  │   FastAPI    │───▶│         ▼                ▼          │   │
+│  │ api-callcenter│    └─────────────────────────────────────┘   │
+│  └──────────────┘              │                │               │
+│                                ▼                ▼               │
+│                    ┌──────────────┐  ┌──────────────────────┐  │
+│                    │  AI Foundry  │  │    Azure OpenAI       │  │
+│                    │   Agent      │  │  (chart generation)   │  │
+│                    │  (streaming) │  │   (non-streaming)     │  │
+│                    └──────────────┘  └──────────────────────┘  │
+│                                                                 │
+│              ┌──────────────────────────────────┐              │
+│              │      Observability Stack          │              │
+│              │  Application Insights │ Log Analyt│              │
+│              │  Azure Monitor Dashboa│ Event Hub │              │
+│              └──────────────────────────────────┘              │
+└─────────────────────────────────────────────────────────────────┘</pre>
+            </div>
+            <p style="margin-top: 14px;">O APIM centraliza políticas específicas para o endpoint de chat em streaming e para o endpoint de geração de gráficos cacheável, reduzindo acoplamento na aplicação e facilitando rollback por feature flag.</p>
+
+            <h3>Capacidades-Chave</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Capacidade</th>
+                        <th>Fase</th>
+                        <th>Descrição</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Feature Flag</strong></td>
+                        <td>1</td>
+                        <td><code>USE_APIM_GATEWAY=false</code> — rollback zero-deploy</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Managed Identity</strong></td>
+                        <td>1</td>
+                        <td>APIM autentica no Azure OpenAI sem credenciais</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Streaming SSE</strong></td>
+                        <td>1</td>
+                        <td><code>buffer-request-body="false"</code> preserva chunked transfer</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Rate Limiting</strong></td>
+                        <td>2</td>
+                        <td>60 req/min por usuário via <code>X-User-Id</code> header</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Token Accounting</strong></td>
+                        <td>2</td>
+                        <td>Event Hub logger para tracking de custos</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Application Insights</strong></td>
+                        <td>2</td>
+                        <td>100% das chamadas auditadas</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Semantic Cache</strong></td>
+                        <td>3</td>
+                        <td>Redis cache para <code>/fetchChartData</code> — target: 30% hit rate</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Multi-região</strong></td>
+                        <td>3</td>
+                        <td>Circuit breaker com failover em &lt; 2s</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Content Safety</strong></td>
+                        <td>4</td>
+                        <td>Bloqueio de prompts antes do backend</td>
+                    </tr>
+                    <tr>
+                        <td><strong>LGPD Compliance</strong></td>
+                        <td>4</td>
+                        <td>Audit log com retenção 90 dias</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>📊 Observabilidade (Fase 2)</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Métrica</th>
+                        <th>Fonte</th>
+                        <th>Alerta</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Tokens/minuto</strong></td>
+                        <td>Event Hub Logger</td>
+                        <td>&gt; 80% da quota</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Latência P95</strong></td>
+                        <td>Application Insights</td>
+                        <td>&gt; 500ms</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Taxa de erros 429</strong></td>
+                        <td>APIM Diagnostics</td>
+                        <td>&gt; 5%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Cache hit rate</strong></td>
+                        <td>APIM Metrics</td>
+                        <td>&lt; 20% (Fase 3+)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Chamadas por usuário</strong></td>
+                        <td><code>X-User-Id</code> header log</td>
+                        <td>Anomalias</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="card-grid">
+                <div class="card">
+                    <h3>Variáveis de Ambiente — Fase 1</h3>
+                    <div style="background:#f8f9fa;border:1px solid #e0e0e0;border-radius:6px;padding:16px;font-family:Consolas, 'Courier New', monospace;font-size:13px;overflow-x:auto;">
+                        # Fase 1 — Variáveis de Ambiente (Backend App Service)<br>
+                        USE_APIM_GATEWAY=false          # Feature flag — true habilita roteamento via APIM<br>
+                        APIM_ENDPOINT=https://apim-callcenter100.azure-api.net<br>
+                        APIM_SUBSCRIPTION_KEY=&lt;key&gt;    # Armazenado no Key Vault na Fase 4<br>
+                        APIM_API_VERSION=2024-02-01
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>GitHub Issues do Roadmap</h3>
+                    <ul class="feature-list">
+                        <li><a href="https://github.com/acmeleme/Conversation-Knowledge-Mining-Solution-Accelerator/issues/37" target="_blank" style="color:#0078D4;">Issue #37 — Fase 1: APIM Básico</a></li>
+                        <li><a href="https://github.com/acmeleme/Conversation-Knowledge-Mining-Solution-Accelerator/issues/40" target="_blank" style="color:#0078D4;">Issue #40 — Fase 2: Políticas Avançadas e Azure Monitor</a></li>
+                        <li><a href="https://github.com/acmeleme/Conversation-Knowledge-Mining-Solution-Accelerator/issues/38" target="_blank" style="color:#0078D4;">Issue #38 — Fase 3: Semantic Cache e Multi-Região</a></li>
+                        <li><a href="https://github.com/acmeleme/Conversation-Knowledge-Mining-Solution-Accelerator/issues/39" target="_blank" style="color:#0078D4;">Issue #39 — Fase 4: Content Safety e Compliance</a></li>
+                    </ul>
+                </div>
+            </div>
         </section>
 
         <section style="background: white; padding: 60px 20px; border-radius: 6px; text-align: center; margin: 40px 0;">
