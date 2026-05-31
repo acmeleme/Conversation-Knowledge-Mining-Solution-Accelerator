@@ -47,7 +47,7 @@ resource apim 'Microsoft.ApiManagement/service@2023-09-01-preview' = {
     capacity: 1
   }
   identity: {
-    type: 'UserAssigned'
+    type: 'SystemAssigned, UserAssigned'
     userAssignedIdentities: {
       '${apimIdentity.id}': {}
     }
@@ -135,7 +135,10 @@ resource aiFoundryBackend 'Microsoft.ApiManagement/service/backends@2023-09-01-p
 }
 
 // ============================================================
-// Global Policy — Managed Identity auth + rate limiting
+// Global Policy — request ID injection + global rate limit
+// Note: MSI auth is applied at individual API-level policies, not globally.
+// Using explicit <on-error></on-error> (not self-closing) to avoid APIM
+// injecting an implicit <base/> which is invalid in global context.
 // ============================================================
 resource globalPolicy 'Microsoft.ApiManagement/service/policies@2023-09-01-preview' = {
   name: 'policy'
@@ -148,12 +151,6 @@ resource globalPolicy 'Microsoft.ApiManagement/service/policies@2023-09-01-previ
       counter-key="@(context.Subscription?.Id ?? &quot;anonymous&quot;)"
       remaining-calls-header-name="X-RateLimit-Remaining"
       retry-after-header-name="Retry-After" />
-    <authentication-managed-identity resource="https://cognitiveservices.azure.com"
-      output-token-variable-name="msi-access-token"
-      client-id="${apimIdentity.properties.clientId}" />
-    <set-header name="Authorization" exists-action="override">
-      <value>@("Bearer " + (string)context.Variables["msi-access-token"])</value>
-    </set-header>
     <set-header name="X-APIM-Request-Id" exists-action="override">
       <value>@(context.RequestId.ToString())</value>
     </set-header>
@@ -166,9 +163,7 @@ resource globalPolicy 'Microsoft.ApiManagement/service/policies@2023-09-01-previ
       <value>1.0</value>
     </set-header>
   </outbound>
-  <on-error>
-    <base />
-  </on-error>
+  <on-error></on-error>
 </policies>'''
   }
 }
@@ -178,12 +173,16 @@ resource globalPolicy 'Microsoft.ApiManagement/service/policies@2023-09-01-previ
 // ============================================================
 var cognitiveServicesOpenAiUserRoleId = '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd'
 
+resource openAiResource 'Microsoft.CognitiveServices/accounts@2024-10-01' existing = {
+  name: last(split(azureOpenAiResourceId, '/'))
+}
+
 resource apimOpenAiRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(azureOpenAiResourceId, apimIdentity.id, cognitiveServicesOpenAiUserRoleId)
-  scope: resourceGroup()
+  name: guid(azureOpenAiResourceId, apim.id, cognitiveServicesOpenAiUserRoleId)
+  scope: openAiResource
   properties: {
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', cognitiveServicesOpenAiUserRoleId)
-    principalId: apimIdentity.properties.principalId
+    principalId: apim.identity.principalId
     principalType: 'ServicePrincipal'
   }
 }
