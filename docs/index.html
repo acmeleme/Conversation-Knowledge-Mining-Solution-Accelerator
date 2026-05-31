@@ -855,15 +855,15 @@
                     <tr>
                         <td><strong>Fase 1</strong></td>
                         <td>Semanas 1-2</td>
-                        <td>APIM básico — proxy transparente com Managed Identity</td>
-                        <td>🚧 Em andamento</td>
+                        <td>APIM básico — proxy transparente com Managed Identity + App Insights + Azure Monitor loggers</td>
+                        <td>✅ Concluída</td>
                         <td><a href="https://github.com/acmeleme/Conversation-Knowledge-Mining-Solution-Accelerator/issues/37" target="_blank" style="color:#0078D4;">#37</a></td>
                     </tr>
                     <tr>
                         <td><strong>Fase 2</strong></td>
                         <td>Semanas 3-4</td>
-                        <td>Rate limiting, Azure Monitor dashboard, Application Insights</td>
-                        <td>📋 Planejada</td>
+                        <td>X-User-Id header propagation, rate limiting, Azure Monitor dashboard, 10 testes automatizados, USE_APIM_GATEWAY=true</td>
+                        <td>✅ Concluída</td>
                         <td><a href="https://github.com/acmeleme/Conversation-Knowledge-Mining-Solution-Accelerator/issues/40" target="_blank" style="color:#0078D4;">#40</a></td>
                     </tr>
                     <tr>
@@ -1018,10 +1018,10 @@
 
             <div class="card-grid">
                 <div class="card">
-                    <h3>Variáveis de Ambiente — Fase 1</h3>
+                    <h3>Variáveis de Ambiente — Fases 1 e 2 (Ativas)</h3>
                     <div style="background:#f8f9fa;border:1px solid #e0e0e0;border-radius:6px;padding:16px;font-family:Consolas, 'Courier New', monospace;font-size:13px;overflow-x:auto;">
-                        # Fase 1 — Variáveis de Ambiente (Backend App Service)<br>
-                        USE_APIM_GATEWAY=false          # Feature flag — true habilita roteamento via APIM<br>
+                        # Fases 1 &amp; 2 — Variáveis de Ambiente (Backend App Service)<br>
+                        USE_APIM_GATEWAY=true           # ✅ Fase 2: tráfego via APIM habilitado<br>
                         APIM_ENDPOINT=https://apim-callcenter100.azure-api.net<br>
                         APIM_SUBSCRIPTION_KEY=&lt;key&gt;    # Armazenado no Key Vault na Fase 4<br>
                         APIM_API_VERSION=2024-02-01
