@@ -1,0 +1,605 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.37.4.10188",
+      "templateHash": "17689711154420379952"
+    }
+  },
+  "parameters": {
+    "resourceName": {
+      "type": "string",
+      "metadata": {
+        "description": "Resource name prefix (e.g., callcenter100)"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Azure region for dashboard deployment"
+      }
+    },
+    "apimServiceName": {
+      "type": "string",
+      "metadata": {
+        "description": "APIM service name"
+      }
+    },
+    "appInsightsName": {
+      "type": "string",
+      "metadata": {
+        "description": "Application Insights name"
+      }
+    }
+  },
+  "variables": {
+    "subscriptionId": "[subscription().subscriptionId]",
+    "rgName": "[resourceGroup().name]",
+    "apimResourceId": "[format('/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.ApiManagement/service/{2}', variables('subscriptionId'), variables('rgName'), parameters('apimServiceName'))]",
+    "appInsightsComponentId": {
+      "SubscriptionId": "[variables('subscriptionId')]",
+      "ResourceGroup": "[variables('rgName')]",
+      "Name": "[parameters('appInsightsName')]",
+      "ResourceType": "microsoft.insights/components"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Portal/dashboards",
+      "apiVersion": "2022-12-01-preview",
+      "name": "[format('dash-{0}-apim', parameters('resourceName'))]",
+      "location": "[parameters('location')]",
+      "tags": {
+        "hidden-title": "CKM AI Gateway — APIM Dashboard",
+        "project": "conversation-knowledge-mining",
+        "phase": "2"
+      },
+      "properties": {
+        "lenses": [
+          {
+            "order": 0,
+            "parts": [
+              {
+                "position": {
+                  "x": 0,
+                  "y": 0,
+                  "colSpan": 12,
+                  "rowSpan": 1
+                },
+                "metadata": {
+                  "type": "Extension/HubsExtension/PartType/MarkdownPart",
+                  "inputs": [],
+                  "settings": {
+                    "content": {
+                      "settings": {
+                        "content": "## 🤖 CKM AI Gateway — APIM Dashboard\nReal-time token usage, request rates, and performance metrics for the Conversation Knowledge Mining AI Gateway.",
+                        "title": "",
+                        "subtitle": "",
+                        "markdownSource": 1
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "position": {
+                  "x": 0,
+                  "y": 1,
+                  "colSpan": 4,
+                  "rowSpan": 3
+                },
+                "metadata": {
+                  "type": "Extension/Microsoft_Azure_MonitoringMetrics/PartType/MetricsChartPart",
+                  "inputs": [
+                    {
+                      "name": "options",
+                      "isOptional": true
+                    },
+                    {
+                      "name": "sharedTimeRange",
+                      "isOptional": true
+                    }
+                  ],
+                  "settings": {
+                    "content": {
+                      "options": {
+                        "chart": {
+                          "metrics": [
+                            {
+                              "resourceMetadata": {
+                                "id": "[variables('apimResourceId')]"
+                              },
+                              "name": "TotalRequests",
+                              "aggregationType": 1,
+                              "namespace": "microsoft.apimanagement/service",
+                              "metricVisualization": {
+                                "displayName": "Total Requests",
+                                "color": "#0078D4"
+                              }
+                            }
+                          ],
+                          "title": "APIM — Total Requests",
+                          "titleKind": 1,
+                          "visualization": {
+                            "chartType": 2,
+                            "legendVisualization": {
+                              "isVisible": true,
+                              "position": 2,
+                              "hideSubtitle": false
+                            },
+                            "axisVisualization": {
+                              "x": {
+                                "isVisible": true,
+                                "axisType": 2
+                              },
+                              "y": {
+                                "isVisible": true,
+                                "axisType": 1
+                              }
+                            }
+                          },
+                          "timespan": {
+                            "relative": {
+                              "duration": 86400000
+                            },
+                            "showUTCTime": false,
+                            "grain": 1
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "position": {
+                  "x": 4,
+                  "y": 1,
+                  "colSpan": 4,
+                  "rowSpan": 3
+                },
+                "metadata": {
+                  "type": "Extension/Microsoft_Azure_MonitoringMetrics/PartType/MetricsChartPart",
+                  "inputs": [
+                    {
+                      "name": "options",
+                      "isOptional": true
+                    },
+                    {
+                      "name": "sharedTimeRange",
+                      "isOptional": true
+                    }
+                  ],
+                  "settings": {
+                    "content": {
+                      "options": {
+                        "chart": {
+                          "metrics": [
+                            {
+                              "resourceMetadata": {
+                                "id": "[variables('apimResourceId')]"
+                              },
+                              "name": "FailedRequests",
+                              "aggregationType": 1,
+                              "namespace": "microsoft.apimanagement/service",
+                              "metricVisualization": {
+                                "displayName": "Failed Requests",
+                                "color": "#E81123"
+                              }
+                            }
+                          ],
+                          "title": "APIM — Failed Requests",
+                          "titleKind": 1,
+                          "visualization": {
+                            "chartType": 2,
+                            "legendVisualization": {
+                              "isVisible": true,
+                              "position": 2,
+                              "hideSubtitle": false
+                            },
+                            "axisVisualization": {
+                              "x": {
+                                "isVisible": true,
+                                "axisType": 2
+                              },
+                              "y": {
+                                "isVisible": true,
+                                "axisType": 1
+                              }
+                            }
+                          },
+                          "timespan": {
+                            "relative": {
+                              "duration": 86400000
+                            },
+                            "showUTCTime": false,
+                            "grain": 1
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "position": {
+                  "x": 8,
+                  "y": 1,
+                  "colSpan": 4,
+                  "rowSpan": 3
+                },
+                "metadata": {
+                  "type": "Extension/Microsoft_Azure_MonitoringMetrics/PartType/MetricsChartPart",
+                  "inputs": [
+                    {
+                      "name": "options",
+                      "isOptional": true
+                    },
+                    {
+                      "name": "sharedTimeRange",
+                      "isOptional": true
+                    }
+                  ],
+                  "settings": {
+                    "content": {
+                      "options": {
+                        "chart": {
+                          "metrics": [
+                            {
+                              "resourceMetadata": {
+                                "id": "[variables('apimResourceId')]"
+                              },
+                              "name": "Capacity",
+                              "aggregationType": 4,
+                              "namespace": "microsoft.apimanagement/service",
+                              "metricVisualization": {
+                                "displayName": "Capacity (%)",
+                                "color": "#FFB900"
+                              }
+                            }
+                          ],
+                          "title": "APIM — Gateway Capacity",
+                          "titleKind": 1,
+                          "visualization": {
+                            "chartType": 2,
+                            "legendVisualization": {
+                              "isVisible": true,
+                              "position": 2,
+                              "hideSubtitle": false
+                            },
+                            "axisVisualization": {
+                              "x": {
+                                "isVisible": true,
+                                "axisType": 2
+                              },
+                              "y": {
+                                "isVisible": true,
+                                "axisType": 1
+                              }
+                            }
+                          },
+                          "timespan": {
+                            "relative": {
+                              "duration": 86400000
+                            },
+                            "showUTCTime": false,
+                            "grain": 1
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "position": {
+                  "x": 0,
+                  "y": 4,
+                  "colSpan": 6,
+                  "rowSpan": 4
+                },
+                "metadata": {
+                  "type": "Extension/Microsoft_OperationsManagementSuite_Workspace/PartType/LogsDashboardPart",
+                  "inputs": [
+                    {
+                      "name": "resourceTypeMode",
+                      "isOptional": true,
+                      "value": "components"
+                    },
+                    {
+                      "name": "ComponentId",
+                      "isOptional": true,
+                      "value": "[variables('appInsightsComponentId')]"
+                    },
+                    {
+                      "name": "TimeRange",
+                      "isOptional": true,
+                      "value": "P1D"
+                    },
+                    {
+                      "name": "Query",
+                      "isOptional": true,
+                      "value": "customMetrics\n| where name startswith \"CKM-TokenUsage\"\n| summarize TotalTokens = sum(value), AvgTokens = avg(value) by bin(timestamp, 1h), name\n| order by timestamp desc"
+                    },
+                    {
+                      "name": "PartTitle",
+                      "isOptional": true,
+                      "value": "Token Usage Over Time (App Insights)"
+                    },
+                    {
+                      "name": "PartSubTitle",
+                      "isOptional": true,
+                      "value": "[parameters('appInsightsName')]"
+                    },
+                    {
+                      "name": "ControlType",
+                      "isOptional": true,
+                      "value": "AnalyticsChart"
+                    },
+                    {
+                      "name": "SpecificChart",
+                      "isOptional": true,
+                      "value": "StackedColumn"
+                    }
+                  ],
+                  "settings": {}
+                }
+              },
+              {
+                "position": {
+                  "x": 6,
+                  "y": 4,
+                  "colSpan": 6,
+                  "rowSpan": 4
+                },
+                "metadata": {
+                  "type": "Extension/Microsoft_Azure_MonitoringMetrics/PartType/MetricsChartPart",
+                  "inputs": [
+                    {
+                      "name": "options",
+                      "isOptional": true
+                    },
+                    {
+                      "name": "sharedTimeRange",
+                      "isOptional": true
+                    }
+                  ],
+                  "settings": {
+                    "content": {
+                      "options": {
+                        "chart": {
+                          "metrics": [
+                            {
+                              "resourceMetadata": {
+                                "id": "[variables('apimResourceId')]"
+                              },
+                              "name": "SuccessfulRequests",
+                              "aggregationType": 1,
+                              "namespace": "microsoft.apimanagement/service",
+                              "metricVisualization": {
+                                "displayName": "Successful Requests",
+                                "color": "#107C10"
+                              }
+                            },
+                            {
+                              "resourceMetadata": {
+                                "id": "[variables('apimResourceId')]"
+                              },
+                              "name": "FailedRequests",
+                              "aggregationType": 1,
+                              "namespace": "microsoft.apimanagement/service",
+                              "metricVisualization": {
+                                "displayName": "Failed Requests",
+                                "color": "#E81123"
+                              }
+                            }
+                          ],
+                          "title": "APIM — Success vs Failed",
+                          "titleKind": 1,
+                          "visualization": {
+                            "chartType": 2,
+                            "legendVisualization": {
+                              "isVisible": true,
+                              "position": 2,
+                              "hideSubtitle": false
+                            },
+                            "axisVisualization": {
+                              "x": {
+                                "isVisible": true,
+                                "axisType": 2
+                              },
+                              "y": {
+                                "isVisible": true,
+                                "axisType": 1
+                              }
+                            }
+                          },
+                          "timespan": {
+                            "relative": {
+                              "duration": 86400000
+                            },
+                            "showUTCTime": false,
+                            "grain": 1
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "position": {
+                  "x": 0,
+                  "y": 8,
+                  "colSpan": 6,
+                  "rowSpan": 4
+                },
+                "metadata": {
+                  "type": "Extension/Microsoft_OperationsManagementSuite_Workspace/PartType/LogsDashboardPart",
+                  "inputs": [
+                    {
+                      "name": "resourceTypeMode",
+                      "isOptional": true,
+                      "value": "components"
+                    },
+                    {
+                      "name": "ComponentId",
+                      "isOptional": true,
+                      "value": "[variables('appInsightsComponentId')]"
+                    },
+                    {
+                      "name": "TimeRange",
+                      "isOptional": true,
+                      "value": "P1D"
+                    },
+                    {
+                      "name": "Query",
+                      "isOptional": true,
+                      "value": "customMetrics\n| where name startswith \"CKM-TokenUsage\"\n| extend userId = tostring(customDimensions[\"User ID\"])\n| summarize TotalTokens = sum(value) by userId\n| top 10 by TotalTokens desc\n| render barchart"
+                    },
+                    {
+                      "name": "PartTitle",
+                      "isOptional": true,
+                      "value": "Top 10 Users by Token Consumption"
+                    },
+                    {
+                      "name": "PartSubTitle",
+                      "isOptional": true,
+                      "value": "Last 24h"
+                    },
+                    {
+                      "name": "ControlType",
+                      "isOptional": true,
+                      "value": "AnalyticsChart"
+                    },
+                    {
+                      "name": "SpecificChart",
+                      "isOptional": true,
+                      "value": "Bar"
+                    }
+                  ],
+                  "settings": {}
+                }
+              },
+              {
+                "position": {
+                  "x": 6,
+                  "y": 8,
+                  "colSpan": 6,
+                  "rowSpan": 4
+                },
+                "metadata": {
+                  "type": "Extension/Microsoft_Azure_MonitoringMetrics/PartType/MetricsChartPart",
+                  "inputs": [
+                    {
+                      "name": "options",
+                      "isOptional": true
+                    },
+                    {
+                      "name": "sharedTimeRange",
+                      "isOptional": true
+                    }
+                  ],
+                  "settings": {
+                    "content": {
+                      "options": {
+                        "chart": {
+                          "metrics": [
+                            {
+                              "resourceMetadata": {
+                                "id": "[variables('apimResourceId')]"
+                              },
+                              "name": "TotalDuration",
+                              "aggregationType": 4,
+                              "namespace": "microsoft.apimanagement/service",
+                              "metricVisualization": {
+                                "displayName": "Avg Response Duration (ms)",
+                                "color": "#8764B8"
+                              }
+                            }
+                          ],
+                          "title": "APIM — Average Response Duration",
+                          "titleKind": 1,
+                          "visualization": {
+                            "chartType": 2,
+                            "legendVisualization": {
+                              "isVisible": true,
+                              "position": 2,
+                              "hideSubtitle": false
+                            },
+                            "axisVisualization": {
+                              "x": {
+                                "isVisible": true,
+                                "axisType": 2
+                              },
+                              "y": {
+                                "isVisible": true,
+                                "axisType": 1
+                              }
+                            }
+                          },
+                          "timespan": {
+                            "relative": {
+                              "duration": 86400000
+                            },
+                            "showUTCTime": false,
+                            "grain": 1
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "metadata": {
+          "model": {
+            "timeRange": {
+              "value": {
+                "relative": {
+                  "duration": 24,
+                  "timeUnit": 1
+                }
+              },
+              "type": "MsPortalFx.Composition.Configuration.ValueTypes.TimeRange"
+            },
+            "filterLocale": {
+              "value": "en-us"
+            },
+            "filters": {
+              "value": {
+                "MsPortalFx_TimeRange": {
+                  "model": {
+                    "format": "utc",
+                    "granularity": "auto",
+                    "relative": "24h"
+                  },
+                  "displayCache": {
+                    "name": "UTC Time",
+                    "value": "Past 24 hours"
+                  },
+                  "filteredPartIds": []
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "dashboardId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Portal/dashboards', format('dash-{0}-apim', parameters('resourceName')))]"
+    },
+    "dashboardName": {
+      "type": "string",
+      "value": "[format('dash-{0}-apim', parameters('resourceName'))]"
+    }
+  }
+}
