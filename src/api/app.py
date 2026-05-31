@@ -9,8 +9,10 @@ and cleanup.
 
 from contextlib import asynccontextmanager
 import os
-from fastapi import FastAPI
+from uuid import uuid4
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from dotenv import load_dotenv
 import uvicorn
@@ -21,6 +23,7 @@ from agents.sql_agent_factory import SQLAgentFactory
 from agents.chart_agent_factory import ChartAgentFactory
 from api.api_routes import router as backend_router
 from api.history_routes import router as history_router
+from helpers.content_safety_helper import build_audit_log_entry
 
 load_dotenv()
 
@@ -70,6 +73,43 @@ def build_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    @fastapi_app.middleware("http")
+    async def phase4_content_safety_middleware(request: Request, call_next):
+        user_id = request.headers.get("X-MS-CLIENT-PRINCIPAL-NAME") or "anonymous"
+        content_safety_result = request.headers.get("X-Content-Safety-Result") or "SAFE"
+        request_id = (
+            request.headers.get("X-APIM-Request-Id")
+            or request.headers.get("X-Request-Id")
+            or str(uuid4())
+        )
+        audit_log_entry = build_audit_log_entry(
+            user_id=user_id,
+            request_id=request_id,
+            content_safety_result=content_safety_result,
+            endpoint=request.url.path,
+        )
+        request.state.audit_log_entry = audit_log_entry
+
+        if content_safety_result.startswith("BLOCKED:"):
+            category = content_safety_result.split(":", 1)[1] or "Unknown"
+            response = JSONResponse(
+                status_code=400,
+                content={
+                    "error": "Content blocked by Azure AI Content Safety.",
+                    "code": "CONTENT_SAFETY_VIOLATION",
+                    "category": category,
+                    "requestId": request_id,
+                },
+            )
+        else:
+            response = await call_next(request)
+
+        response.headers["X-Audit-UserId"] = audit_log_entry["user_id"]
+        response.headers["X-Audit-Timestamp"] = audit_log_entry["timestamp"]
+        response.headers["X-Content-Safety-Result"] = audit_log_entry["content_safety_result"]
+        response.headers["X-APIM-Version"] = request.headers.get("X-APIM-Version", "3.0")
+        return response
 
     # Include routers
     fastapi_app.include_router(backend_router, prefix="/api", tags=["backend"])

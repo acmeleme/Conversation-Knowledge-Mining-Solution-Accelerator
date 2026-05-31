@@ -1,17 +1,12 @@
 <!--
   APIM Policy for /api/fetchChartData endpoint (non-streaming, cacheable)
   Phase 3: External Redis cache + retry policy
+  Phase 4: Content Safety pre-check + audit log for LGPD/ISO 27001 compliance
 
-  This endpoint is safe to cache because:
-  - Response is a complete JSON object (not streaming)
-  - Chart prompts for similar date ranges produce identical/near-identical output
-  - Cache key includes the full request body (prompt + filters)
-
-  Phase 3 changes:
-  - caching-type="external" → uses Redis (redis-callcenter100) instead of in-memory APIM cache
-  - retry policy: 3 retries with exponential backoff for 429/5xx backend failures
-  - X-Cache-Status header for client-side observability
-  - X-APIM-Version bumped to 2.0
+  Phase 4 additions:
+  - Content Safety pre-check before cache lookup (block harmful queries)
+  - Audit log headers: X-Audit-UserId, X-Audit-Timestamp, X-Content-Safety-Result
+  - APIM Version bumped to 3.0
 -->
 <policies>
   <inbound>
@@ -25,13 +20,75 @@
       counter-key="@(context.Request.Headers.GetValueOrDefault(&quot;X-User-Id&quot;, &quot;anonymous&quot;))"
       remaining-calls-header-name="X-RateLimit-Remaining"
       retry-after-header-name="Retry-After" />
+    <!-- Phase 4: Content Safety pre-check -->
+    <set-variable name="chartQuery" value="@{
+      try {
+        var body = context.Request.Body.As&lt;JObject&gt;(preserveContent: true);
+        return body?[&quot;query&quot;]?.ToString() ?? body?[&quot;message&quot;]?.ToString() ?? body?.ToString() ?? &quot;&quot;;
+      } catch { return &quot;&quot;; }
+    }" />
+    <send-request mode="new" response-variable-name="contentSafetyResponse" timeout="10" ignore-error="true">
+      <set-url>@("{{content-safety-endpoint}}contentsafety/text:analyze?api-version=2024-09-01")</set-url>
+      <set-method>POST</set-method>
+      <set-header name="Content-Type" exists-action="override">
+        <value>application/json</value>
+      </set-header>
+      <set-header name="Ocp-Apim-Subscription-Key" exists-action="override">
+        <value>{{content-safety-key}}</value>
+      </set-header>
+      <set-body>@{
+        var text = (string)context.Variables["chartQuery"];
+        if (string.IsNullOrEmpty(text)) text = "empty";
+        return new JObject(
+          new JProperty("text", text.Length > 5000 ? text.Substring(0, 5000) : text),
+          new JProperty("categories", new JArray("Hate", "Violence", "Sexual", "SelfHarm")),
+          new JProperty("outputType", "FourSeverityLevels")
+        ).ToString();
+      }</set-body>
+    </send-request>
+    <set-variable name="contentSafetyResult" value="@{
+      try {
+        var resp = (IResponse)context.Variables[&quot;contentSafetyResponse&quot;];
+        if (resp == null || resp.StatusCode != 200) return &quot;UNAVAILABLE&quot;;
+        var body = resp.Body.As&lt;JObject&gt;();
+        var cats = body?[&quot;categoriesAnalysis&quot;] as JArray;
+        if (cats == null) return &quot;SAFE&quot;;
+        foreach (var cat in cats) {
+          if ((int)(cat[&quot;severity&quot;] ?? 0) >= 4) {
+            return &quot;BLOCKED:&quot; + (string)cat[&quot;category&quot;];
+          }
+        }
+        return &quot;SAFE&quot;;
+      } catch { return &quot;ERROR&quot;; }
+    }" />
+    <choose>
+      <when condition="@(((string)context.Variables[&quot;contentSafetyResult&quot;]).StartsWith(&quot;BLOCKED&quot;))">
+        <return-response>
+          <set-status code="400" reason="Content Safety Violation" />
+          <set-header name="Content-Type" exists-action="override">
+            <value>application/json</value>
+          </set-header>
+          <set-header name="X-Content-Safety-Result" exists-action="override">
+            <value>@((string)context.Variables["contentSafetyResult"])</value>
+          </set-header>
+          <set-body>@{
+            return new JObject(
+              new JProperty("error", "Content blocked by Azure AI Content Safety policy"),
+              new JProperty("code", "CONTENT_SAFETY_VIOLATION"),
+              new JProperty("category", ((string)context.Variables["contentSafetyResult"]).Replace("BLOCKED:", "")),
+              new JProperty("requestId", context.RequestId.ToString())
+            ).ToString();
+          }</set-body>
+        </return-response>
+      </when>
+    </choose>
     <!-- External Redis cache lookup (TTL: 5 minutes) -->
     <cache-lookup vary-by-developer="false" vary-by-developer-groups="false"
       allow-private-response-caching="true" must-revalidate="false"
       downstream-caching-type="none" caching-type="external" />
   </inbound>
   <backend>
-    <!-- Retry: 3 attempts, exponential backoff 2s→4s→8s (max 10s) for 429 and 5xx -->
+    <!-- Retry: 3 attempts, exponential backoff 2s->4s->8s (max 10s) for 429 and 5xx -->
     <retry condition="@(context.Response.StatusCode == 429 || context.Response.StatusCode >= 500)" count="3" interval="2" delta="2" max-interval="10" first-fast-retry="true">
       <forward-request timeout="60" />
     </retry>
@@ -39,14 +96,23 @@
   <outbound>
     <base />
     <!-- Store in external Redis cache for 5 minutes -->
-    <!-- caching-type not supported on cache-store in this APIM version; cache-lookup uses external -->
     <cache-store duration="300" />
     <set-header name="X-APIM-Version" exists-action="override">
-      <value>2.0</value>
+      <value>3.0</value>
     </set-header>
     <!-- Expose cache hit/miss status to client for observability -->
     <set-header name="X-Cache-Status" exists-action="override">
       <value>@(context.Response.Headers.ContainsKey("Ocp-Apim-Cached") ? "HIT" : "MISS")</value>
+    </set-header>
+    <!-- Audit log headers for LGPD/ISO 27001 compliance -->
+    <set-header name="X-Audit-UserId" exists-action="override">
+      <value>@(context.Request.Headers.GetValueOrDefault("X-User-Id", "anonymous"))</value>
+    </set-header>
+    <set-header name="X-Audit-Timestamp" exists-action="override">
+      <value>@(DateTime.UtcNow.ToString("o"))</value>
+    </set-header>
+    <set-header name="X-Content-Safety-Result" exists-action="override">
+      <value>@((string)context.Variables.GetValueOrDefault("contentSafetyResult", "SAFE"))</value>
     </set-header>
   </outbound>
   <on-error>

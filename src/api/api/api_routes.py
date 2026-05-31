@@ -246,7 +246,17 @@ async def fetch_filter_data(request: Request):
 async def conversation(request: Request):
     try:
         # Get the request JSON and last RAG response from the client
-        request_json = await request.json()
+        try:
+            request_json = await request.json()
+        except Exception:
+            request_json = {}
+
+        if not isinstance(request_json, dict) or request_json == {}:
+            return JSONResponse(
+                content={"error": "Request body must be a valid JSON object."},
+                status_code=400,
+            )
+
         conversation_id = request_json.get("conversation_id")
         messages: list[dict[str, Any]] = request_json.get("messages", [])
         last_message = messages[-1] if messages and isinstance(messages[-1], dict) else {}

@@ -1,16 +1,17 @@
 <!--
   APIM Policy for /api/chat endpoint (streaming SSE)
   Phase 3: Backend pool routing (circuit breaker) + observability headers
+  Phase 4: Content Safety pre-check + audit log for LGPD/ISO 27001 compliance
 
   Critical: buffer-request-body="false" preserves Transfer-Encoding: chunked
   for StreamingResponse from the FastAPI backend. Do NOT add outbound body
-  policies that read the response body — they break chunked streaming.
+  policies that read the response body break chunked streaming.
 
-  Phase 3 changes:
-  - set-backend-service routes to "openai-pool" backend (circuit breaker pool, configured by kai)
-  - X-APIM-Backend header exposes which backend host served the request
-  - X-APIM-Version bumped to 2.0
-  - NO retry in backend section — retry breaks SSE chunked transfer encoding
+  Phase 4 additions:
+  - Content Safety pre-check (send-request to Azure AI Content Safety)
+  - Block requests with severity >= 4 in Hate, Violence, Sexual, SelfHarm
+  - Audit log headers: X-Audit-UserId, X-Audit-Timestamp, X-Audit-ContentSafety
+  - APIM Version bumped to 3.0
 -->
 <policies>
   <inbound>
@@ -27,21 +28,109 @@
       counter-key="@(context.Request.Headers.GetValueOrDefault(&quot;X-User-Id&quot;, &quot;anonymous&quot;))"
       remaining-calls-header-name="X-RateLimit-Remaining"
       retry-after-header-name="Retry-After" />
+    <!-- Phase 4: Content Safety pre-check -->
+    <!-- Extract user message for content safety analysis -->
+    <set-variable name="userMessage" value="@{
+      try {
+        var body = context.Request.Body.As&lt;JObject&gt;(preserveContent: true);
+        var msgs = body?[&quot;messages&quot;] as JArray;
+        if (msgs == null) return &quot;&quot;;
+        for (int i = msgs.Count - 1; i >= 0; i--) {
+          if ((string)msgs[i][&quot;role&quot;] == &quot;user&quot;) {
+            return msgs[i][&quot;content&quot;]?.ToString() ?? &quot;&quot;;
+          }
+        }
+        return &quot;&quot;;
+      } catch { return &quot;&quot;; }
+    }" />
+    <!-- Call Azure AI Content Safety API -->
+    <send-request mode="new" response-variable-name="contentSafetyResponse" timeout="10" ignore-error="true">
+      <set-url>@("{{content-safety-endpoint}}contentsafety/text:analyze?api-version=2024-09-01")</set-url>
+      <set-method>POST</set-method>
+      <set-header name="Content-Type" exists-action="override">
+        <value>application/json</value>
+      </set-header>
+      <set-header name="Ocp-Apim-Subscription-Key" exists-action="override">
+        <value>{{content-safety-key}}</value>
+      </set-header>
+      <set-body>@{
+        var text = (string)context.Variables["userMessage"];
+        if (string.IsNullOrEmpty(text)) text = "empty";
+        return new JObject(
+          new JProperty("text", text.Length > 5000 ? text.Substring(0, 5000) : text),
+          new JProperty("categories", new JArray("Hate", "Violence", "Sexual", "SelfHarm")),
+          new JProperty("outputType", "FourSeverityLevels")
+        ).ToString();
+      }</set-body>
+    </send-request>
+    <!-- Evaluate content safety result and block if severity >= 4 -->
+    <set-variable name="contentSafetyResult" value="@{
+      try {
+        var resp = (IResponse)context.Variables[&quot;contentSafetyResponse&quot;];
+        if (resp == null || resp.StatusCode != 200) return &quot;UNAVAILABLE&quot;;
+        var body = resp.Body.As&lt;JObject&gt;();
+        var cats = body?[&quot;categoriesAnalysis&quot;] as JArray;
+        if (cats == null) return &quot;SAFE&quot;;
+        foreach (var cat in cats) {
+          if ((int)(cat[&quot;severity&quot;] ?? 0) >= 4) {
+            return &quot;BLOCKED:&quot; + (string)cat[&quot;category&quot;];
+          }
+        }
+        return &quot;SAFE&quot;;
+      } catch { return &quot;ERROR&quot;; }
+    }" />
+    <choose>
+      <when condition="@(((string)context.Variables[&quot;contentSafetyResult&quot;]).StartsWith(&quot;BLOCKED&quot;))">
+        <return-response>
+          <set-status code="400" reason="Content Safety Violation" />
+          <set-header name="Content-Type" exists-action="override">
+            <value>application/json</value>
+          </set-header>
+          <set-header name="X-Audit-UserId" exists-action="override">
+            <value>@(context.Request.Headers.GetValueOrDefault("X-User-Id", "anonymous"))</value>
+          </set-header>
+          <set-header name="X-Audit-Timestamp" exists-action="override">
+            <value>@(DateTime.UtcNow.ToString("o"))</value>
+          </set-header>
+          <set-header name="X-Content-Safety-Result" exists-action="override">
+            <value>@((string)context.Variables["contentSafetyResult"])</value>
+          </set-header>
+          <set-body>@{
+            return new JObject(
+              new JProperty("error", "Content blocked by Azure AI Content Safety policy"),
+              new JProperty("code", "CONTENT_SAFETY_VIOLATION"),
+              new JProperty("category", ((string)context.Variables["contentSafetyResult"]).Replace("BLOCKED:", "")),
+              new JProperty("requestId", context.RequestId.ToString())
+            ).ToString();
+          }</set-body>
+        </return-response>
+      </when>
+    </choose>
     <!-- Route to backend pool with circuit breaker (requires openai-pool backend from kai) -->
     <set-backend-service backend-id="openai-pool" />
   </inbound>
   <backend>
-    <!-- CRITICAL: Do not buffer — required for SSE/chunked streaming -->
+    <!-- CRITICAL: Do not buffer; required for SSE/chunked streaming -->
     <forward-request buffer-request-body="false" timeout="120" />
   </backend>
   <outbound>
-    <!-- Do NOT read response body here — it would break streaming -->
+    <!-- Do NOT read response body here; it would break streaming -->
     <set-header name="X-APIM-Version" exists-action="override">
-      <value>2.0</value>
+      <value>3.0</value>
     </set-header>
     <!-- Expose which backend host served the request for tracing -->
     <set-header name="X-APIM-Backend" exists-action="override">
       <value>@(context.Request.OriginalUrl.Host)</value>
+    </set-header>
+    <!-- Audit log headers for LGPD/ISO 27001 compliance -->
+    <set-header name="X-Audit-UserId" exists-action="override">
+      <value>@(context.Request.Headers.GetValueOrDefault("X-User-Id", "anonymous"))</value>
+    </set-header>
+    <set-header name="X-Audit-Timestamp" exists-action="override">
+      <value>@(DateTime.UtcNow.ToString("o"))</value>
+    </set-header>
+    <set-header name="X-Content-Safety-Result" exists-action="override">
+      <value>@((string)context.Variables.GetValueOrDefault("contentSafetyResult", "SAFE"))</value>
     </set-header>
   </outbound>
   <on-error>
