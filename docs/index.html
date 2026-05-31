@@ -869,8 +869,8 @@
                     <tr>
                         <td><strong>Fase 3</strong></td>
                         <td>Semanas 5-6</td>
-                        <td>Semantic cache (Redis), load balancing multi-região</td>
-                        <td>📋 Planejada</td>
+                        <td>Semantic cache (Redis), load balancing multi-região — redis-callcenter100 (Azure Managed Redis Balanced_B0), openai-primary + openai-pool backends com circuit breaker, políticas de cache externo + retry aplicadas</td>
+                        <td>✅ Concluída</td>
                         <td><a href="https://github.com/acmeleme/Conversation-Knowledge-Mining-Solution-Accelerator/issues/38" target="_blank" style="color:#0078D4;">#38</a></td>
                     </tr>
                     <tr>
@@ -958,7 +958,7 @@
                     <tr>
                         <td><strong>Semantic Cache</strong></td>
                         <td>3</td>
-                        <td>Redis cache para <code>/fetchChartData</code> — target: 30% hit rate</td>
+                        <td>Azure Managed Redis <code>redis-callcenter100</code> (Balanced_B0, centralus) — APIM external cache para <code>/fetchChartData</code>, target: 30% hit rate</td>
                     </tr>
                     <tr>
                         <td><strong>Multi-região</strong></td>

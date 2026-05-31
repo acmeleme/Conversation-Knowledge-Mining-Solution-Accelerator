@@ -95,7 +95,71 @@ The App Service runs on **F1 Free tier** (`asp-financeirax01`, SKU: F1) with `al
 ## Next Steps
 Monitor application behavior to ensure Memory Store integration functions correctly with the configured delay and naming conventions.
 
-## Learnings (Easy Auth — added 2026-05-28)
+---
+
+### Phase 3 — APIM AI Gateway: Redis Cache + Backend Pool (2026-06-03)
+
+Deployed Azure Managed Redis as APIM external cache and configured backend pool with circuit breaker for Azure OpenAI.
+
+**Resources deployed:**
+- `redis-callcenter100` (Azure Managed Redis, Balanced_B0, centralus, port 10000)
+- `databases/default` (Redis 7.4, OSSCluster, AllKeysLRU)
+- `apim-callcenter100/caches/default` (APIM external cache → Redis connection string)
+- `openai-primary` backend with circuit breaker (3×5xx/60s → open 30s, acceptRetryAfter)
+- `openai-pool` backend pool referencing `openai-primary`
+- Named values: `redis-host`, `redis-port`
+- Policies applied to `fetchChartData-post` (cache + retry) and `chat-post` (pool routing, no retry)
+
+**Bicep modules updated:**
+- `infra/modules/redis.bicep` — rewritten from retired Azure Cache for Redis to Azure Managed Redis
+- `infra/modules/apim-redis-cache.bicep` — port updated 6380→10000
+- `infra/modules/apim-backend-pool.bicep` — circuit breaker on individual backend, not pool
+
+**Reference:** `.squad/decisions/inbox/kai-phase3-redis.md`
+
+## Learnings (Phase 3 — 2026-06-03)
+
+13. **Azure Cache for Redis (ALL tiers) is retiring**
+    - `Microsoft.Cache/Redis` (Basic/Standard/Premium) returns `BadRequest: Azure Cache for Redis is retiring`
+    - Use `Microsoft.Cache/redisEnterprise` with SKU `Balanced_B0`, `Balanced_B1`, etc.
+    - CLI: `az extension add --name redisenterprise`, then `az redisenterprise create/show/database`
+    - Port changes from **6380 → 10000** (TLS). Hostname: `{name}.{region}.redis.azure.net`
+
+14. **`publicNetworkAccess` is required for Azure Managed Redis (API 2025-07-01)**
+    - Omitting `--public-network-access Enabled` → `BadRequest: 'properties.publicNetworkAccess' is required`
+    - Always pass this flag explicitly on `az redisenterprise create`
+
+15. **Azure Managed Redis: access keys disabled by default**
+    - New databases set `accessKeysAuthentication: Disabled`
+    - APIM external cache uses connection string auth → must run: `az redisenterprise database update --access-keys-auth Enabled`
+    - Only after this will `list-keys` provide usable keys for APIM
+
+16. **APIM: `circuitBreaker` NOT supported on Pool-type backends**
+    - APIM `2023-09-01-preview` returns: `"CircuitBreaker is not supported for backend pool."`
+    - Apply `circuitBreaker` rules to the **individual named backend** (e.g., `openai-primary`)
+    - The pool inherits circuit breaker state from its member backends automatically
+    - Pool resource must NOT include a `circuitBreaker` block
+
+17. **`az rest --body` Unicode encoding bug**
+    - Passing JSON with non-ASCII characters (em dashes, special chars) directly as `--body '...'` corrupts the payload
+    - Fix: write JSON with `Out-File -FilePath ... -Encoding utf8`, then use `--body "@filepath"`
+    - Required for ALL `az rest` calls whose body contains special characters
+
+18. **APIM retry policy breaks SSE / chunked streaming**
+    - For streaming endpoints (chat, SSE), do NOT add `<retry>` in the backend policy section
+    - Retry buffers the response, breaking `Transfer-Encoding: chunked` and SSE event delivery
+    - Use `<forward-request buffer-request-body="false" timeout="120" />` for streaming routes
+    - Retry is safe for non-streaming JSON endpoints (e.g., `fetchChartData`)
+
+19. **APIM caches API version: `2023-05-01-preview`**
+    - External cache resource (`caches/default`) requires preview API version
+    - `useFromLocation: 'default'` sets the cache as global (applies to all regions)
+    - APIM auto-stores the connection string as a masked named value (`{{hexid}}`) — normal behavior
+
+20. **Azure Managed Redis race condition on create**
+    - If `az redisenterprise create` fails mid-flight, cluster may already be partially created
+    - Retry will return `Conflict: The cluster is not yet running.`
+    - Fix: poll with `az redisenterprise show --query properties.provisioningState` until `Succeeded`, then proceed normally
 
 5. **F1 Free tier + Easy Auth = ephemeral encryption key (critical)**
    - `WEBSITE_AUTH_ENCRYPTION_KEY` must ALWAYS be set explicitly on Free/Shared tier apps
