@@ -1,37 +1,52 @@
 <!--
   APIM Policy for /api/fetchChartData endpoint (non-streaming, cacheable)
-  
+  Phase 3: External Redis cache + retry policy
+
   This endpoint is safe to cache because:
   - Response is a complete JSON object (not streaming)
   - Chart prompts for similar date ranges produce identical/near-identical output
   - Cache key includes the full request body (prompt + filters)
+
+  Phase 3 changes:
+  - caching-type="external" → uses Redis (redis-callcenter100) instead of in-memory APIM cache
+  - retry policy: 3 retries with exponential backoff for 429/5xx backend failures
+  - X-Cache-Status header for client-side observability
+  - X-APIM-Version bumped to 2.0
 -->
 <policies>
   <inbound>
     <base />
-    <!-- Propagate user identity -->
+    <!-- User identity propagation -->
     <set-header name="X-User-Id" exists-action="skip">
       <value>@(context.Request.Headers.GetValueOrDefault("X-MS-CLIENT-PRINCIPAL-NAME", "anonymous"))</value>
     </set-header>
     <!-- Rate limit: 30 chart requests per minute per user -->
     <rate-limit-by-key calls="30" renewal-period="60"
-      counter-key="@(context.Request.Headers.GetValueOrDefault("X-User-Id", "anonymous"))"
+      counter-key="@(context.Request.Headers.GetValueOrDefault(&quot;X-User-Id&quot;, &quot;anonymous&quot;))"
       remaining-calls-header-name="X-RateLimit-Remaining"
       retry-after-header-name="Retry-After" />
-    <!-- Cache lookup: 300s TTL, key = method + URL + body hash -->
+    <!-- External Redis cache lookup (TTL: 5 minutes) -->
     <cache-lookup vary-by-developer="false" vary-by-developer-groups="false"
       allow-private-response-caching="true" must-revalidate="false"
-      downstream-caching-type="none" />
+      downstream-caching-type="none" caching-type="external" />
   </inbound>
   <backend>
-    <forward-request timeout="60" />
+    <!-- Retry: 3 attempts, exponential backoff 2s→4s→8s (max 10s) for 429 and 5xx -->
+    <retry condition="@(context.Response.StatusCode == 429 || context.Response.StatusCode >= 500)" count="3" interval="2" delta="2" max-interval="10" first-fast-retry="true">
+      <forward-request timeout="60" />
+    </retry>
   </backend>
   <outbound>
     <base />
-    <!-- Store response in cache for 5 minutes -->
+    <!-- Store in external Redis cache for 5 minutes -->
+    <!-- caching-type not supported on cache-store in this APIM version; cache-lookup uses external -->
     <cache-store duration="300" />
     <set-header name="X-APIM-Version" exists-action="override">
-      <value>1.0</value>
+      <value>2.0</value>
+    </set-header>
+    <!-- Expose cache hit/miss status to client for observability -->
+    <set-header name="X-Cache-Status" exists-action="override">
+      <value>@(context.Response.Headers.ContainsKey("Ocp-Apim-Cached") ? "HIT" : "MISS")</value>
     </set-header>
   </outbound>
   <on-error>

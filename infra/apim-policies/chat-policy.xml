@@ -1,14 +1,21 @@
 <!--
   APIM Policy for /api/chat endpoint (streaming SSE)
-  
+  Phase 3: Backend pool routing (circuit breaker) + observability headers
+
   Critical: buffer-request-body="false" preserves Transfer-Encoding: chunked
   for StreamingResponse from the FastAPI backend. Do NOT add outbound body
   policies that read the response body — they break chunked streaming.
+
+  Phase 3 changes:
+  - set-backend-service routes to "openai-pool" backend (circuit breaker pool, configured by kai)
+  - X-APIM-Backend header exposes which backend host served the request
+  - X-APIM-Version bumped to 2.0
+  - NO retry in backend section — retry breaks SSE chunked transfer encoding
 -->
 <policies>
   <inbound>
     <base />
-    <!-- Propagate user identity for audit logging and rate limiting -->
+    <!-- User identity propagation for audit logging and rate limiting -->
     <set-header name="X-User-Id" exists-action="skip">
       <value>@(context.Request.Headers.GetValueOrDefault("X-MS-CLIENT-PRINCIPAL-NAME", "anonymous"))</value>
     </set-header>
@@ -17,9 +24,11 @@
     </set-header>
     <!-- Rate limit: 60 chat requests per minute per user -->
     <rate-limit-by-key calls="60" renewal-period="60"
-      counter-key="@(context.Request.Headers.GetValueOrDefault("X-User-Id", "anonymous"))"
+      counter-key="@(context.Request.Headers.GetValueOrDefault(&quot;X-User-Id&quot;, &quot;anonymous&quot;))"
       remaining-calls-header-name="X-RateLimit-Remaining"
       retry-after-header-name="Retry-After" />
+    <!-- Route to backend pool with circuit breaker (requires openai-pool backend from kai) -->
+    <set-backend-service backend-id="openai-pool" />
   </inbound>
   <backend>
     <!-- CRITICAL: Do not buffer — required for SSE/chunked streaming -->
@@ -28,7 +37,11 @@
   <outbound>
     <!-- Do NOT read response body here — it would break streaming -->
     <set-header name="X-APIM-Version" exists-action="override">
-      <value>1.0</value>
+      <value>2.0</value>
+    </set-header>
+    <!-- Expose which backend host served the request for tracing -->
+    <set-header name="X-APIM-Backend" exists-action="override">
+      <value>@(context.Request.OriginalUrl.Host)</value>
     </set-header>
   </outbound>
   <on-error>
