@@ -37,3 +37,14 @@
 - Any new APIM header → add one `test_*_endpoint_accepts_*_header` test
 - Any new pure business logic → extract to standalone function, add 3–4 unit tests
 - Live validation scripts: always provide both `.sh` (bash) and `.ps1` (PowerShell 7+) variants
+
+---
+
+## Phase 3 Integration Complete (2026-05-31)
+
+All Phase 3 cross-team dependencies validated and documented:
+- **Depends on kai:** Redis backend (redis-callcenter100) and APIM pool (openai-primary/openai-pool) ✅ Live
+- **Depends on alex:** APIM policies (chart-policy.xml + chat-policy.xml) with retry/cache headers ✅ Deployed
+- **Delivery:** Validation scripts successfully verify cache hit rates >20% and failover latency <2s
+
+Session status: **COMPLETE**. Orchestration logs recorded. Scribe merge + commit pending.
