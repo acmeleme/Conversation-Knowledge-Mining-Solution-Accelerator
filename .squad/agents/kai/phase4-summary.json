@@ -1,0 +1,21 @@
+{
+  "contentSafety": {
+    "name": "contentsafety-callcenter100",
+    "resourceId": "/subscriptions/a2ec8402-d75b-419c-b71d-7558309c50dc/resourceGroups/rg-callcenter-100/providers/Microsoft.CognitiveServices/accounts/contentsafety-callcenter100",
+    "endpoint": "https://contentsafety-callcenter100-92f5b.cognitiveservices.azure.com/"
+  },
+  "keyVault": {
+    "name": "kv-callcenter100",
+    "resourceId": "/subscriptions/a2ec8402-d75b-419c-b71d-7558309c50dc/resourceGroups/rg-callcenter-100/providers/Microsoft.KeyVault/vaults/kv-callcenter100"
+  },
+  "apim": {
+    "name": "apim-callcenter100",
+    "principalId": "df9c97eb-b22c-413d-8af5-548382ef2384",
+    "namedValueMode": "keyvault"
+  },
+  "policies": {
+    "chatOperation": "chat-post",
+    "chartOperation": "fetchChartData-post",
+    "apiId": "callcenter-api"
+  }
+}

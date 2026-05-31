@@ -33,26 +33,24 @@
       <set-header name="Content-Type" exists-action="override">
         <value>application/json</value>
       </set-header>
-      <set-header name="Ocp-Apim-Subscription-Key" exists-action="override">
-        <value>{{content-safety-key}}</value>
-      </set-header>
       <set-body>@{
         var text = (string)context.Variables["chartQuery"];
-        if (string.IsNullOrEmpty(text)) text = "empty";
+        if (string.IsNullOrEmpty(text)) { text = "empty"; }
         return new JObject(
           new JProperty("text", text.Length > 5000 ? text.Substring(0, 5000) : text),
           new JProperty("categories", new JArray("Hate", "Violence", "Sexual", "SelfHarm")),
           new JProperty("outputType", "FourSeverityLevels")
         ).ToString();
       }</set-body>
+      <authentication-managed-identity resource="https://cognitiveservices.azure.com/" />
     </send-request>
     <set-variable name="contentSafetyResult" value="@{
       try {
         var resp = (IResponse)context.Variables[&quot;contentSafetyResponse&quot;];
-        if (resp == null || resp.StatusCode != 200) return &quot;UNAVAILABLE&quot;;
+        if (resp == null || resp.StatusCode != 200) { return &quot;UNAVAILABLE&quot;; }
         var body = resp.Body.As&lt;JObject&gt;();
         var cats = body?[&quot;categoriesAnalysis&quot;] as JArray;
-        if (cats == null) return &quot;SAFE&quot;;
+        if (cats == null) { return &quot;SAFE&quot;; }
         foreach (var cat in cats) {
           if ((int)(cat[&quot;severity&quot;] ?? 0) >= 4) {
             return &quot;BLOCKED:&quot; + (string)cat[&quot;category&quot;];

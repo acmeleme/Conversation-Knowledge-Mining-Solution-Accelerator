@@ -34,7 +34,7 @@
       try {
         var body = context.Request.Body.As&lt;JObject&gt;(preserveContent: true);
         var msgs = body?[&quot;messages&quot;] as JArray;
-        if (msgs == null) return &quot;&quot;;
+        if (msgs == null) { return &quot;&quot;; }
         for (int i = msgs.Count - 1; i >= 0; i--) {
           if ((string)msgs[i][&quot;role&quot;] == &quot;user&quot;) {
             return msgs[i][&quot;content&quot;]?.ToString() ?? &quot;&quot;;
@@ -50,27 +50,25 @@
       <set-header name="Content-Type" exists-action="override">
         <value>application/json</value>
       </set-header>
-      <set-header name="Ocp-Apim-Subscription-Key" exists-action="override">
-        <value>{{content-safety-key}}</value>
-      </set-header>
       <set-body>@{
         var text = (string)context.Variables["userMessage"];
-        if (string.IsNullOrEmpty(text)) text = "empty";
+        if (string.IsNullOrEmpty(text)) { text = "empty"; }
         return new JObject(
           new JProperty("text", text.Length > 5000 ? text.Substring(0, 5000) : text),
           new JProperty("categories", new JArray("Hate", "Violence", "Sexual", "SelfHarm")),
           new JProperty("outputType", "FourSeverityLevels")
         ).ToString();
       }</set-body>
+      <authentication-managed-identity resource="https://cognitiveservices.azure.com/" />
     </send-request>
     <!-- Evaluate content safety result and block if severity >= 4 -->
     <set-variable name="contentSafetyResult" value="@{
       try {
         var resp = (IResponse)context.Variables[&quot;contentSafetyResponse&quot;];
-        if (resp == null || resp.StatusCode != 200) return &quot;UNAVAILABLE&quot;;
+        if (resp == null || resp.StatusCode != 200) { return &quot;UNAVAILABLE&quot;; }
         var body = resp.Body.As&lt;JObject&gt;();
         var cats = body?[&quot;categoriesAnalysis&quot;] as JArray;
-        if (cats == null) return &quot;SAFE&quot;;
+        if (cats == null) { return &quot;SAFE&quot;; }
         foreach (var cat in cats) {
           if ((int)(cat[&quot;severity&quot;] ?? 0) >= 4) {
             return &quot;BLOCKED:&quot; + (string)cat[&quot;category&quot;];
@@ -114,6 +112,7 @@
     <forward-request buffer-request-body="false" timeout="120" />
   </backend>
   <outbound>
+    <base />
     <!-- Do NOT read response body here; it would break streaming -->
     <set-header name="X-APIM-Version" exists-action="override">
       <value>3.0</value>

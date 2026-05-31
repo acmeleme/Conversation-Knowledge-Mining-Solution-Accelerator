@@ -25,6 +25,9 @@ Created Python scripts for generating 500 call-center conversations at volume:
 ### Phase 3 — APIM AI Gateway: Redis Cache + Backend Pool (2026-06-03)
 Deployed Azure Managed Redis (`redis-callcenter100`, Balanced_B0, centralus, port 10000) as APIM external cache with circuit breaker on OpenAI backend. Bicep modules updated: `redis.bicep` (retired Azure Cache for Redis → Managed Redis), `apim-redis-cache.bicep` (port 6380→10000), `apim-backend-pool.bicep` (circuit breaker on individual backend, not pool).
 
+### Phase 4 — Content Safety + Key Vault + APIM Named Values (2026-05-31)
+Provisioned Azure AI Content Safety (`contentsafety-callcenter100`, S0, centralus) and integrated APIM with Content Safety using managed identity authentication. Reused existing Key Vault (`kv-callcenter100`) in RBAC mode, stored `apim-subscription-key` and `content-safety-key` as ARM-managed secrets, granted APIM `Key Vault Secrets User`, and added APIM named values `content-safety-endpoint` + `content-safety-key` (Key Vault reference). Updated APIM operation policies for `chat-post` and `fetchChartData-post` and added Bicep modules `content-safety.bicep` + `keyvault.bicep`.
+
 ## Learnings
 
 1. **azd environments:** Callcenter100 (primary, East US 2) + Callcenter2 (test). Resources: RG `rg-callcenter-100`, App Services `app-callcenter100` + `api-callcenter100` (Linux containers), ACR `ckmcc0522172320.azurecr.io`.
@@ -67,6 +70,9 @@ Deployed Azure Managed Redis (`redis-callcenter100`, Balanced_B0, centralus, por
 19. **APIM caches API version: `2023-05-01-preview`.** External cache resource (`caches/default`) requires preview API version. `useFromLocation: 'default'` sets cache as global (applies to all regions). APIM auto-stores connection string as masked named value—normal behavior.
 
 20. **Azure Managed Redis race condition on create.** If `az redisenterprise create` fails mid-flight, cluster may be partially created. Retry returns `Conflict: The cluster is not yet running.` **Fix:** poll with `az redisenterprise show --query properties.provisioningState` until `Succeeded`, then proceed.
+21. **Content Safety keys can still be retrieved through ARM `listKeys` even when CLI `account keys list` is blocked by `disableLocalAuth=true`.** Use `POST .../accounts/{name}/listKeys?api-version=2023-05-01` with `az rest` when the service is policy-enforced.
+22. **Existing Key Vault may be RBAC-only + public network disabled.** In that case, `az keyvault set-policy` and `az keyvault secret set` can fail from a developer workstation. Use ARM-managed `Microsoft.KeyVault/vaults/secrets` resources for secret creation and grant APIM `Key Vault Secrets User` via RBAC.
+23. **APIM `send-request` can call Content Safety with managed identity.** Inside policy use `<authentication-managed-identity resource="https://cognitiveservices.azure.com/" />` and omit `client-id`; APIM injects the bearer token for the outbound request.
 
 11. **`unauthenticatedClientAction` affects `/.auth/me` response code.** `"RedirectToLoginPage"` → 302; `"Return401"`/`"Return403"` → 401/403. Both indicate Easy Auth working properly; 302 is NOT a bug when RedirectToLoginPage is set.
 
