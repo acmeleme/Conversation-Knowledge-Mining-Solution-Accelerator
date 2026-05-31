@@ -369,7 +369,8 @@ class TestPhase4PolicyFiles:
         content = (REPO_ROOT / "infra" / "apim-policies" / "chat-policy.xml").read_text()
 
         assert "content-safety-endpoint" in content
-        assert "content-safety-key" in content
+        # Auth via Managed Identity (passwordless) instead of API key — more secure
+        assert "authentication-managed-identity" in content
 
     def test_phase4_policy_version_is_3_0(self):
         chat_policy = (REPO_ROOT / "infra" / "apim-policies" / "chat-policy.xml").read_text()
