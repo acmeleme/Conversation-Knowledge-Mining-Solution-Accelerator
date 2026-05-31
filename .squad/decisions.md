@@ -53,6 +53,28 @@
 - **Verified:** Post-fix; `/.auth/login/aad` returns `302 → login.microsoftonline.com` with correct `client_id=35f4b07f-...` ✅
 - **Recommendations:** Always set `WEBSITE_AUTH_ENCRYPTION_KEY` on F1/ephemeral storage; upgrade to B1+ for `alwaysOn: true` in production.
 
+### 2026-05-31 · Phase 4 Content Safety Architecture (Squad)
+- **Adopted:** Azure AI Content Safety via Managed Identity (passwordless) — NOT API key
+  - `<authentication-managed-identity resource="https://cognitiveservices.azure.com/" />` in APIM inbound policy
+  - Named Value `{{content-safety-endpoint}}` only; no key Named Value exposed
+  - APIM system MSI granted `Cognitive Services User` role on Content Safety resource
+- **Block threshold:** severity ≥ 4 for all 4 categories (Hate, Violence, Sexual, SelfHarm)
+- **Fail-open:** `ignore-error="true"` on `send-request` → if Content Safety unavailable, request is allowed through
+- **Audit log headers:** `X-Audit-UserId`, `X-Audit-Timestamp`, `X-Content-Safety-Result` propagated downstream
+- **Key Vault:** `kv-callcenter100` stores `apim-subscription-key` + `content-safety-key` (defense-in-depth); APIM uses MSI not KV keys
+- **Test coverage:** 34/34 tests passing — `src/api/tests/test_phase4_content_safety.py`
+- **Compliance:** `docs/phase4-compliance-evidence.md` — LGPD Art. 46-49, ISO 27001 A.8.24 controls documented
+- **Rationale:** MSI eliminates secret rotation burden and removes key exfiltration risk; aligns with LGPD data minimization principle
+
+### 2026-05-31 · Phase 4 Complete — AI Gateway Roadmap (Squad)
+- **All 4 phases shipped:**
+  - Phase 1 ✅ APIM `apim-callcenter100` + App Insights + logging
+  - Phase 2 ✅ Rate limiting (60/min chat, 30/min chart) + `X-User-Id` header propagation
+  - Phase 3 ✅ Redis `redis-callcenter100` semantic cache (TTL 5min) + circuit breaker `openai-pool`
+  - Phase 4 ✅ Content Safety + audit log + Key Vault + LGPD/ISO 27001 compliance evidence
+- **Test count:** 10 (P2) + 15 (P3) + 34 (P4) = 59 gateway tests, all passing
+- **Architecture:** `USE_APIM_GATEWAY=true` active; all AI calls route through APIM
+
 ## Governance
 
 - All meaningful changes require team consensus
