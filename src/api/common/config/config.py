@@ -51,3 +51,9 @@ class Config:
 
         self.solution_name = os.getenv("SOLUTION_NAME", "")
         self.azure_client_id = os.getenv("AZURE_CLIENT_ID", "")
+
+        # APIM AI Gateway configuration (Phase 1)
+        self.use_apim_gateway = os.getenv("USE_APIM_GATEWAY", "false").strip().lower() == "true"
+        self.apim_endpoint = os.getenv("APIM_ENDPOINT", "")
+        self.apim_subscription_key = os.getenv("APIM_SUBSCRIPTION_KEY", "")
+        self.apim_api_version = os.getenv("APIM_API_VERSION", "2024-02-01")

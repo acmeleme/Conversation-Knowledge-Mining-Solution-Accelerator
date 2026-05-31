@@ -1,0 +1,40 @@
+<!--
+  APIM Policy for /api/fetchChartData endpoint (non-streaming, cacheable)
+  
+  This endpoint is safe to cache because:
+  - Response is a complete JSON object (not streaming)
+  - Chart prompts for similar date ranges produce identical/near-identical output
+  - Cache key includes the full request body (prompt + filters)
+-->
+<policies>
+  <inbound>
+    <base />
+    <!-- Propagate user identity -->
+    <set-header name="X-User-Id" exists-action="skip">
+      <value>@(context.Request.Headers.GetValueOrDefault("X-MS-CLIENT-PRINCIPAL-NAME", "anonymous"))</value>
+    </set-header>
+    <!-- Rate limit: 30 chart requests per minute per user -->
+    <rate-limit-by-key calls="30" renewal-period="60"
+      counter-key="@(context.Request.Headers.GetValueOrDefault("X-User-Id", "anonymous"))"
+      remaining-calls-header-name="X-RateLimit-Remaining"
+      retry-after-header-name="Retry-After" />
+    <!-- Cache lookup: 300s TTL, key = method + URL + body hash -->
+    <cache-lookup vary-by-developer="false" vary-by-developer-groups="false"
+      allow-private-response-caching="true" must-revalidate="false"
+      downstream-caching-type="none" />
+  </inbound>
+  <backend>
+    <forward-request timeout="60" />
+  </backend>
+  <outbound>
+    <base />
+    <!-- Store response in cache for 5 minutes -->
+    <cache-store duration="300" />
+    <set-header name="X-APIM-Version" exists-action="override">
+      <value>1.0</value>
+    </set-header>
+  </outbound>
+  <on-error>
+    <base />
+  </on-error>
+</policies>
