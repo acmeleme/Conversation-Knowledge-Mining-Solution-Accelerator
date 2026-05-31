@@ -89,11 +89,11 @@ echo "Image tag: ${IMAGE_TAG}"
 az acr login --name "$ACR_NAME"
 
 echo "Building and pushing frontend image..."
-docker build --platform linux/amd64 -f src/App/WebApp.Dockerfile -t "$APP_IMAGE" src/App
+docker build --platform linux/amd64 --build-arg REACT_APP_VERSION="${IMAGE_TAG}" -f src/App/WebApp.Dockerfile -t "$APP_IMAGE" src/App
 docker push "$APP_IMAGE"
 
 echo "Building and pushing API image..."
-docker build --platform linux/amd64 -f src/api/ApiApp.Dockerfile -t "$API_IMAGE" src/api
+docker build --platform linux/amd64 --build-arg APP_VERSION="${IMAGE_TAG}" -f src/api/ApiApp.Dockerfile -t "$API_IMAGE" src/api
 docker push "$API_IMAGE"
 
 echo "Updating App Service container configuration..."
@@ -108,6 +108,12 @@ az webapp config container set \
   --name "$API_NAME" \
   --container-image-name "$API_IMAGE" \
   --container-registry-url "https://${ACR_LOGIN_SERVER}" >/dev/null
+
+# Persist the image version as an App Service env var so /api/version can read it
+az webapp config appsettings set \
+  --resource-group "$RESOURCE_GROUP" \
+  --name "$API_NAME" \
+  --settings APP_VERSION="${IMAGE_TAG}" >/dev/null
 
 echo "Restarting App Services..."
 az webapp restart --resource-group "$RESOURCE_GROUP" --name "$APP_NAME" >/dev/null

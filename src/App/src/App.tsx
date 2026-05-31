@@ -79,6 +79,23 @@ const Dashboard: React.FC<{ userRole: UserRole; userName: string; userEmail: str
   const OFFSET_INCREMENT = 25;
   const [hasMoreRecords, setHasMoreRecords] = useState<boolean>(true);
   const [userMenuOpen, setUserMenuOpen] = useState<boolean>(false);
+  const [apiVersion, setApiVersion] = useState<string>("");
+
+  useEffect(() => {
+    const fetchApiVersion = async () => {
+      try {
+        const apiBase = process.env.REACT_APP_API_BASE_URL || "";
+        const resp = await fetch(`${apiBase}/api/version`, { credentials: "include" });
+        if (resp.ok) {
+          const data = await resp.json();
+          setApiVersion(data.api_version || "");
+        }
+      } catch {
+        // silent
+      }
+    };
+    fetchApiVersion();
+  }, []);
 
   useEffect(() => {
     try {
@@ -329,6 +346,10 @@ const Dashboard: React.FC<{ userRole: UserRole; userName: string; userEmail: str
           </Tag>
         </div>
         <div className="header-right-section">
+          <Text size={100} style={{ color: "#aaa", fontSize: 11, alignSelf: "center", fontFamily: "monospace", marginRight: 4 }}>
+            fe:{(process.env.REACT_APP_VERSION || "dev").slice(0, 7)}
+            {apiVersion ? ` · api:${String(apiVersion).slice(0, 7)}` : ""}
+          </Text>
           <Button
             appearance="subtle"
             onClick={() => onHandlePanelStates(panels.DASHBOARD)}
@@ -571,7 +592,6 @@ const App: React.FC = () => {
           emailFromIdToken ||
           emailFromClaims ||
           emailFromBackend ||
-          principal.user_id ||
           ""
         ).toLowerCase().trim();
 

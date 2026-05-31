@@ -1,5 +1,8 @@
 FROM python:3.11-slim
 
+ARG APP_VERSION=dev
+ENV APP_VERSION=$APP_VERSION
+
 # Install system dependencies and Microsoft ODBC Driver 18 for SQL Server.
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -21,21 +24,15 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Set the working directory inside the container
 WORKDIR /app
 
-# Copy only the requirements file first to leverage Docker layer caching
 COPY ./requirements.txt .
 
-# Install Python dependencies
 RUN pip install --upgrade pip setuptools wheel \
     && pip install --no-cache-dir -r requirements.txt && rm -rf /root/.cache
 
-# Copy the backend application code into the container
 COPY ./ .
 
-# Expose port 80 for incoming traffic
 EXPOSE 80
 
-# Start the application using Uvicorn
 CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "80"]

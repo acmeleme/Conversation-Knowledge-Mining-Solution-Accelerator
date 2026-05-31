@@ -281,6 +281,15 @@ async def conversation(request: Request):
         return JSONResponse(content={"error": "An internal error occurred while processing the conversation."}, status_code=500)
 
 
+@router.get("/version")
+async def get_version():
+    """Returns the running image version tags for the frontend and API."""
+    return {
+        "api_version": os.getenv("APP_VERSION", "dev"),
+        "build_sha": os.getenv("BUILD_SHA", "local"),
+    }
+
+
 @router.get("/debug-state")
 async def debug_state(request: Request):
     """Debug endpoint to diagnose app state issues."""
