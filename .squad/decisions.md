@@ -37,7 +37,7 @@
 ### 2026-05-25 · Memory Store Settings Applied (Kai)
 - **Completed:** Azure App Service application settings configured:
   - `AZURE_AI_MEMORY_ENABLED=true`
-  - `AZURE_AI_MEMORY_STORE_NAME=memory-store-callcenter100`
+  - `AZURE_AI_MEMORY_STORE_NAME=<memory-store-name>`
   - `AZURE_AI_MEMORY_UPDATE_DELAY_SECONDS=300`
 - **Verified:** Settings applied; awaiting next app restart for effect
 
@@ -61,16 +61,16 @@
 - **Block threshold:** severity ≥ 4 for all 4 categories (Hate, Violence, Sexual, SelfHarm)
 - **Fail-open:** `ignore-error="true"` on `send-request` → if Content Safety unavailable, request is allowed through
 - **Audit log headers:** `X-Audit-UserId`, `X-Audit-Timestamp`, `X-Content-Safety-Result` propagated downstream
-- **Key Vault:** `kv-callcenter100` stores `apim-subscription-key` + `content-safety-key` (defense-in-depth); APIM uses MSI not KV keys
+- **Key Vault:** Stores `apim-subscription-key` + `content-safety-key` (defense-in-depth); APIM uses MSI not KV keys
 - **Test coverage:** 34/34 tests passing — `src/api/tests/test_phase4_content_safety.py`
 - **Compliance:** `docs/phase4-compliance-evidence.md` — LGPD Art. 46-49, ISO 27001 A.8.24 controls documented
 - **Rationale:** MSI eliminates secret rotation burden and removes key exfiltration risk; aligns with LGPD data minimization principle
 
 ### 2026-05-31 · Phase 4 Complete — AI Gateway Roadmap (Squad)
 - **All 4 phases shipped:**
-  - Phase 1 ✅ APIM `apim-callcenter100` + App Insights + logging
+  - Phase 1 ✅ APIM AI Gateway + App Insights + logging
   - Phase 2 ✅ Rate limiting (60/min chat, 30/min chart) + `X-User-Id` header propagation
-  - Phase 3 ✅ Redis `redis-callcenter100` semantic cache (TTL 5min) + circuit breaker `openai-pool`
+  - Phase 3 ✅ Redis semantic cache (TTL 5min) + circuit breaker `openai-pool`
   - Phase 4 ✅ Content Safety + audit log + Key Vault + LGPD/ISO 27001 compliance evidence
 - **Test count:** 10 (P2) + 15 (P3) + 34 (P4) = 59 gateway tests, all passing
 - **Architecture:** `USE_APIM_GATEWAY=true` active; all AI calls route through APIM

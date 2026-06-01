@@ -1,7 +1,7 @@
 # Phase 3 ROI Report: Semantic Cache & Load Balancing
 
 **Period:** [START_DATE] to [END_DATE]  
-**Environment:** `rg-callcenter-100` | APIM: `apim-callcenter100`  
+**Environment:** `rg-callcenter-100` | APIM: AI Gateway  
 **Prepared by:** Morgan (Test Engineer) — Phase 3 validation  
 **Issue:** #38  
 

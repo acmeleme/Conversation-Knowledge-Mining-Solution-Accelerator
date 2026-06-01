@@ -14,7 +14,7 @@ Test Engineer — owns E2E testing, API validation, and quality gates.
 - `/api/fetchFilterData` → HTTP 401 (no token), HTTP 200 + 8 topics (with token)
 - `/api/fetchChartData` → HTTP 401 (no token), HTTP 200 + charts (with token)
 - `/api/chat` → HTTP 401 (no token), streaming response (with token)
-- CORS preflight → `Access-Control-Allow-Origin: https://app-callcenter100.azurewebsites.net`
+- CORS preflight → `Access-Control-Allow-Origin` header validation
 - Agent responds in PT and EN
 
 ## Handoffs

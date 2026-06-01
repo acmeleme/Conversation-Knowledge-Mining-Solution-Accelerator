@@ -31,8 +31,8 @@
 
 | Secret | Storage | Access |
 |--------|---------|--------|
-| APIM Subscription Key | Azure Key Vault (`kv-callcenter100`) | APIM Managed Identity |
-| Content Safety API Key | Azure Key Vault (`kv-callcenter100`) | APIM Managed Identity |
+| APIM Subscription Key | Azure Key Vault | APIM Managed Identity |
+| Content Safety API Key | Azure Key Vault | APIM Managed Identity |
 
 ## 4. Data Retention (LGPD Art. 16)
 

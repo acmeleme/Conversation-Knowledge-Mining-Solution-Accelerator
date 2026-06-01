@@ -11,10 +11,6 @@ DevOps Engineer — owns Azure infrastructure, Docker builds, deployments, and m
 - Monitor and fix connectivity between services
 
 ## Stack
-- **ACR:** `ckmcc0522172320.azurecr.io`
-- **App Services:** `app-callcenter100`, `api-callcenter100`
-- **SQL:** `sql-callcenter100.database.windows.net`
-- **CosmosDB:** `cosmos-callcenter100`
 - **Resource Group:** `rg-callcenter-100`
 - **Subscription:** `a2ec8402-d75b-419c-b71d-7558309c50dc`
 

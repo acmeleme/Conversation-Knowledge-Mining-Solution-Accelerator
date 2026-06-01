@@ -3,12 +3,12 @@
 ## Work Completed (Condensed)
 
 ### Memory Store Configuration (2026-05-25)
-Configured Azure App Service (`app-callcenter100`, East US 2) with Memory Store settings: `AZURE_AI_MEMORY_ENABLED=true`, `AZURE_AI_MEMORY_STORE_NAME=memory-store-callcenter100`, `AZURE_AI_MEMORY_UPDATE_DELAY_SECONDS=300`. ✅ Verified.
+Configured Azure App Service (East US 2) with Memory Store settings: `AZURE_AI_MEMORY_ENABLED=true`, `AZURE_AI_MEMORY_UPDATE_DELAY_SECONDS=300`. ✅ Verified.
 
 ### Data Ingestion Diagnosis (2026-05-26)
 Diagnosed empty `processed_data` SQL table. **Root cause:** `run_process_data_scripts.sh` was never executed after 2026-05-22 infra deployment. **Secondary bug:** script passes `storageAccount` parameter to bicep file that doesn't declare it (deployment would fail).
 
-**Options:** (A) Fast—seed SQL from `infra/data/sample_processed_data.json` (851 records); (B) Full—fix param bug, upload to ADLS, run pipeline. **Key findings:** ADLS `stcallcenter100` has HNS + key auth disabled (needs managed identity); Key Vault public network access disabled.
+**Options:** (A) Fast—seed SQL from `infra/data/sample_processed_data.json` (851 records); (B) Full—fix param bug, upload to ADLS, run pipeline. **Key findings:** ADLS has HNS + key auth disabled (needs managed identity); Key Vault public network access disabled.
 
 ### Easy Auth Authentication Loop Fix — app-financeirax01 (2026-05-28)
 **Root cause:** F1 Free tier + `WEBSITE_AUTH_ENCRYPTION_KEY` unset → ephemeral encryption key on container restart → nonce cookie unreadable → auth loop. **Fix:** (1) Generated 32-byte encryption key, set app setting; (2) Set `tokenStore.enabled: false` (session → client cookies). ✅ Verified—auth flow operational.
@@ -23,20 +23,20 @@ Created Python scripts for generating 500 call-center conversations at volume:
 - 100 seed question templates across 7 categories (billing, technical, activation, account, network, cancellation, upgrades)
 
 ### Phase 3 — APIM AI Gateway: Redis Cache + Backend Pool (2026-06-03)
-Deployed Azure Managed Redis (`redis-callcenter100`, Balanced_B0, centralus, port 10000) as APIM external cache with circuit breaker on OpenAI backend. Bicep modules updated: `redis.bicep` (retired Azure Cache for Redis → Managed Redis), `apim-redis-cache.bicep` (port 6380→10000), `apim-backend-pool.bicep` (circuit breaker on individual backend, not pool).
+Deployed Azure Managed Redis (Balanced_B0, centralus, port 10000) as APIM external cache with circuit breaker on OpenAI backend. Bicep modules updated: `redis.bicep` (retired Azure Cache for Redis → Managed Redis), `apim-redis-cache.bicep` (port 6380→10000), `apim-backend-pool.bicep` (circuit breaker on individual backend, not pool).
 
 ### Phase 4 — Content Safety + Key Vault + APIM Named Values (2026-05-31)
-Provisioned Azure AI Content Safety (`contentsafety-callcenter100`, S0, centralus) and integrated APIM with Content Safety using managed identity authentication. Reused existing Key Vault (`kv-callcenter100`) in RBAC mode, stored `apim-subscription-key` and `content-safety-key` as ARM-managed secrets, granted APIM `Key Vault Secrets User`, and added APIM named values `content-safety-endpoint` + `content-safety-key` (Key Vault reference). Updated APIM operation policies for `chat-post` and `fetchChartData-post` and added Bicep modules `content-safety.bicep` + `keyvault.bicep`.
+Provisioned Azure AI Content Safety (S0, centralus) and integrated APIM with Content Safety using managed identity authentication. Reused existing Key Vault in RBAC mode, stored `apim-subscription-key` and `content-safety-key` as ARM-managed secrets, granted APIM `Key Vault Secrets User`, and added APIM named values `content-safety-endpoint` + `content-safety-key` (Key Vault reference). Updated APIM operation policies for `chat-post` and `fetchChartData-post` and added Bicep modules `content-safety.bicep` + `keyvault.bicep`.
 
 ## Learnings
 
-1. **azd environments:** Callcenter100 (primary, East US 2) + Callcenter2 (test). Resources: RG `rg-callcenter-100`, App Services `app-callcenter100` + `api-callcenter100` (Linux containers), ACR `ckmcc0522172320.azurecr.io`.
+1. **azd environments:** Callcenter100 (primary, East US 2) + Callcenter2 (test). Resource Group: `rg-callcenter-100`, Subscription: `a2ec8402-d75b-419c-b71d-7558309c50dc`.
 
 2. **Memory Store:** Settings now active for main application service.
 
-3. **Data ingestion pipeline:** `run_process_data_scripts.sh` → `process_data_scripts.bicep` → Azure Deployment Script → `process_data_scripts.sh` → `04_cu_process_data_new_data.py`. Reads from ADLS (`stcallcenter100/data/custom_transcripts/` + `/custom_audiodata/`), secrets from Key Vault, outputs to `processed_data` SQL table.
+3. **Data ingestion pipeline:** `run_process_data_scripts.sh` → `process_data_scripts.bicep` → Azure Deployment Script → `process_data_scripts.sh` → `04_cu_process_data_new_data.py`. Reads from ADLS (`data/custom_transcripts/` + `/custom_audiodata/`), secrets from Key Vault, outputs to `processed_data` SQL table.
 
-4. **ADLS configuration:** HNS enabled, shared key disabled, key-based auth blocked — requires managed identity (`id-callcenter100`, clientId: `b33d1eb1-ef1e-456c-be29-f0cd1d595079`).
+4. **ADLS configuration:** HNS enabled, shared key disabled, key-based auth blocked — requires managed identity.
 
 5. **F1 Free tier + Easy Auth = ephemeral encryption key (critical).** `WEBSITE_AUTH_ENCRYPTION_KEY` must be set explicitly. Without it, Easy Auth generates a new random key each startup → nonce cookies unreadable after restart → auth loop. **Fix:** generate stable 32-byte key, set as app setting.
 
@@ -85,7 +85,7 @@ Provisioned Azure AI Content Safety (`contentsafety-callcenter100`, S0, centralu
 ## Phase 3 Completion & Cross-Agent Integration (2026-05-31)
 
 Phase 3 session finalized. Kai's Redis infrastructure, Alex's APIM policies, and Morgan's validation tests all integrated successfully:
-- **Redis backend:** redis-callcenter100 (Balanced_B0, Central US) serving APIM cache @ TTL 5min
+- **Redis backend:** Azure Managed Redis (Balanced_B0, Central US) serving APIM cache @ TTL 5min
 - **APIM pool:** openai-primary + openai-pool with 3-failure circuit breaker active
 - **Policies deployed:** chart-policy.xml (cache + retry), chat-policy.xml (pool routing)
 - **Validation:** 15 unit tests + 2 failover scripts (validate-cache-hit-rate, test-failover)

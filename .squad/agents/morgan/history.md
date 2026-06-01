@@ -43,7 +43,7 @@
 ## Phase 3 Integration Complete (2026-05-31)
 
 All Phase 3 cross-team dependencies validated and documented:
-- **Depends on kai:** Redis backend (redis-callcenter100) and APIM pool (openai-primary/openai-pool) ✅ Live
+- **Depends on kai:** Redis backend and APIM pool (openai-primary/openai-pool) ✅ Live
 - **Depends on alex:** APIM policies (chart-policy.xml + chat-policy.xml) with retry/cache headers ✅ Deployed
 - **Delivery:** Validation scripts successfully verify cache hit rates >20% and failover latency <2s
 
