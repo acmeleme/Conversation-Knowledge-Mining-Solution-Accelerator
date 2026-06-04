@@ -150,3 +150,73 @@ All cross-agent dependencies satisfied. Session status: **COMPLETE**.
 30. **`LogsDashboardPart` tiles need `isOptional: false` on `ComponentId`, `Query`, `ControlType`.** Azure Portal treats all-optional tile inputs as "unconfigured" and shows "An incomplete query has been provided to this part". Mark these three inputs as required to force the portal to execute the KQL query. Other inputs (`TimeRange`, `PartTitle`, etc.) can remain optional.
 
 31. **OTel Counter name normalization: hyphens may become underscores.** Metric names with hyphens (e.g., `CKM-TokenUsage`) may be stored with underscores (`CKM_TokenUsage`) by the OTel SDK. Verify actual stored name in App Insights `customMetrics | summarize by name` and align KQL `startswith` filter accordingly.
+
+32. **Git commit timestamp vs image push timestamp determines what code is deployed.** A CI/CD image build triggered immediately before a commit will NOT contain that commit's changes. Always verify: `git log --format="%ai" <commit>` in UTC vs ACR push timestamp in UTC. If fix commit is after image push, the deployed container is stale and must be rebuilt.
+
+33. **Zero `customMetrics` ≠ "app is down".** If baseline telemetry (requests, exceptions) flows to App Insights but `customMetrics` is empty, the most likely cause is that the running image predates the OTel metric emission code, NOT that App Insights connectivity is broken. Confirm by comparing fix commit UTC timestamp against ACR image push UTC timestamp.
+
+34. **Scanner bot traffic looks like app activity in App Insights.** WordPress probes (`/xmlrpc.php`, `/wp-includes/`, `/wp-login.php`) will populate `requests` and `exceptions` tables with 404 + `OperationNotFound` errors. These are NOT real user sessions. Exclude scanner paths before drawing conclusions about app health or traffic volume.
+
+### CKM Dashboard Metrics Sync Validation (2026-06-04)
+
+**Charter:** 4-step live end-to-end validation — deployed version → metrics flow → dashboard KQL → tile render.
+
+**Context:** Prior session fixed two issues: (1) `APPLICATIONINSIGHTS_CONNECTION_STRING` env var was missing → set via CLI; (2) `LogsDashboardPart` tiles 4 & 6 had `isOptional: true` on all inputs → fixed to `isOptional: false` and deployed via `az deployment group create`.
+
+The current session validated whether metrics are NOW flowing end-to-end.
+
+---
+
+**Step 1 — Deployed Image Version**
+
+- Deployed image: `acrcallcenter100.azurecr.io/web-app:hotfix-topic-filter-4`
+- ACR push timestamp: `2026-06-03T23:38:56Z`
+- OTel metrics fix commit (`f49303a`): `2026-06-04T02:30:26Z` (+2h52m AFTER image push)
+- Dashboard `isOptional` fix commit (`60819d7`): `2026-06-04T02:52:36Z` (+3h14m AFTER image push)
+- **Result: ❌ STALE IMAGE — neither fix is deployed in the running container**
+
+---
+
+**Step 2 — App Insights `customMetrics`**
+
+- KQL: `customMetrics | where timestamp > ago(7d) | summarize count() by name` → **0 rows**
+- Expected: rows with `name = "CKM-TokenUsage"` (or `"CKM_TokenUsage"`)
+- Root cause: image predates `event_utils.py` fix → `track_metric_if_configured()` not present → no metric emission
+- **Result: ❌ NO DATA**
+
+---
+
+**Step 3 — Dashboard KQL vs Metric Shape**
+
+- Cannot validate OTel normalization (hyphen vs underscore) because `customMetrics` is empty
+- Dashboard KQL uses `startswith "CKM-TokenUsage"` — correctness TBD once data flows
+- **Result: ⚠️ BLOCKED (no data to query)**
+
+---
+
+**Step 4 — Live Dashboard Tile Render**
+
+- `isOptional: false` fix IS deployed (prior session confirmed) → "incomplete query" portal error resolved
+- But tiles 4 & 6 will show "No results from query" because `customMetrics` is empty
+- **Result: ❌ NO DATA (config correct, data absent)**
+
+---
+
+**App Health Check (bonus)**
+
+- 48 requests + 48 exceptions in last 24h confirmed in App Insights
+- ALL are WordPress/scanner bot probes (`/xmlrpc.php`, `/wlwmanifest.xml`, etc.) → 404 + `OperationNotFound`
+- Zero real user conversations → zero organic metric data
+- App Insights pipeline IS connected and receiving telemetry ✅
+
+---
+
+**Remediation Required (in order)**
+
+1. Trigger `.github/workflows/docker-build.yml` (workflow_dispatch on `main`) to build a new image from the current fixed source
+2. Update App Service `linuxFxVersion` to the new `main`-branch image tag
+3. Restart App Service to pull new image
+4. Send at least one test chat request to seed `customMetrics`
+5. Run: `customMetrics | summarize by name` to confirm stored metric name (hyphen vs underscore — see learning #31 above)
+6. If name is `CKM_TokenUsage`, update KQL in tiles 4 & 6 of `monitor-dashboard.bicep` and redeploy dashboard
+7. Verify dashboard tiles 4 & 6 render data
