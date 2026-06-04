@@ -1,0 +1,44 @@
+2026-06-01T12:13:34.2868435Z State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-06-01T12:13:35.3251914Z State: Starting, Action: StartingMsiContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-06-01T12:13:38.5679099Z State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-06-01T12:13:38.5683190Z Container start method called.
+2026-06-01T12:13:38.5684543Z State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503 for api-financeirax01., DetailsLevel: INFO
+2026-06-01T12:13:38.5686466Z Establishing network.
+2026-06-01T12:13:38.5688475Z Pulling image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503.
+2026-06-01T12:13:56.1114701Z Image ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503 is pulled from registry ckmcc0522172320.azurecr.io
+2026-06-01T12:13:56.1116351Z Container is starting.
+2026-06-01T12:13:56.1334024Z State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for api-financeirax01., DetailsLevel: INFO
+2026-06-01T12:13:56.1336327Z Establishing user namespace if not established already.
+2026-06-01T12:13:56.1337791Z Establishing network if not established already.
+2026-06-01T12:13:56.1340566Z Mounting volumes.
+2026-06-01T12:13:56.1442248Z Nested mountpoint volatile/logs
+2026-06-01T12:13:56.1510576Z Nested mountpoint 
+2026-06-01T12:13:56.1751868Z State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for api-financeirax01. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO
+2026-06-01T12:13:56.1753248Z Creating container.
+2026-06-01T12:13:56.1754516Z Creating pipes for streaming container io.
+2026-06-01T12:13:56.1756484Z Creating stdout named pipe at /podr/container/pipe/e110b24945ef_api-financeirax01/stdout_9a1f8e76b50747688186157577a864a2.
+2026-06-01T12:13:56.1790406Z Successfully created stdout named pipe at: /podr/container/pipe/e110b24945ef_api-financeirax01/stdout_9a1f8e76b50747688186157577a864a2.
+2026-06-01T12:13:56.1793440Z Opening named pipe /podr/container/pipe/e110b24945ef_api-financeirax01/stdout_9a1f8e76b50747688186157577a864a2 for reading in non-blocking mode.
+2026-06-01T12:13:56.1794984Z Successfully opened named pipe: /podr/container/pipe/e110b24945ef_api-financeirax01/stdout_9a1f8e76b50747688186157577a864a2.
+2026-06-01T12:13:56.1796180Z Successfully removed non-blocking flag from /podr/container/pipe/e110b24945ef_api-financeirax01/stdout_9a1f8e76b50747688186157577a864a2.
+2026-06-01T12:13:56.1798295Z Creating stderr named pipe at /podr/container/pipe/e110b24945ef_api-financeirax01/stderr_a6178e3475f9427cb737c67d4b1308c3.
+2026-06-01T12:13:56.1818147Z Successfully created stderr named pipe at: /podr/container/pipe/e110b24945ef_api-financeirax01/stderr_a6178e3475f9427cb737c67d4b1308c3.
+2026-06-01T12:13:56.1838778Z Opening named pipe /podr/container/pipe/e110b24945ef_api-financeirax01/stderr_a6178e3475f9427cb737c67d4b1308c3 for reading in non-blocking mode.
+2026-06-01T12:13:56.1840448Z Successfully opened named pipe: /podr/container/pipe/e110b24945ef_api-financeirax01/stderr_a6178e3475f9427cb737c67d4b1308c3.
+2026-06-01T12:13:56.1841832Z Successfully removed non-blocking flag from /podr/container/pipe/e110b24945ef_api-financeirax01/stderr_a6178e3475f9427cb737c67d4b1308c3.
+2026-06-01T12:13:56.1844986Z Overriding PORT environment variable with port exposed by container image.
+2026-06-01T12:13:56.2971857Z Container image exposes ports: ContainerExposedPort { Port = 80, Protocol = TCP }. Sanitized list of ports is: 80. Resolved main port to 80.
+2026-06-01T12:13:56.2977729Z Setting value of PORT variable to 80
+2026-06-01T12:13:56.2983474Z Creating container with image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503 from registry: ckmcc0522172320.azurecr.io and fully qualified image name: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503
+2026-06-01T12:13:56.6189284Z Starting container: e110b24945ef_api-financeirax01.
+2026-06-01T12:13:56.6450208Z Starting watchers and probes.
+2026-06-01T12:13:56.6457843Z Starting metrics collection.
+2026-06-01T12:13:56.6469815Z Container is running.
+2026-06-01T12:13:56.6470836Z State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container api-financeirax01 successfully created and is running., DetailsLevel: INFO
+2026-06-01T12:13:56.7145404Z Container start method finished after 18145 ms.
+2026-06-01T12:13:56.7160496Z State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container api-financeirax01 successfully created and is running., DetailsLevel: INFO
+2026-06-01T12:13:56.7160822Z State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO
+2026-06-01T12:14:18.7346381Z Site startup probe succeeded after 22.0179159 seconds.
+2026-06-01T12:14:18.8045613Z State: Starting, Action: WarmUpProbeSucceeded, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 22.0179159 seconds., DetailsLevel: INFO
+2026-06-01T12:14:18.9555340Z Site started.
+2026-06-01T12:14:18.9556644Z State: Started, Action: None, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 06/01/2026 12:14:18 (UTC), DetailsLevel: INFO

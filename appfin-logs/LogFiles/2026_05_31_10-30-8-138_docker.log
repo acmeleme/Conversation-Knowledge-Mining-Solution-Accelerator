@@ -1,0 +1,45 @@
+2026-05-31T23:29:35.3048589Z State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-05-31T23:29:36.6403489Z State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-05-31T23:29:36.6472592Z Container start method called.
+2026-05-31T23:29:36.6540489Z State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260531170503 for app-financeirax01., DetailsLevel: INFO
+2026-05-31T23:29:36.6542300Z Establishing network.
+2026-05-31T23:29:36.6553881Z Pulling image: ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260531170503.
+2026-05-31T23:29:38.8232922Z Image ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260531170503 is pulled from registry ckmcc0522172320.azurecr.io
+2026-05-31T23:29:38.8311374Z Container is starting.
+2026-05-31T23:29:38.8312913Z State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for app-financeirax01., DetailsLevel: INFO
+2026-05-31T23:29:38.8314361Z Establishing user namespace if not established already.
+2026-05-31T23:29:38.8320668Z Establishing network if not established already.
+2026-05-31T23:29:38.8330269Z Mounting volumes.
+2026-05-31T23:29:38.8418356Z Nested mountpoint volatile/logs
+2026-05-31T23:29:38.8547659Z Nested mountpoint 
+2026-05-31T23:29:38.8750581Z State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for app-financeirax01. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO
+2026-05-31T23:29:38.8752180Z Creating container.
+2026-05-31T23:29:38.8757317Z Creating pipes for streaming container io.
+2026-05-31T23:29:38.8762357Z Creating stdout named pipe at /podr/container/pipe/65460a7c2d01_app-financeirax01/stdout_e9d25e02629847a3b41cad9aac86b13c.
+2026-05-31T23:29:38.8767086Z Successfully created stdout named pipe at: /podr/container/pipe/65460a7c2d01_app-financeirax01/stdout_e9d25e02629847a3b41cad9aac86b13c.
+2026-05-31T23:29:38.8773186Z Opening named pipe /podr/container/pipe/65460a7c2d01_app-financeirax01/stdout_e9d25e02629847a3b41cad9aac86b13c for reading in non-blocking mode.
+2026-05-31T23:29:38.8774870Z Successfully opened named pipe: /podr/container/pipe/65460a7c2d01_app-financeirax01/stdout_e9d25e02629847a3b41cad9aac86b13c.
+2026-05-31T23:29:38.8778979Z Successfully removed non-blocking flag from /podr/container/pipe/65460a7c2d01_app-financeirax01/stdout_e9d25e02629847a3b41cad9aac86b13c.
+2026-05-31T23:29:38.8847299Z Creating stderr named pipe at /podr/container/pipe/65460a7c2d01_app-financeirax01/stderr_1e02a7be53914f0599a9ca9b8f422346.
+2026-05-31T23:29:38.8850268Z Successfully created stderr named pipe at: /podr/container/pipe/65460a7c2d01_app-financeirax01/stderr_1e02a7be53914f0599a9ca9b8f422346.
+2026-05-31T23:29:38.8852749Z Opening named pipe /podr/container/pipe/65460a7c2d01_app-financeirax01/stderr_1e02a7be53914f0599a9ca9b8f422346 for reading in non-blocking mode.
+2026-05-31T23:29:38.8854638Z Successfully opened named pipe: /podr/container/pipe/65460a7c2d01_app-financeirax01/stderr_1e02a7be53914f0599a9ca9b8f422346.
+2026-05-31T23:29:38.8856092Z Successfully removed non-blocking flag from /podr/container/pipe/65460a7c2d01_app-financeirax01/stderr_1e02a7be53914f0599a9ca9b8f422346.
+2026-05-31T23:29:38.8889861Z Overriding PORT environment variable with port exposed by container image.
+2026-05-31T23:29:38.9430574Z Container image exposes ports: ContainerExposedPort { Port = 80, Protocol = TCP }. Sanitized list of ports is: 80. Resolved main port to 80.
+2026-05-31T23:29:38.9435418Z Setting value of PORT variable to 80
+2026-05-31T23:29:38.9441458Z Creating container with image: ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260531170503 from registry: ckmcc0522172320.azurecr.io and fully qualified image name: ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260531170503
+2026-05-31T23:29:39.5430521Z Starting container: 65460a7c2d01_app-financeirax01.
+2026-05-31T23:29:39.6558538Z Starting watchers and probes.
+2026-05-31T23:29:39.6817946Z Starting metrics collection.
+2026-05-31T23:29:39.6951968Z Container is running.
+2026-05-31T23:29:39.6953090Z State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-financeirax01 successfully created and is running., DetailsLevel: INFO
+2026-05-31T23:29:39.8268092Z Container start method finished after 3173 ms.
+2026-05-31T23:29:39.8511602Z State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-financeirax01 successfully created and is running., DetailsLevel: INFO
+2026-05-31T23:29:39.8634685Z State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO
+2026-05-31T23:29:40.9092955Z Site startup probe succeeded after 1.0286961 seconds.
+2026-05-31T23:29:41.0056276Z State: Starting, Action: WarmUpProbeSucceeded, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 1.0286961 seconds., DetailsLevel: INFO
+2026-05-31T23:29:41.1568033Z State: Starting, Action: StartingAuthContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 1.0286961 seconds., DetailsLevel: INFO
+2026-05-31T23:29:44.8167630Z Site is running with deployment version: 1cc2bc00-e644-42c2-978c-0e2b9bcb8657
+2026-05-31T23:29:44.8579188Z Site started.
+2026-05-31T23:29:44.8582366Z State: Started, Action: None, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 05/31/2026 23:29:44 (UTC), DetailsLevel: INFO

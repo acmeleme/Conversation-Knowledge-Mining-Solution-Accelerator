@@ -1,0 +1,11 @@
+2026-05-30T06:46:07.5640632Z APP_API_BASE_URL=https://api-financeirax01.azurewebsites.net
+2026-05-30T06:46:08.0637822Z done
+2026-05-30T06:46:08.0758971Z 2026/05/30 06:46:08 [notice] 1#1: using the "epoll" event method
+2026-05-30T06:46:08.0766873Z 2026/05/30 06:46:08 [notice] 1#1: nginx/1.31.1
+2026-05-30T06:46:08.0767377Z 2026/05/30 06:46:08 [notice] 1#1: built by gcc 15.2.0 (Alpine 15.2.0) 
+2026-05-30T06:46:08.0776201Z 2026/05/30 06:46:08 [notice] 1#1: OS: Linux 6.6.138.1-1.azl3
+2026-05-30T06:46:08.0776771Z 2026/05/30 06:46:08 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 131072:131072
+2026-05-30T06:46:08.0791019Z 2026/05/30 06:46:08 [notice] 1#1: start worker processes
+2026-05-30T06:46:08.0791480Z 2026/05/30 06:46:08 [notice] 1#1: start worker process 19
+2026-05-30T06:46:08.0791583Z 2026/05/30 06:46:08 [notice] 1#1: start worker process 20
+2026-05-30T06:46:08.7676002Z 169.254.129.1 - - [30/May/2026:06:46:08 +0000] "GET /robots933456.txt HTTP/1.1" 200 551 "-" "HealthCheck/1.0" "-"

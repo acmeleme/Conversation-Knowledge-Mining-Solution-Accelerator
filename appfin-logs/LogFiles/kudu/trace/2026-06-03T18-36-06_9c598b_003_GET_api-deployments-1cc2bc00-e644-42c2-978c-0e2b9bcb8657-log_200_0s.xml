@@ -1,0 +1,6 @@
+<step title="Incoming Request" date="2026-06-03T18:36:06.300" instance="9c598b" url="/api/deployments/1cc2bc00-e644-42c2-978c-0e2b9bcb8657/log" method="GET" type="request" pid="768,1,31" Accept="*/*" Host="app-financeirax01.scm.azurewebsites.net" User-Agent="AZURECLI/2.85.0 (MSI)" Accept-Encoding="gzip, deflate" Authorization="Bea..." x-ms-client-request-id="0e88552d-5f7b-11f1-8683-dc567b81b48a" X-ARR-LOG-ID="0e88552d-5f7b-11f1-8683-dc567b81b48a" CLIENT-IP="4.255.188.38:4517" X-SITE-DEPLOYMENT-ID="app-financeirax01" WAS-DEFAULT-HOSTNAME="app-financeirax01.scm.azurewebsites.net" X-Forwarded-Proto="https" X-AppService-Proto="https" X-Forwarded-TlsVersion="1.3" X-WAWS-Unencoded-URL="/api/deployments/1cc2bc00-e644-42c2-978c-0e2b9bcb8657/log" X-Client-IP="4.255.188.38" X-Client-Port="4517" >
+  <step title="DeploymentService.GetLogEntry" date="2026-06-03T18:36:06.343" >
+    <step title="DeploymentManager.GetLogEntries(id:1cc2bc00-e644-42c2-978c-0e2b9bcb8657)" date="2026-06-03T18:36:06.345" /><!-- duration: 79ms -->
+  </step><!-- duration: 93ms -->
+  <step title="Outgoing response" date="2026-06-03T18:36:06.447" type="response" statusCode="200" statusText="OK" /><!-- duration: 6ms -->
+</step><!-- duration: 157ms -->

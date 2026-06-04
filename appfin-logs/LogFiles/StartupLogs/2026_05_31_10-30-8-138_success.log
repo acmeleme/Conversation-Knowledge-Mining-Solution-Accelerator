@@ -1,0 +1,56 @@
+2026-05-31T23:29:35.3048589+00:00 ContainerStatus: State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-05-31T23:29:36.6403489+00:00 ContainerStatus: State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-05-31T23:29:36.6472592+00:00 ContainerStatus: Container start method called.
+2026-05-31T23:29:36.6540489+00:00 ContainerStatus: State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260531170503 for app-financeirax01., DetailsLevel: INFO
+2026-05-31T23:29:36.6542300+00:00 ContainerStatus: Establishing network.
+2026-05-31T23:29:36.6553881+00:00 ContainerStatus: Pulling image: ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260531170503.
+2026-05-31T23:29:38.8232922+00:00 ContainerStatus: Image ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260531170503 is pulled from registry ckmcc0522172320.azurecr.io
+2026-05-31T23:29:38.8311374+00:00 ContainerStatus: Container is starting.
+2026-05-31T23:29:38.8312913+00:00 ContainerStatus: State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for app-financeirax01., DetailsLevel: INFO
+2026-05-31T23:29:38.8314361+00:00 ContainerStatus: Establishing user namespace if not established already.
+2026-05-31T23:29:38.8320668+00:00 ContainerStatus: Establishing network if not established already.
+2026-05-31T23:29:38.8330269+00:00 ContainerStatus: Mounting volumes.
+2026-05-31T23:29:38.8418356+00:00 ContainerStatus: Nested mountpoint volatile/logs
+2026-05-31T23:29:38.8547659+00:00 ContainerStatus: Nested mountpoint 
+2026-05-31T23:29:38.8750581+00:00 ContainerStatus: State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for app-financeirax01. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO
+2026-05-31T23:29:38.8752180+00:00 ContainerStatus: Creating container.
+2026-05-31T23:29:38.8757317+00:00 ContainerStatus: Creating pipes for streaming container io.
+2026-05-31T23:29:38.8762357+00:00 ContainerStatus: Creating stdout named pipe at /podr/container/pipe/65460a7c2d01_app-financeirax01/stdout_e9d25e02629847a3b41cad9aac86b13c.
+2026-05-31T23:29:38.8767086+00:00 ContainerStatus: Successfully created stdout named pipe at: /podr/container/pipe/65460a7c2d01_app-financeirax01/stdout_e9d25e02629847a3b41cad9aac86b13c.
+2026-05-31T23:29:38.8773186+00:00 ContainerStatus: Opening named pipe /podr/container/pipe/65460a7c2d01_app-financeirax01/stdout_e9d25e02629847a3b41cad9aac86b13c for reading in non-blocking mode.
+2026-05-31T23:29:38.8774870+00:00 ContainerStatus: Successfully opened named pipe: /podr/container/pipe/65460a7c2d01_app-financeirax01/stdout_e9d25e02629847a3b41cad9aac86b13c.
+2026-05-31T23:29:38.8778979+00:00 ContainerStatus: Successfully removed non-blocking flag from /podr/container/pipe/65460a7c2d01_app-financeirax01/stdout_e9d25e02629847a3b41cad9aac86b13c.
+2026-05-31T23:29:38.8847299+00:00 ContainerStatus: Creating stderr named pipe at /podr/container/pipe/65460a7c2d01_app-financeirax01/stderr_1e02a7be53914f0599a9ca9b8f422346.
+2026-05-31T23:29:38.8850268+00:00 ContainerStatus: Successfully created stderr named pipe at: /podr/container/pipe/65460a7c2d01_app-financeirax01/stderr_1e02a7be53914f0599a9ca9b8f422346.
+2026-05-31T23:29:38.8852749+00:00 ContainerStatus: Opening named pipe /podr/container/pipe/65460a7c2d01_app-financeirax01/stderr_1e02a7be53914f0599a9ca9b8f422346 for reading in non-blocking mode.
+2026-05-31T23:29:38.8854638+00:00 ContainerStatus: Successfully opened named pipe: /podr/container/pipe/65460a7c2d01_app-financeirax01/stderr_1e02a7be53914f0599a9ca9b8f422346.
+2026-05-31T23:29:38.8856092+00:00 ContainerStatus: Successfully removed non-blocking flag from /podr/container/pipe/65460a7c2d01_app-financeirax01/stderr_1e02a7be53914f0599a9ca9b8f422346.
+2026-05-31T23:29:38.8889861+00:00 ContainerStatus: Overriding PORT environment variable with port exposed by container image.
+2026-05-31T23:29:38.9430574+00:00 ContainerStatus: Container image exposes ports: ContainerExposedPort { Port = 80, Protocol = TCP }. Sanitized list of ports is: 80. Resolved main port to 80.
+2026-05-31T23:29:38.9435418+00:00 ContainerStatus: Setting value of PORT variable to 80
+2026-05-31T23:29:38.9441458+00:00 ContainerStatus: Creating container with image: ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260531170503 from registry: ckmcc0522172320.azurecr.io and fully qualified image name: ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260531170503
+2026-05-31T23:29:39.5430521+00:00 ContainerStatus: Starting container: 65460a7c2d01_app-financeirax01.
+2026-05-31T23:29:39.6558538+00:00 ContainerStatus: Starting watchers and probes.
+2026-05-31T23:29:39.6817946+00:00 ContainerStatus: Starting metrics collection.
+2026-05-31T23:29:39.6863606+00:00 ContainerStream: APP_API_BASE_URL=https://api-financeirax01.azurewebsites.net
+2026-05-31T23:29:39.6951968+00:00 ContainerStatus: Container is running.
+2026-05-31T23:29:39.6953090+00:00 ContainerStatus: State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-financeirax01 successfully created and is running., DetailsLevel: INFO
+2026-05-31T23:29:39.8268092+00:00 ContainerStatus: Container start method finished after 3173 ms.
+2026-05-31T23:29:39.8511602+00:00 ContainerStatus: State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-financeirax01 successfully created and is running., DetailsLevel: INFO
+2026-05-31T23:29:39.8634685+00:00 ContainerStatus: State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO
+2026-05-31T23:29:40.3551404+00:00 ContainerStream: done
+2026-05-31T23:29:40.3637749+00:00 ContainerStream: 2026/05/31 23:29:40 [notice] 1#1: using the "epoll" event method
+2026-05-31T23:29:40.3645850+00:00 ContainerStream: 2026/05/31 23:29:40 [notice] 1#1: nginx/1.31.1
+2026-05-31T23:29:40.3653469+00:00 ContainerStream: 2026/05/31 23:29:40 [notice] 1#1: built by gcc 15.2.0 (Alpine 15.2.0) 
+2026-05-31T23:29:40.3653917+00:00 ContainerStream: 2026/05/31 23:29:40 [notice] 1#1: OS: Linux 6.6.138.1-1.azl3
+2026-05-31T23:29:40.3654004+00:00 ContainerStream: 2026/05/31 23:29:40 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 131072:131072
+2026-05-31T23:29:40.3658594+00:00 ContainerStream: 2026/05/31 23:29:40 [notice] 1#1: start worker processes
+2026-05-31T23:29:40.3665823+00:00 ContainerStream: 2026/05/31 23:29:40 [notice] 1#1: start worker process 19
+2026-05-31T23:29:40.3675851+00:00 ContainerStream: 2026/05/31 23:29:40 [notice] 1#1: start worker process 20
+2026-05-31T23:29:40.8939462+00:00 ContainerStream: 169.254.129.1 - - [31/May/2026:23:29:40 +0000] "GET /robots933456.txt HTTP/1.1" 200 551 "-" "HealthCheck/1.0" "-"
+2026-05-31T23:29:40.9092955+00:00 ContainerStatus: Site startup probe succeeded after 1.0286961 seconds.
+2026-05-31T23:29:41.0056276+00:00 ContainerStatus: State: Starting, Action: WarmUpProbeSucceeded, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 1.0286961 seconds., DetailsLevel: INFO
+2026-05-31T23:29:41.1568033+00:00 ContainerStatus: State: Starting, Action: StartingAuthContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 1.0286961 seconds., DetailsLevel: INFO
+2026-05-31T23:29:44.8167630+00:00 ContainerStatus: Site is running with deployment version: 1cc2bc00-e644-42c2-978c-0e2b9bcb8657
+2026-05-31T23:29:44.8579188+00:00 ContainerStatus: Site started.
+2026-05-31T23:29:44.8582366+00:00 ContainerStatus: State: Started, Action: None, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 05/31/2026 23:29:44 (UTC), DetailsLevel: INFO

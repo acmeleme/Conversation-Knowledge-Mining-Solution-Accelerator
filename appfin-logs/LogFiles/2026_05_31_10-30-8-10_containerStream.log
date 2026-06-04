@@ -1,0 +1,11 @@
+2026-05-31T03:00:23.6718201Z [Previous Container] 2026/05/31 03:00:23 [notice] 1#1: signal 3 (SIGQUIT) received, shutting down
+2026-05-31T03:00:23.6738506Z [Previous Container] 2026/05/31 03:00:23 [notice] 19#19: gracefully shutting down
+2026-05-31T03:00:23.6738637Z [Previous Container] 2026/05/31 03:00:23 [notice] 19#19: exiting
+2026-05-31T03:00:23.6738933Z [Previous Container] 2026/05/31 03:00:23 [notice] 19#19: exit
+2026-05-31T03:00:23.6752493Z [Previous Container] 2026/05/31 03:00:23 [notice] 20#20: gracefully shutting down
+2026-05-31T03:00:23.6757596Z [Previous Container] 2026/05/31 03:00:23 [notice] 20#20: exiting
+2026-05-31T03:00:23.6757681Z [Previous Container] 2026/05/31 03:00:23 [notice] 20#20: exit
+2026-05-31T03:00:23.7114754Z [Previous Container] 2026/05/31 03:00:23 [notice] 1#1: signal 17 (SIGCHLD) received from 19
+2026-05-31T03:00:23.7116119Z [Previous Container] 2026/05/31 03:00:23 [notice] 1#1: worker process 19 exited with code 0
+2026-05-31T03:00:23.7116915Z [Previous Container] 2026/05/31 03:00:23 [notice] 1#1: worker process 20 exited with code 0
+2026-05-31T03:00:23.7117120Z [Previous Container] 2026/05/31 03:00:23 [notice] 1#1: exit

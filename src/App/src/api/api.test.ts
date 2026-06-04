@@ -1,3 +1,5 @@
+export {};
+
 describe("apiFetch X-User-Id propagation", () => {
   const originalFetch = global.fetch;
   const originalApiBaseUrl = process.env.REACT_APP_API_BASE_URL;
@@ -13,7 +15,7 @@ describe("apiFetch X-User-Id propagation", () => {
     if (originalFetch) {
       global.fetch = originalFetch;
     } else {
-      delete (global as typeof globalThis & { fetch?: typeof fetch }).fetch;
+      delete (global as any).fetch;
     }
 
     if (originalApiBaseUrl === undefined) {
@@ -81,5 +83,42 @@ describe("apiFetch X-User-Id propagation", () => {
     const requestHeaders = fetchMock.mock.calls[4][1]?.headers as Headers;
     expect(requestHeaders.get("Authorization")).toBe("Bearer token-456");
     expect(requestHeaders.get("X-User-Id")).toBeNull();
+  });
+});
+
+describe("fetchChartDataWithFilters fallback topic filtering", () => {
+  const originalFetch = global.fetch;
+
+  beforeEach(() => {
+    jest.resetModules();
+    jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    if (originalFetch) {
+      global.fetch = originalFetch;
+    } else {
+      delete (global as any).fetch;
+    }
+  });
+
+  it("filters key phrases by selected topic when fallback is used", async () => {
+    global.fetch = jest.fn().mockRejectedValue(new Error("network")) as unknown as typeof fetch;
+
+    const { fetchChartDataWithFilters } = await import("./api");
+
+    const charts = await fetchChartDataWithFilters({
+      selected_filters: {
+        Topic: ["Seguro — Sinistros e Indenizações"],
+        Sentiment: ["all"],
+      },
+    });
+
+    const keyPhrasesChart = charts.find((chart: any) => chart.id === "KEY_PHRASES");
+    expect(keyPhrasesChart).toBeDefined();
+
+    const texts = (keyPhrasesChart?.chart_value ?? []).map((item: any) => item.text);
+    expect(texts).toContain("sinistro pendente");
+    expect(texts).not.toContain("fatura cartão");
   });
 });

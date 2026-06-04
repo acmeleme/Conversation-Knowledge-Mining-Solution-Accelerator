@@ -17,6 +17,8 @@ def login_logout():
     load_dotenv()
     headless = os.getenv("PLAYWRIGHT_HEADLESS", "false").lower() == "true"
     storage_state_path = os.getenv("PLAYWRIGHT_STORAGE_STATE", "")
+    username = os.getenv("USERNAME", "")
+    password = os.getenv("PASSWORD", "")
 
     with sync_playwright() as p:
         launch_args = [] if headless else ["--start-maximized"]
@@ -37,8 +39,14 @@ def login_logout():
         page.goto(URL, wait_until="domcontentloaded")
 
         if not (storage_state_path and os.path.exists(storage_state_path)):
-            wait_ms = int(os.getenv("PLAYWRIGHT_LOGIN_WAIT_MS", "60000"))
-            page.wait_for_timeout(wait_ms)
+            # Try programmatic login if credentials are provided
+            if username and password:
+                login_page = LoginPage(page)
+                login_page.authenticate(username, password)
+            else:
+                # Otherwise wait for manual login
+                wait_ms = int(os.getenv("PLAYWRIGHT_LOGIN_WAIT_MS", "60000"))
+                page.wait_for_timeout(wait_ms)
 
         yield page
         browser.close()

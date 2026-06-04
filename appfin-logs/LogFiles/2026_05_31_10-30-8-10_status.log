@@ -1,0 +1,9 @@
+2026-05-31T03:00:23.6398823Z State: Stopping, Action: StoppingSite, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 05/31/2026 02:59:37 (UTC), DetailsLevel: INFO
+2026-05-31T03:00:23.6405563Z State: Stopping, Action: StoppingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 05/31/2026 02:59:37 (UTC), DetailsLevel: INFO
+2026-05-31T03:00:23.6407057Z Container is terminating. Grace period: 5 seconds.
+2026-05-31T03:00:23.6430836Z Stop and delete container. Retry count = 0
+2026-05-31T03:00:23.6432041Z Stopping container: c80842e19df0_app-financeirax01.
+2026-05-31T03:00:23.7219000Z Deleting container: c80842e19df0_app-financeirax01. Retry count = 0
+2026-05-31T03:00:23.8194453Z Container spec TerminationMessagePolicy  path 
+2026-05-31T03:00:23.8196321Z Container is terminated. Total time elapsed: 178 ms.
+2026-05-31T03:00:23.9748847Z Site: app-financeirax01 stopped.

@@ -1,0 +1,24 @@
+2026-05-30T19:48:35.0764320Z [Previous Container] 2026/05/30 19:48:35 [notice] 1#1: signal 3 (SIGQUIT) received, shutting down
+2026-05-30T19:48:35.0791769Z [Previous Container] 2026/05/30 19:48:35 [notice] 21#21: gracefully shutting down
+2026-05-30T19:48:35.0791858Z [Previous Container] 2026/05/30 19:48:35 [notice] 21#21: exiting
+2026-05-30T19:48:35.0791885Z [Previous Container] 2026/05/30 19:48:35 [notice] 20#20: gracefully shutting down
+2026-05-30T19:48:35.0791906Z [Previous Container] 2026/05/30 19:48:35 [notice] 20#20: exiting
+2026-05-30T19:48:35.0791926Z [Previous Container] 2026/05/30 19:48:35 [notice] 21#21: exit
+2026-05-30T19:48:35.0791945Z [Previous Container] 2026/05/30 19:48:35 [notice] 20#20: exit
+2026-05-30T19:48:35.1472250Z [Previous Container] 2026/05/30 19:48:35 [notice] 1#1: signal 17 (SIGCHLD) received from 21
+2026-05-30T19:48:35.1472535Z [Previous Container] 2026/05/30 19:48:35 [notice] 1#1: worker process 21 exited with code 0
+2026-05-30T19:48:35.1473799Z [Previous Container] 2026/05/30 19:48:35 [notice] 1#1: signal 29 (SIGIO) received
+2026-05-30T19:48:35.1473835Z [Previous Container] 2026/05/30 19:48:35 [notice] 1#1: signal 17 (SIGCHLD) received from 20
+2026-05-30T19:48:35.1473866Z [Previous Container] 2026/05/30 19:48:35 [notice] 1#1: worker process 20 exited with code 0
+2026-05-30T19:48:35.1473895Z [Previous Container] 2026/05/30 19:48:35 [notice] 1#1: exit
+2026-05-30T19:48:55.6307737Z [Previous Container] 2026/05/30 19:48:55 [notice] 1#1: signal 3 (SIGQUIT) received, shutting down
+2026-05-30T19:48:55.6309124Z [Previous Container] 2026/05/30 19:48:55 [notice] 20#20: gracefully shutting down
+2026-05-30T19:48:55.6310534Z [Previous Container] 2026/05/30 19:48:55 [notice] 21#21: gracefully shutting down
+2026-05-30T19:48:55.6310869Z [Previous Container] 2026/05/30 19:48:55 [notice] 21#21: exiting
+2026-05-30T19:48:55.6313679Z [Previous Container] 2026/05/30 19:48:55 [notice] 21#21: exit
+2026-05-30T19:48:55.6325316Z [Previous Container] 2026/05/30 19:48:55 [notice] 20#20: exiting
+2026-05-30T19:48:55.6341090Z [Previous Container] 2026/05/30 19:48:55 [notice] 20#20: exit
+2026-05-30T19:48:55.6667392Z [Previous Container] 2026/05/30 19:48:55 [notice] 1#1: signal 17 (SIGCHLD) received from 20
+2026-05-30T19:48:55.6669533Z [Previous Container] 2026/05/30 19:48:55 [notice] 1#1: worker process 20 exited with code 0
+2026-05-30T19:48:55.6669606Z [Previous Container] 2026/05/30 19:48:55 [notice] 1#1: worker process 21 exited with code 0
+2026-05-30T19:48:55.6669959Z [Previous Container] 2026/05/30 19:48:55 [notice] 1#1: exit

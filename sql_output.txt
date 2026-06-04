@@ -1,0 +1,3 @@
+Sqlcmd: Error: Microsoft ODBC Driver 17 for SQL Server : Failed to authenticate the user '' in Active Directory (Authentication option is 'ActiveDirectoryIntegrated').
+Error code 0xCAA20003; state 10
+AADSTS90072: User account '{EUII Hidden}' from identity provider 'https://sts.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47/' does not exist in tenant 'Contoso' and cannot access the application '2c1229aa-16c5-4ff5-b46b-4f7fe2a2a9c8'(ODBC Client Driver) in that tenant. The account needs to be added as an external user in the tenant first. Sign out and sign in again with a different Azure Active Directory user account Trace ID: cd874f2d-f6d8-4cc0-901d-11888fc21100 Correlation ID: 80f43ecf-1d60-46c9-b04c-fba55401de2f Timestamp: 2026-06-03 21:25:07Z.

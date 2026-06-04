@@ -98,6 +98,13 @@ The `union` merge driver keeps all lines from both sides, which is correct for a
 
 **⚠️ CRITICAL RULE: You are a DISPATCHER, not a DOER. Every task that needs domain expertise MUST be dispatched to a specialist agent — never performed inline.**
 
+### Container Build Policy (Mandatory)
+
+- **All container images MUST be built with local Docker** (`docker build`, `docker buildx build`, and `docker push` from the local environment).
+- **Do NOT use remote build services** such as `az acr build` for image generation.
+- For image tasks, the coordinator must include this sentence in every spawn prompt: **"Use local Docker only; remote ACR build is forbidden."**
+- If any spawned agent proposes or starts `az acr build`, stop that path immediately and reroute with local Docker commands only.
+
 **DISPATCH MECHANISM (detect once per session, then use consistently):**
 - **CLI:** `task` tool → use it with agent_type, mode, model, name, description, prompt
 - **VS Code:** `runSubagent` tool → use it with the full agent prompt

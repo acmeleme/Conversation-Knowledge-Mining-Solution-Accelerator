@@ -90,29 +90,21 @@ try {
     $dockerAvailable = $false
 }
 
-Write-Host "Building and pushing frontend image..."
-if ($dockerAvailable) {
-    docker build --platform linux/amd64 -f src/App/WebApp.Dockerfile -t $appImage src/App
-    if ($LASTEXITCODE -ne 0) { throw "Frontend image build failed." }
-    docker push $appImage
-    if ($LASTEXITCODE -ne 0) { throw "Frontend image push failed." }
-} else {
-    Write-Host "Docker daemon not available. Using remote ACR build for frontend..."
-    az acr build --registry $acrName --image "${appRepo}:$ImageTag" --file src/App/WebApp.Dockerfile src/App
-    if ($LASTEXITCODE -ne 0) { throw "Frontend remote ACR build failed." }
+if (-not $dockerAvailable) {
+    throw "Local Docker daemon is required for image generation. Remote ACR build is not allowed."
 }
 
+Write-Host "Building and pushing frontend image..."
+docker build --platform linux/amd64 -f src/App/WebApp.Dockerfile -t $appImage src/App
+if ($LASTEXITCODE -ne 0) { throw "Frontend image build failed." }
+docker push $appImage
+if ($LASTEXITCODE -ne 0) { throw "Frontend image push failed." }
+
 Write-Host "Building and pushing API image..."
-if ($dockerAvailable) {
-    docker build --platform linux/amd64 -f src/api/ApiApp.Dockerfile -t $apiImage src/api
-    if ($LASTEXITCODE -ne 0) { throw "API image build failed." }
-    docker push $apiImage
-    if ($LASTEXITCODE -ne 0) { throw "API image push failed." }
-} else {
-    Write-Host "Docker daemon not available. Using remote ACR build for API..."
-    az acr build --registry $acrName --image "${apiRepo}:$ImageTag" --file src/api/ApiApp.Dockerfile src/api
-    if ($LASTEXITCODE -ne 0) { throw "API remote ACR build failed." }
-}
+docker build --platform linux/amd64 -f src/api/ApiApp.Dockerfile -t $apiImage src/api
+if ($LASTEXITCODE -ne 0) { throw "API image build failed." }
+docker push $apiImage
+if ($LASTEXITCODE -ne 0) { throw "API image push failed." }
 
 Write-Host "Updating App Service container configuration..."
 az webapp config container set --resource-group $ResourceGroup --name $appName --container-image-name $appImage --container-registry-url "https://$acrLoginServer" | Out-Null

@@ -1,0 +1,450 @@
+2026-05-30T19:09:37.6364055+00:00 ContainerStatus: State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-05-30T19:09:38.7084770+00:00 ContainerStatus: State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-05-30T19:09:38.7099225+00:00 ContainerStatus: Container start method called.
+2026-05-30T19:09:38.7142206+00:00 ContainerStatus: State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260529201308 for app-financeirax01., DetailsLevel: INFO
+2026-05-30T19:09:38.7147119+00:00 ContainerStatus: Establishing network.
+2026-05-30T19:09:38.7153839+00:00 ContainerStatus: Pulling image: ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260529201308.
+2026-05-30T19:09:40.8923959+00:00 ContainerStatus: Image ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260529201308 is pulled from registry ckmcc0522172320.azurecr.io
+2026-05-30T19:09:40.8986857+00:00 ContainerStatus: Container is starting.
+2026-05-30T19:09:40.8988355+00:00 ContainerStatus: State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for app-financeirax01., DetailsLevel: INFO
+2026-05-30T19:09:40.8990360+00:00 ContainerStatus: Establishing user namespace if not established already.
+2026-05-30T19:09:40.8992101+00:00 ContainerStatus: Establishing network if not established already.
+2026-05-30T19:09:40.8994363+00:00 ContainerStatus: Mounting volumes.
+2026-05-30T19:09:40.9025437+00:00 ContainerStatus: Nested mountpoint volatile/logs
+2026-05-30T19:09:40.9073240+00:00 ContainerStatus: Nested mountpoint 
+2026-05-30T19:09:40.9226235+00:00 ContainerStatus: State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for app-financeirax01. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO
+2026-05-30T19:09:40.9228486+00:00 ContainerStatus: Creating container.
+2026-05-30T19:09:40.9234288+00:00 ContainerStatus: Creating pipes for streaming container io.
+2026-05-30T19:09:40.9240556+00:00 ContainerStatus: Creating stdout named pipe at /podr/container/pipe/9aa129236113_app-financeirax01/stdout_0aaa64321f364b44b4f607fcf1b4c950.
+2026-05-30T19:09:40.9246097+00:00 ContainerStatus: Successfully created stdout named pipe at: /podr/container/pipe/9aa129236113_app-financeirax01/stdout_0aaa64321f364b44b4f607fcf1b4c950.
+2026-05-30T19:09:40.9253006+00:00 ContainerStatus: Opening named pipe /podr/container/pipe/9aa129236113_app-financeirax01/stdout_0aaa64321f364b44b4f607fcf1b4c950 for reading in non-blocking mode.
+2026-05-30T19:09:40.9254928+00:00 ContainerStatus: Successfully opened named pipe: /podr/container/pipe/9aa129236113_app-financeirax01/stdout_0aaa64321f364b44b4f607fcf1b4c950.
+2026-05-30T19:09:40.9281713+00:00 ContainerStatus: Successfully removed non-blocking flag from /podr/container/pipe/9aa129236113_app-financeirax01/stdout_0aaa64321f364b44b4f607fcf1b4c950.
+2026-05-30T19:09:40.9293625+00:00 ContainerStatus: Creating stderr named pipe at /podr/container/pipe/9aa129236113_app-financeirax01/stderr_dc2fc3c30c8c4d5aaa00915f2ec42e6f.
+2026-05-30T19:09:40.9296477+00:00 ContainerStatus: Successfully created stderr named pipe at: /podr/container/pipe/9aa129236113_app-financeirax01/stderr_dc2fc3c30c8c4d5aaa00915f2ec42e6f.
+2026-05-30T19:09:40.9305428+00:00 ContainerStatus: Opening named pipe /podr/container/pipe/9aa129236113_app-financeirax01/stderr_dc2fc3c30c8c4d5aaa00915f2ec42e6f for reading in non-blocking mode.
+2026-05-30T19:09:40.9310418+00:00 ContainerStatus: Successfully opened named pipe: /podr/container/pipe/9aa129236113_app-financeirax01/stderr_dc2fc3c30c8c4d5aaa00915f2ec42e6f.
+2026-05-30T19:09:40.9312756+00:00 ContainerStatus: Successfully removed non-blocking flag from /podr/container/pipe/9aa129236113_app-financeirax01/stderr_dc2fc3c30c8c4d5aaa00915f2ec42e6f.
+2026-05-30T19:09:40.9328698+00:00 ContainerStatus: Overriding PORT environment variable with port exposed by container image.
+2026-05-30T19:09:40.9798239+00:00 ContainerStatus: Container image exposes ports: ContainerExposedPort { Port = 80, Protocol = TCP }. Sanitized list of ports is: 80. Resolved main port to 80.
+2026-05-30T19:09:40.9804132+00:00 ContainerStatus: Setting value of PORT variable to 80
+2026-05-30T19:09:40.9810189+00:00 ContainerStatus: Creating container with image: ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260529201308 from registry: ckmcc0522172320.azurecr.io and fully qualified image name: ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260529201308
+2026-05-30T19:09:41.6548208+00:00 ContainerStatus: Starting container: 9aa129236113_app-financeirax01.
+2026-05-30T19:09:41.7415747+00:00 ContainerStatus: Starting watchers and probes.
+2026-05-30T19:09:41.7560912+00:00 ContainerStream: APP_API_BASE_URL=https://api-financeirax01.azurewebsites.net
+2026-05-30T19:09:41.7562271+00:00 ContainerStatus: Starting metrics collection.
+2026-05-30T19:09:41.7599625+00:00 ContainerStatus: Container is running.
+2026-05-30T19:09:41.7607763+00:00 ContainerStatus: State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-financeirax01 successfully created and is running., DetailsLevel: INFO
+2026-05-30T19:09:41.8569030+00:00 ContainerStatus: Container start method finished after 3146 ms.
+2026-05-30T19:09:41.8650878+00:00 ContainerStatus: State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-financeirax01 successfully created and is running., DetailsLevel: INFO
+2026-05-30T19:09:41.8683996+00:00 ContainerStatus: State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO
+2026-05-30T19:09:42.3947518+00:00 ContainerStream: done
+2026-05-30T19:09:42.4034361+00:00 ContainerStream: 2026/05/30 19:09:42 [notice] 1#1: using the "epoll" event method
+2026-05-30T19:09:42.4034917+00:00 ContainerStream: 2026/05/30 19:09:42 [notice] 1#1: nginx/1.31.1
+2026-05-30T19:09:42.4035039+00:00 ContainerStream: 2026/05/30 19:09:42 [notice] 1#1: built by gcc 15.2.0 (Alpine 15.2.0) 
+2026-05-30T19:09:42.4035186+00:00 ContainerStream: 2026/05/30 19:09:42 [notice] 1#1: OS: Linux 6.6.138.1-1.azl3
+2026-05-30T19:09:42.4036613+00:00 ContainerStream: 2026/05/30 19:09:42 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 131072:131072
+2026-05-30T19:09:42.4040013+00:00 ContainerStream: 2026/05/30 19:09:42 [notice] 1#1: start worker processes
+2026-05-30T19:09:42.4043954+00:00 ContainerStream: 2026/05/30 19:09:42 [notice] 1#1: start worker process 19
+2026-05-30T19:09:42.4055295+00:00 ContainerStream: 2026/05/30 19:09:42 [notice] 1#1: start worker process 20
+2026-05-30T19:09:42.9114320+00:00 ContainerStream: 169.254.129.1 - - [30/May/2026:19:09:42 +0000] "GET /robots933456.txt HTTP/1.1" 200 551 "-" "HealthCheck/1.0" "-"
+2026-05-30T19:09:42.9248469+00:00 ContainerStatus: Site startup probe succeeded after 1.0401375 seconds.
+2026-05-30T19:09:43.0315222+00:00 ContainerStatus: State: Starting, Action: WarmUpProbeSucceeded, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 1.0401375 seconds., DetailsLevel: INFO
+2026-05-30T19:09:43.1449401+00:00 ContainerStatus: State: Starting, Action: StartingAuthContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 1.0401375 seconds., DetailsLevel: INFO
+2026-05-30T19:09:46.2215399+00:00 ContainerStatus: Site is running with deployment version: 1cc2bc00-e644-42c2-978c-0e2b9bcb8657
+2026-05-30T19:09:46.2314391+00:00 ContainerStatus: Site started.
+2026-05-30T19:09:46.2320409+00:00 ContainerStatus: State: Started, Action: None, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 05/30/2026 19:09:46 (UTC), DetailsLevel: INFO
+========== New Cold Start Attempt (2026-05-30T19:10:43.0365055+00:00) ==========
+2026-05-30T19:10:43.0365055+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:10:43 +0000] "GET / HTTP/1.1" 200 551 "https://login.microsoftonline.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:47823"
+2026-05-30T19:10:43.3024444+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:10:43 +0000] "GET /static/js/main.151f73dc.js HTTP/1.1" 200 1530387 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:47823"
+2026-05-30T19:10:43.7015082+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:10:43 +0000] "GET /static/css/main.fa9b9196.css HTTP/1.1" 200 16059 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:47823"
+2026-05-30T19:10:43.9972444+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:10:43 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:47823"
+2026-05-30T19:10:44.0198768+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:10:44 +0000] "GET /favicon.ico HTTP/1.1" 200 2031 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:9412"
+2026-05-30T19:10:44.2563645+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:10:44 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:47823"
+2026-05-30T19:10:44.2576793+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:10:44 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:9412"
+2026-05-30T19:10:44.4519937+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:10:44 +0000] "GET /static/media/financeirax01_logo.0dd6749ab16bcfe9a40f.png HTTP/1.1" 200 235429 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:9412"
+2026-05-30T19:10:44.4525436+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:10:44 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:47823"
+2026-05-30T19:10:44.6487830+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:10:44 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:47823"
+2026-05-30T19:10:44.7096831+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:10:44 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:10:44.8553804+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:10:44 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:9412"
+2026-05-30T19:10:45.0477559+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:10:45 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:11:13.8374886+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:11:13 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:11:14.0593981+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:11:14 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:11:18.4547921+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:11:18 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:11:18.6508922+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:11:18 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:11:19.8408854+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:11:19 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:11:20.0348981+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:11:20 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:11:23.6640827+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:11:23 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:11:23.8574206+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:11:23 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:11:27.4444067+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:11:27 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:11:27.6386309+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:11:27 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:11:35.8273228+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:11:35 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:11:36.0227028+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:11:36 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:11:42.7205070+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:11:42 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:11:42.9199240+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:11:42 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:13:03.0836969+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:13:03 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:13:03.2772446+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:13:03 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:13:30.5669556+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:13:30 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:13:30.7644964+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:13:30 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:26:38.7897182+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:26:38 +0000] "GET / HTTP/1.1" 200 551 "https://login.microsoftonline.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:36874"
+2026-05-30T19:26:39.0710377+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:26:39 +0000] "GET /static/js/main.151f73dc.js HTTP/1.1" 200 1530387 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:36874"
+2026-05-30T19:26:39.4628819+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:26:39 +0000] "GET /static/css/main.fa9b9196.css HTTP/1.1" 200 16059 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16977"
+2026-05-30T19:26:39.7714977+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:26:39 +0000] "GET /.auth/me HTTP/1.1" 200 210 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16977"
+2026-05-30T19:26:39.7771905+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:26:39 +0000] "GET /favicon.ico HTTP/1.1" 200 2031 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:36874"
+2026-05-30T19:26:40.0066826+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:26:40 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:36874"
+2026-05-30T19:26:40.0088563+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:26:40 +0000] "GET /.auth/me HTTP/1.1" 200 210 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16977"
+2026-05-30T19:26:40.2000102+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:26:40 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:36874"
+2026-05-30T19:26:40.2075324+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:26:40 +0000] "GET /static/media/financeirax01_logo.0dd6749ab16bcfe9a40f.png HTTP/1.1" 200 235429 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16977"
+2026-05-30T19:26:40.3884987+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:26:40 +0000] "GET /.auth/me HTTP/1.1" 200 210 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:36874"
+2026-05-30T19:26:40.4308678+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:26:40 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16961"
+2026-05-30T19:26:40.5782972+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:26:40 +0000] "GET /.auth/me HTTP/1.1" 200 210 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16977"
+2026-05-30T19:26:40.7699895+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:26:40 +0000] "GET /.auth/me HTTP/1.1" 200 210 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16961"
+2026-05-30T19:26:41.6822886+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:26:41 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16961"
+2026-05-30T19:26:41.8805037+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:26:41 +0000] "GET /.auth/me HTTP/1.1" 200 210 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16961"
+2026-05-30T19:26:43.0660108+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:26:43 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16961"
+2026-05-30T19:26:43.2551608+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:26:43 +0000] "GET /.auth/me HTTP/1.1" 200 210 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16961"
+2026-05-30T19:28:37.3727153+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:28:37 +0000] "GET / HTTP/1.1" 200 551 "https://login.microsoftonline.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16961"
+2026-05-30T19:28:37.6137226+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:28:37 +0000] "GET /static/css/main.fa9b9196.css HTTP/1.1" 200 16059 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16977"
+2026-05-30T19:28:37.6146473+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:28:37 +0000] "GET /static/js/main.151f73dc.js HTTP/1.1" 200 1530387 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16961"
+2026-05-30T19:28:38.0897259+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:28:38 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16961"
+2026-05-30T19:28:38.0947201+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:28:38 +0000] "GET /favicon.ico HTTP/1.1" 200 2031 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16977"
+2026-05-30T19:28:38.3223686+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:28:38 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16961"
+2026-05-30T19:28:38.3256839+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:28:38 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16977"
+2026-05-30T19:28:38.3301754+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:28:38 +0000] "GET /static/media/financeirax01_logo.0dd6749ab16bcfe9a40f.png HTTP/1.1" 200 235429 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:36874"
+2026-05-30T19:28:38.5144049+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:28:38 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16961"
+2026-05-30T19:28:38.5283882+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:28:38 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16977"
+2026-05-30T19:28:38.7064703+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:28:38 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:36874"
+2026-05-30T19:28:38.7196339+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:28:38 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16961"
+2026-05-30T19:28:38.9048124+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:28:38 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:36874"
+2026-05-30T19:28:39.3049102+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:28:39 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:36874"
+2026-05-30T19:28:39.5008899+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:28:39 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:36874"
+2026-05-30T19:28:40.4647484+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:28:40 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:36874"
+2026-05-30T19:28:40.6598784+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:28:40 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:36874"
+2026-05-30T19:29:15.5874041+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:29:15 +0000] "GET / HTTP/1.1" 200 551 "https://login.microsoftonline.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0" "4.255.188.38:38789"
+2026-05-30T19:29:15.8095797+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:29:15 +0000] "GET /static/js/main.151f73dc.js HTTP/1.1" 200 1530387 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0" "4.255.188.38:38789"
+2026-05-30T19:29:15.8135421+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:29:15 +0000] "GET /static/css/main.fa9b9196.css HTTP/1.1" 200 16059 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0" "4.255.188.38:52615"
+2026-05-30T19:29:16.2405701+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:29:16 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0" "4.255.188.38:38789"
+2026-05-30T19:29:16.2580393+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:29:16 +0000] "GET /favicon.ico HTTP/1.1" 200 2031 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0" "4.255.188.38:52615"
+2026-05-30T19:29:16.4643434+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:29:16 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0" "4.255.188.38:52615"
+2026-05-30T19:29:16.4655788+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:29:16 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0" "4.255.188.38:38789"
+2026-05-30T19:29:16.6576949+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:29:16 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0" "4.255.188.38:52615"
+2026-05-30T19:29:16.6598005+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:29:16 +0000] "GET /static/media/financeirax01_logo.0dd6749ab16bcfe9a40f.png HTTP/1.1" 200 235429 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0" "4.255.188.38:38789"
+2026-05-30T19:29:16.8501255+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:29:16 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0" "4.255.188.38:52615"
+2026-05-30T19:29:16.8715295+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:29:16 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0" "4.255.188.38:38789"
+2026-05-30T19:29:17.0392000+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:29:17 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0" "4.255.188.38:52615"
+2026-05-30T19:29:17.2243934+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:29:17 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0" "4.255.188.38:52615"
+2026-05-30T19:29:18.0940963+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:29:18 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0" "4.255.188.38:52615"
+2026-05-30T19:29:18.2822042+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:29:18 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0" "4.255.188.38:52615"
+2026-05-30T19:29:19.2009834+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:29:19 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0" "4.255.188.38:52615"
+2026-05-30T19:29:19.4011450+00:00 ContainerStream: 169.254.129.3 - - [30/May/2026:19:29:19 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0" "4.255.188.38:52615"
+2026-05-30T19:30:03.3102098+00:00 ContainerStatus: State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-05-30T19:30:04.2907654+00:00 ContainerStatus: State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-05-30T19:30:04.2909278+00:00 ContainerStatus: Container start method called.
+2026-05-30T19:30:04.2910494+00:00 ContainerStatus: State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260530192639 for app-financeirax01., DetailsLevel: INFO
+2026-05-30T19:30:04.2912057+00:00 ContainerStatus: Establishing network.
+2026-05-30T19:30:04.2913484+00:00 ContainerStatus: Pulling image: ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260530192639.
+2026-05-30T19:30:04.8477765+00:00 ContainerStatus: Image ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260530192639 is pulled from registry ckmcc0522172320.azurecr.io
+2026-05-30T19:30:04.8542012+00:00 ContainerStatus: Container is starting.
+2026-05-30T19:30:04.8543587+00:00 ContainerStatus: State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for app-financeirax01., DetailsLevel: INFO
+2026-05-30T19:30:04.8545125+00:00 ContainerStatus: Establishing user namespace if not established already.
+2026-05-30T19:30:04.8546771+00:00 ContainerStatus: Establishing network if not established already.
+2026-05-30T19:30:04.8557245+00:00 ContainerStatus: Mounting volumes.
+2026-05-30T19:30:04.8560703+00:00 ContainerStatus: Nested mountpoint volatile/logs
+2026-05-30T19:30:04.8606783+00:00 ContainerStatus: Nested mountpoint 
+2026-05-30T19:30:04.8757334+00:00 ContainerStatus: State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for app-financeirax01. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO
+2026-05-30T19:30:04.8758815+00:00 ContainerStatus: Creating container.
+2026-05-30T19:30:04.8760296+00:00 ContainerStatus: Creating pipes for streaming container io.
+2026-05-30T19:30:04.8761603+00:00 ContainerStatus: Creating stdout named pipe at /podr/container/pipe/fa7c72b681a1_app-financeirax01/stdout_124cdb559ac643128877253d451b2384.
+2026-05-30T19:30:04.8776508+00:00 ContainerStatus: Successfully created stdout named pipe at: /podr/container/pipe/fa7c72b681a1_app-financeirax01/stdout_124cdb559ac643128877253d451b2384.
+2026-05-30T19:30:04.8777562+00:00 ContainerStatus: Opening named pipe /podr/container/pipe/fa7c72b681a1_app-financeirax01/stdout_124cdb559ac643128877253d451b2384 for reading in non-blocking mode.
+2026-05-30T19:30:04.8778714+00:00 ContainerStatus: Successfully opened named pipe: /podr/container/pipe/fa7c72b681a1_app-financeirax01/stdout_124cdb559ac643128877253d451b2384.
+2026-05-30T19:30:04.8823114+00:00 ContainerStatus: Successfully removed non-blocking flag from /podr/container/pipe/fa7c72b681a1_app-financeirax01/stdout_124cdb559ac643128877253d451b2384.
+2026-05-30T19:30:04.8825061+00:00 ContainerStatus: Creating stderr named pipe at /podr/container/pipe/fa7c72b681a1_app-financeirax01/stderr_9a0a575e68034c62a099024f7feb81ad.
+2026-05-30T19:30:04.8827174+00:00 ContainerStatus: Successfully created stderr named pipe at: /podr/container/pipe/fa7c72b681a1_app-financeirax01/stderr_9a0a575e68034c62a099024f7feb81ad.
+2026-05-30T19:30:04.8839700+00:00 ContainerStatus: Opening named pipe /podr/container/pipe/fa7c72b681a1_app-financeirax01/stderr_9a0a575e68034c62a099024f7feb81ad for reading in non-blocking mode.
+2026-05-30T19:30:04.8843392+00:00 ContainerStatus: Successfully opened named pipe: /podr/container/pipe/fa7c72b681a1_app-financeirax01/stderr_9a0a575e68034c62a099024f7feb81ad.
+2026-05-30T19:30:04.8845171+00:00 ContainerStatus: Successfully removed non-blocking flag from /podr/container/pipe/fa7c72b681a1_app-financeirax01/stderr_9a0a575e68034c62a099024f7feb81ad.
+2026-05-30T19:30:04.8866428+00:00 ContainerStatus: Overriding PORT environment variable with port exposed by container image.
+2026-05-30T19:30:04.9246772+00:00 ContainerStatus: Container image exposes ports: ContainerExposedPort { Port = 80, Protocol = TCP }. Sanitized list of ports is: 80. Resolved main port to 80.
+2026-05-30T19:30:04.9248333+00:00 ContainerStatus: Setting value of PORT variable to 80
+2026-05-30T19:30:04.9250253+00:00 ContainerStatus: Creating container with image: ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260530192639 from registry: ckmcc0522172320.azurecr.io and fully qualified image name: ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260530192639
+2026-05-30T19:30:05.2898977+00:00 ContainerStatus: Starting container: fa7c72b681a1_app-financeirax01.
+2026-05-30T19:30:05.3705444+00:00 ContainerStatus: Starting watchers and probes.
+2026-05-30T19:30:05.3735297+00:00 ContainerStatus: Starting metrics collection.
+2026-05-30T19:30:05.3737595+00:00 ContainerStatus: Container is running.
+2026-05-30T19:30:05.3738437+00:00 ContainerStatus: State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-financeirax01 successfully created and is running., DetailsLevel: INFO
+2026-05-30T19:30:05.4037963+00:00 ContainerStream: APP_API_BASE_URL=https://api-financeirax01.azurewebsites.net
+2026-05-30T19:30:05.4178565+00:00 ContainerStatus: Container start method finished after 1126 ms.
+2026-05-30T19:30:05.4387144+00:00 ContainerStatus: State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-financeirax01 successfully created and is running., DetailsLevel: INFO
+2026-05-30T19:30:05.4387970+00:00 ContainerStatus: State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO
+2026-05-30T19:30:05.8465981+00:00 ContainerStream: done
+2026-05-30T19:30:05.8922319+00:00 ContainerStream: 2026/05/30 19:30:05 [notice] 1#1: using the "epoll" event method
+2026-05-30T19:30:05.8927647+00:00 ContainerStream: 2026/05/30 19:30:05 [notice] 1#1: nginx/1.31.1
+2026-05-30T19:30:05.8927745+00:00 ContainerStream: 2026/05/30 19:30:05 [notice] 1#1: built by gcc 15.2.0 (Alpine 15.2.0) 
+2026-05-30T19:30:05.8927790+00:00 ContainerStream: 2026/05/30 19:30:05 [notice] 1#1: OS: Linux 6.6.138.1-1.azl3
+2026-05-30T19:30:05.8927883+00:00 ContainerStream: 2026/05/30 19:30:05 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 131072:131072
+2026-05-30T19:30:05.8927935+00:00 ContainerStream: 2026/05/30 19:30:05 [notice] 1#1: start worker processes
+2026-05-30T19:30:05.8933142+00:00 ContainerStream: 2026/05/30 19:30:05 [notice] 1#1: start worker process 18
+2026-05-30T19:30:05.8936416+00:00 ContainerStream: 2026/05/30 19:30:05 [notice] 1#1: start worker process 19
+2026-05-30T19:30:06.4572401+00:00 ContainerStream: 169.254.129.1 - - [30/May/2026:19:30:06 +0000] "GET /robots933456.txt HTTP/1.1" 200 551 "-" "HealthCheck/1.0" "-"
+2026-05-30T19:30:06.4658310+00:00 ContainerStatus: Site startup probe succeeded after 1.0197544 seconds.
+2026-05-30T19:30:06.5309621+00:00 ContainerStatus: State: Starting, Action: WarmUpProbeSucceeded, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 1.0197544 seconds., DetailsLevel: INFO
+2026-05-30T19:30:06.6234331+00:00 ContainerStatus: State: Starting, Action: StartingAuthContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 1.0197544 seconds., DetailsLevel: INFO
+2026-05-30T19:30:08.4234732+00:00 ContainerStatus: Site is running with deployment version: 1cc2bc00-e644-42c2-978c-0e2b9bcb8657
+2026-05-30T19:30:08.4238450+00:00 ContainerStatus: Site started.
+2026-05-30T19:30:08.4239792+00:00 ContainerStatus: State: Started, Action: None, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 05/30/2026 19:30:08 (UTC), DetailsLevel: INFO
+========== New Cold Start Attempt (2026-05-30T19:30:28.5867017+00:00) ==========
+2026-05-30T19:30:28.5867017+00:00 ContainerStatus: State: Stopping, Action: StoppingSite, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 05/30/2026 19:09:46 (UTC), DetailsLevel: INFO
+2026-05-30T19:30:28.6238297+00:00 ContainerStatus: State: Stopping, Action: StoppingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 05/30/2026 19:09:46 (UTC), DetailsLevel: INFO
+2026-05-30T19:30:28.6262290+00:00 ContainerStatus: Container is terminating. Grace period: 5 seconds.
+2026-05-30T19:30:28.7147792+00:00 ContainerStatus: Stop and delete container. Retry count = 0
+2026-05-30T19:30:28.7164988+00:00 ContainerStatus: Stopping container: 9aa129236113_app-financeirax01.
+2026-05-30T19:30:28.8233143+00:00 ContainerStream: [Previous Container] 2026/05/30 19:30:28 [notice] 20#20: gracefully shutting down
+2026-05-30T19:30:28.8233184+00:00 ContainerStream: [Previous Container] 2026/05/30 19:30:28 [notice] 19#19: gracefully shutting down
+2026-05-30T19:30:28.8233215+00:00 ContainerStream: [Previous Container] 2026/05/30 19:30:28 [notice] 19#19: exiting
+2026-05-30T19:30:28.8233246+00:00 ContainerStream: [Previous Container] 2026/05/30 19:30:28 [notice] 20#20: exiting
+2026-05-30T19:30:28.8233289+00:00 ContainerStream: [Previous Container] 2026/05/30 19:30:28 [notice] 20#20: exit
+2026-05-30T19:30:28.8233318+00:00 ContainerStream: [Previous Container] 2026/05/30 19:30:28 [notice] 19#19: exit
+2026-05-30T19:30:28.8427424+00:00 ContainerStream: [Previous Container] 2026/05/30 19:30:28 [notice] 1#1: signal 17 (SIGCHLD) received from 20
+2026-05-30T19:30:28.8427556+00:00 ContainerStream: [Previous Container] 2026/05/30 19:30:28 [notice] 1#1: worker process 20 exited with code 0
+2026-05-30T19:30:28.8427611+00:00 ContainerStream: [Previous Container] 2026/05/30 19:30:28 [notice] 1#1: signal 29 (SIGIO) received
+2026-05-30T19:30:28.8546543+00:00 ContainerStream: [Previous Container] 2026/05/30 19:30:28 [notice] 1#1: signal 17 (SIGCHLD) received from 19
+2026-05-30T19:30:28.8546629+00:00 ContainerStream: [Previous Container] 2026/05/30 19:30:28 [notice] 1#1: worker process 19 exited with code 0
+2026-05-30T19:30:28.8576995+00:00 ContainerStream: [Previous Container] 2026/05/30 19:30:28 [notice] 1#1: exit
+2026-05-30T19:30:28.9351744+00:00 ContainerStatus: Deleting container: 9aa129236113_app-financeirax01. Retry count = 0
+2026-05-30T19:30:29.2245520+00:00 ContainerStatus: Container spec TerminationMessagePolicy  path 
+2026-05-30T19:30:29.2279460+00:00 ContainerStatus: Container is terminated. Total time elapsed: 600 ms.
+2026-05-30T19:30:29.4814330+00:00 ContainerStatus: Site: app-financeirax01 stopped.
+2026-05-30T19:30:36.9991684+00:00 ContainerStatus: State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-05-30T19:30:38.1721776+00:00 ContainerStatus: State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-05-30T19:30:38.1723215+00:00 ContainerStatus: Container start method called.
+2026-05-30T19:30:38.1723657+00:00 ContainerStatus: State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260530192639 for app-financeirax01., DetailsLevel: INFO
+2026-05-30T19:30:38.1724787+00:00 ContainerStatus: Establishing network.
+2026-05-30T19:30:38.1727856+00:00 ContainerStatus: Pulling image: ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260530192639.
+2026-05-30T19:30:38.5014993+00:00 ContainerStatus: Container is starting.
+2026-05-30T19:30:38.5016660+00:00 ContainerStatus: State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for app-financeirax01., DetailsLevel: INFO
+2026-05-30T19:30:38.5017781+00:00 ContainerStatus: Establishing user namespace if not established already.
+2026-05-30T19:30:38.5018935+00:00 ContainerStatus: Establishing network if not established already.
+2026-05-30T19:30:38.5020776+00:00 ContainerStatus: Mounting volumes.
+2026-05-30T19:30:38.5022238+00:00 ContainerStatus: Nested mountpoint volatile/logs
+2026-05-30T19:30:38.5191346+00:00 ContainerStatus: Nested mountpoint 
+2026-05-30T19:30:38.5524279+00:00 ContainerStatus: State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for app-financeirax01. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO
+2026-05-30T19:30:38.5525670+00:00 ContainerStatus: Creating container.
+2026-05-30T19:30:38.5526650+00:00 ContainerStatus: Creating pipes for streaming container io.
+2026-05-30T19:30:38.5527785+00:00 ContainerStatus: Creating stdout named pipe at /podr/container/pipe/ab86a611fcc0_app-financeirax01/stdout_48e1fd135ef841628fa8dbb197cf6d0f.
+2026-05-30T19:30:38.5529902+00:00 ContainerStatus: Successfully created stdout named pipe at: /podr/container/pipe/ab86a611fcc0_app-financeirax01/stdout_48e1fd135ef841628fa8dbb197cf6d0f.
+2026-05-30T19:30:38.5531060+00:00 ContainerStatus: Opening named pipe /podr/container/pipe/ab86a611fcc0_app-financeirax01/stdout_48e1fd135ef841628fa8dbb197cf6d0f for reading in non-blocking mode.
+2026-05-30T19:30:38.5532318+00:00 ContainerStatus: Successfully opened named pipe: /podr/container/pipe/ab86a611fcc0_app-financeirax01/stdout_48e1fd135ef841628fa8dbb197cf6d0f.
+2026-05-30T19:30:38.5533390+00:00 ContainerStatus: Successfully removed non-blocking flag from /podr/container/pipe/ab86a611fcc0_app-financeirax01/stdout_48e1fd135ef841628fa8dbb197cf6d0f.
+2026-05-30T19:30:38.5534939+00:00 ContainerStatus: Creating stderr named pipe at /podr/container/pipe/ab86a611fcc0_app-financeirax01/stderr_b99b564f75134d1eacd136eacda4e556.
+2026-05-30T19:30:38.5536596+00:00 ContainerStatus: Successfully created stderr named pipe at: /podr/container/pipe/ab86a611fcc0_app-financeirax01/stderr_b99b564f75134d1eacd136eacda4e556.
+2026-05-30T19:30:38.5537713+00:00 ContainerStatus: Opening named pipe /podr/container/pipe/ab86a611fcc0_app-financeirax01/stderr_b99b564f75134d1eacd136eacda4e556 for reading in non-blocking mode.
+2026-05-30T19:30:38.5538914+00:00 ContainerStatus: Successfully opened named pipe: /podr/container/pipe/ab86a611fcc0_app-financeirax01/stderr_b99b564f75134d1eacd136eacda4e556.
+2026-05-30T19:30:38.5667337+00:00 ContainerStatus: Successfully removed non-blocking flag from /podr/container/pipe/ab86a611fcc0_app-financeirax01/stderr_b99b564f75134d1eacd136eacda4e556.
+2026-05-30T19:30:38.5676303+00:00 ContainerStatus: Overriding PORT environment variable with port exposed by container image.
+2026-05-30T19:30:38.8284473+00:00 ContainerStatus: Container image exposes ports: ContainerExposedPort { Port = 80, Protocol = TCP }. Sanitized list of ports is: 80. Resolved main port to 80.
+2026-05-30T19:30:38.8285951+00:00 ContainerStatus: Setting value of PORT variable to 80
+2026-05-30T19:30:38.8288167+00:00 ContainerStatus: Creating container with image: ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260530192639 from registry: ckmcc0522172320.azurecr.io and fully qualified image name: ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260530192639
+2026-05-30T19:30:39.3812632+00:00 ContainerStatus: Starting container: ab86a611fcc0_app-financeirax01.
+2026-05-30T19:30:39.3995961+00:00 ContainerStatus: Starting watchers and probes.
+2026-05-30T19:30:39.4004296+00:00 ContainerStatus: Starting metrics collection.
+2026-05-30T19:30:39.4008665+00:00 ContainerStatus: Container is running.
+2026-05-30T19:30:39.4015321+00:00 ContainerStatus: State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-financeirax01 successfully created and is running., DetailsLevel: INFO
+2026-05-30T19:30:39.4253769+00:00 ContainerStatus: Container start method finished after 1252 ms.
+2026-05-30T19:30:39.4258178+00:00 ContainerStatus: State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-financeirax01 successfully created and is running., DetailsLevel: INFO
+2026-05-30T19:30:39.4258481+00:00 ContainerStatus: State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO
+2026-05-30T19:30:39.5774068+00:00 ContainerStream: APP_API_BASE_URL=https://api-financeirax01.azurewebsites.net
+2026-05-30T19:30:40.2673683+00:00 ContainerStream: done
+2026-05-30T19:30:40.2906051+00:00 ContainerStream: 2026/05/30 19:30:40 [notice] 1#1: using the "epoll" event method
+2026-05-30T19:30:40.2906924+00:00 ContainerStream: 2026/05/30 19:30:40 [notice] 1#1: nginx/1.31.1
+2026-05-30T19:30:40.2907008+00:00 ContainerStream: 2026/05/30 19:30:40 [notice] 1#1: built by gcc 15.2.0 (Alpine 15.2.0) 
+2026-05-30T19:30:40.2907055+00:00 ContainerStream: 2026/05/30 19:30:40 [notice] 1#1: OS: Linux 6.6.138.1-1.azl3
+2026-05-30T19:30:40.2907099+00:00 ContainerStream: 2026/05/30 19:30:40 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 131072:131072
+2026-05-30T19:30:40.2908986+00:00 ContainerStream: 2026/05/30 19:30:40 [notice] 1#1: start worker processes
+2026-05-30T19:30:40.2914502+00:00 ContainerStream: 2026/05/30 19:30:40 [notice] 1#1: start worker process 19
+2026-05-30T19:30:40.2914603+00:00 ContainerStream: 2026/05/30 19:30:40 [notice] 1#1: start worker process 20
+2026-05-30T19:30:40.4450245+00:00 ContainerStatus: Site startup probe succeeded after 1.0139568 seconds.
+2026-05-30T19:30:40.4456703+00:00 ContainerStream: 169.254.129.1 - - [30/May/2026:19:30:40 +0000] "GET /robots933456.txt HTTP/1.1" 200 551 "-" "HealthCheck/1.0" "-"
+2026-05-30T19:30:40.5020913+00:00 ContainerStatus: State: Starting, Action: WarmUpProbeSucceeded, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 1.0139568 seconds., DetailsLevel: INFO
+2026-05-30T19:30:40.5745954+00:00 ContainerStatus: State: Starting, Action: StartingAuthContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 1.0139568 seconds., DetailsLevel: INFO
+2026-05-30T19:30:42.4364191+00:00 ContainerStatus: Site is running with deployment version: 1cc2bc00-e644-42c2-978c-0e2b9bcb8657
+========== New Cold Start Attempt (2026-05-30T19:31:02.5200989+00:00) ==========
+2026-05-30T19:31:02.5200989+00:00 ContainerStatus: State: Stopping, Action: StoppingSite, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 05/30/2026 19:30:08 (UTC), DetailsLevel: INFO
+2026-05-30T19:31:02.5203554+00:00 ContainerStatus: State: Stopping, Action: StoppingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 05/30/2026 19:30:08 (UTC), DetailsLevel: INFO
+2026-05-30T19:31:02.5204987+00:00 ContainerStatus: Container is terminating. Grace period: 5 seconds.
+2026-05-30T19:31:02.5251159+00:00 ContainerStatus: Stop and delete container. Retry count = 0
+2026-05-30T19:31:02.5252400+00:00 ContainerStatus: Stopping container: fa7c72b681a1_app-financeirax01.
+2026-05-30T19:31:02.5404724+00:00 ContainerStream: [Previous Container] 2026/05/30 19:31:02 [notice] 1#1: signal 3 (SIGQUIT) received, shutting down
+2026-05-30T19:31:02.5415647+00:00 ContainerStream: [Previous Container] 2026/05/30 19:31:02 [notice] 18#18: gracefully shutting down
+2026-05-30T19:31:02.5415733+00:00 ContainerStream: [Previous Container] 2026/05/30 19:31:02 [notice] 18#18: exiting
+2026-05-30T19:31:02.5415768+00:00 ContainerStream: [Previous Container] 2026/05/30 19:31:02 [notice] 18#18: exit
+2026-05-30T19:31:02.5419246+00:00 ContainerStream: [Previous Container] 2026/05/30 19:31:02 [notice] 19#19: gracefully shutting down
+2026-05-30T19:31:02.5421656+00:00 ContainerStream: [Previous Container] 2026/05/30 19:31:02 [notice] 19#19: exiting
+2026-05-30T19:31:02.5425338+00:00 ContainerStream: [Previous Container] 2026/05/30 19:31:02 [notice] 19#19: exit
+2026-05-30T19:31:02.5875063+00:00 ContainerStream: [Previous Container] 2026/05/30 19:31:02 [notice] 1#1: signal 17 (SIGCHLD) received from 19
+2026-05-30T19:31:02.5875821+00:00 ContainerStream: [Previous Container] 2026/05/30 19:31:02 [notice] 1#1: worker process 18 exited with code 0
+2026-05-30T19:31:02.5876320+00:00 ContainerStream: [Previous Container] 2026/05/30 19:31:02 [notice] 1#1: worker process 19 exited with code 0
+2026-05-30T19:31:02.5877814+00:00 ContainerStream: [Previous Container] 2026/05/30 19:31:02 [notice] 1#1: exit
+2026-05-30T19:31:02.5968458+00:00 ContainerStatus: Deleting container: fa7c72b681a1_app-financeirax01. Retry count = 0
+2026-05-30T19:31:02.6825545+00:00 ContainerStatus: Container spec TerminationMessagePolicy  path 
+2026-05-30T19:31:02.6827525+00:00 ContainerStatus: Container is terminated. Total time elapsed: 162 ms.
+2026-05-30T19:31:02.8438883+00:00 ContainerStatus: Site: app-financeirax01 stopped.
+2026-05-30T19:34:47.3365586+00:00 ContainerStream: 169.254.129.2 - - [30/May/2026:19:34:47 +0000] "GET / HTTP/1.1" 200 551 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:34374"
+2026-05-30T19:34:47.5906330+00:00 ContainerStream: 169.254.129.2 - - [30/May/2026:19:34:47 +0000] "GET /static/js/main.34f9d586.js HTTP/1.1" 200 1530894 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:34374"
+2026-05-30T19:34:48.0739930+00:00 ContainerStream: 169.254.129.2 - - [30/May/2026:19:34:48 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:34374"
+2026-05-30T19:34:48.3136909+00:00 ContainerStream: 169.254.129.2 - - [30/May/2026:19:34:48 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:34374"
+2026-05-30T19:34:48.5026076+00:00 ContainerStream: 169.254.129.2 - - [30/May/2026:19:34:48 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:34374"
+2026-05-30T19:34:48.7022942+00:00 ContainerStream: 169.254.129.2 - - [30/May/2026:19:34:48 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:34374"
+2026-05-30T19:34:48.7286041+00:00 ContainerStream: 169.254.129.2 - - [30/May/2026:19:34:48 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:26368"
+2026-05-30T19:34:48.8913728+00:00 ContainerStream: 169.254.129.2 - - [30/May/2026:19:34:48 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:34374"
+2026-05-30T19:34:48.9209225+00:00 ContainerStream: 169.254.129.2 - - [30/May/2026:19:34:48 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:26368"
+2026-05-30T19:34:49.1122564+00:00 ContainerStream: 169.254.129.2 - - [30/May/2026:19:34:49 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:34374"
+2026-05-30T19:35:32.4201854+00:00 ContainerStream: 169.254.129.2 - - [30/May/2026:19:35:32 +0000] "GET / HTTP/1.1" 200 551 "https://login.microsoftonline.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:34374"
+2026-05-30T19:35:32.6497339+00:00 ContainerStream: 169.254.129.2 - - [30/May/2026:19:35:32 +0000] "GET /static/js/main.34f9d586.js HTTP/1.1" 200 1530894 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:34374"
+2026-05-30T19:35:32.6598795+00:00 ContainerStream: 169.254.129.2 - - [30/May/2026:19:35:32 +0000] "GET /static/css/main.fa9b9196.css HTTP/1.1" 200 16059 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:26368"
+2026-05-30T19:35:33.1031566+00:00 ContainerStream: 169.254.129.2 - - [30/May/2026:19:35:33 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:34374"
+2026-05-30T19:35:33.1063029+00:00 ContainerStream: 169.254.129.2 - - [30/May/2026:19:35:33 +0000] "GET /favicon.ico HTTP/1.1" 200 2031 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:26368"
+2026-05-30T19:35:33.3380147+00:00 ContainerStream: 169.254.129.2 - - [30/May/2026:19:35:33 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:34374"
+2026-05-30T19:35:33.3402034+00:00 ContainerStream: 169.254.129.2 - - [30/May/2026:19:35:33 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:26368"
+2026-05-30T19:35:33.4635078+00:00 ContainerStream: 169.254.129.2 - - [30/May/2026:19:35:33 +0000] "GET /static/media/financeirax01_logo.0dd6749ab16bcfe9a40f.png HTTP/1.1" 200 235429 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:31179"
+2026-05-30T19:35:33.6524272+00:00 ContainerStream: 169.254.129.2 - - [30/May/2026:19:35:33 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:34374"
+2026-05-30T19:35:33.6589983+00:00 ContainerStream: 169.254.129.2 - - [30/May/2026:19:35:33 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:26368"
+2026-05-30T19:35:33.8794730+00:00 ContainerStream: 169.254.129.2 - - [30/May/2026:19:35:33 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:34374"
+2026-05-30T19:35:33.8795272+00:00 ContainerStream: 169.254.129.2 - - [30/May/2026:19:35:33 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:26368"
+2026-05-30T19:35:34.0806082+00:00 ContainerStream: 169.254.129.2 - - [30/May/2026:19:35:34 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:26368"
+2026-05-30T19:35:34.9189152+00:00 ContainerStream: 169.254.129.2 - - [30/May/2026:19:35:34 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:26368"
+2026-05-30T19:35:35.1170318+00:00 ContainerStream: 169.254.129.2 - - [30/May/2026:19:35:35 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:26368"
+2026-05-30T19:35:36.2778744+00:00 ContainerStream: 169.254.129.2 - - [30/May/2026:19:35:36 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:26368"
+2026-05-30T19:35:36.4768009+00:00 ContainerStream: 169.254.129.2 - - [30/May/2026:19:35:36 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:26368"
+2026-05-30T19:47:44.9266061+00:00 ContainerStatus: State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-05-30T19:47:45.8821661+00:00 ContainerStatus: State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-05-30T19:47:45.8823985+00:00 ContainerStatus: Container start method called.
+2026-05-30T19:47:45.8826272+00:00 ContainerStatus: State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260530194419 for app-financeirax01., DetailsLevel: INFO
+2026-05-30T19:47:45.8828054+00:00 ContainerStatus: Establishing network.
+2026-05-30T19:47:45.8830046+00:00 ContainerStatus: Pulling image: ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260530194419.
+2026-05-30T19:47:46.5262342+00:00 ContainerStatus: Image ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260530194419 is pulled from registry ckmcc0522172320.azurecr.io
+2026-05-30T19:47:46.5263938+00:00 ContainerStatus: Container is starting.
+2026-05-30T19:47:46.5264893+00:00 ContainerStatus: State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for app-financeirax01., DetailsLevel: INFO
+2026-05-30T19:47:46.5266202+00:00 ContainerStatus: Establishing user namespace if not established already.
+2026-05-30T19:47:46.5267287+00:00 ContainerStatus: Establishing network if not established already.
+2026-05-30T19:47:46.5268540+00:00 ContainerStatus: Mounting volumes.
+2026-05-30T19:47:46.5270072+00:00 ContainerStatus: Nested mountpoint volatile/logs
+2026-05-30T19:47:46.5431766+00:00 ContainerStatus: Nested mountpoint 
+2026-05-30T19:47:46.5913978+00:00 ContainerStatus: State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for app-financeirax01. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO
+2026-05-30T19:47:46.5915437+00:00 ContainerStatus: Creating container.
+2026-05-30T19:47:46.5917272+00:00 ContainerStatus: Creating pipes for streaming container io.
+2026-05-30T19:47:46.5918517+00:00 ContainerStatus: Creating stdout named pipe at /podr/container/pipe/488fb97b1a3e_app-financeirax01/stdout_813a7d8787e44066b1e7583629bc9340.
+2026-05-30T19:47:46.6048236+00:00 ContainerStatus: Successfully created stdout named pipe at: /podr/container/pipe/488fb97b1a3e_app-financeirax01/stdout_813a7d8787e44066b1e7583629bc9340.
+2026-05-30T19:47:46.6049950+00:00 ContainerStatus: Opening named pipe /podr/container/pipe/488fb97b1a3e_app-financeirax01/stdout_813a7d8787e44066b1e7583629bc9340 for reading in non-blocking mode.
+2026-05-30T19:47:46.6061748+00:00 ContainerStatus: Successfully opened named pipe: /podr/container/pipe/488fb97b1a3e_app-financeirax01/stdout_813a7d8787e44066b1e7583629bc9340.
+2026-05-30T19:47:46.6063803+00:00 ContainerStatus: Successfully removed non-blocking flag from /podr/container/pipe/488fb97b1a3e_app-financeirax01/stdout_813a7d8787e44066b1e7583629bc9340.
+2026-05-30T19:47:46.6065806+00:00 ContainerStatus: Creating stderr named pipe at /podr/container/pipe/488fb97b1a3e_app-financeirax01/stderr_476cbeb8287c43dcaaa51c9e663e54d1.
+2026-05-30T19:47:46.6067805+00:00 ContainerStatus: Successfully created stderr named pipe at: /podr/container/pipe/488fb97b1a3e_app-financeirax01/stderr_476cbeb8287c43dcaaa51c9e663e54d1.
+2026-05-30T19:47:46.6068910+00:00 ContainerStatus: Opening named pipe /podr/container/pipe/488fb97b1a3e_app-financeirax01/stderr_476cbeb8287c43dcaaa51c9e663e54d1 for reading in non-blocking mode.
+2026-05-30T19:47:46.6070158+00:00 ContainerStatus: Successfully opened named pipe: /podr/container/pipe/488fb97b1a3e_app-financeirax01/stderr_476cbeb8287c43dcaaa51c9e663e54d1.
+2026-05-30T19:47:46.6071314+00:00 ContainerStatus: Successfully removed non-blocking flag from /podr/container/pipe/488fb97b1a3e_app-financeirax01/stderr_476cbeb8287c43dcaaa51c9e663e54d1.
+2026-05-30T19:47:46.6072560+00:00 ContainerStatus: Overriding PORT environment variable with port exposed by container image.
+2026-05-30T19:47:46.6493044+00:00 ContainerStatus: Container image exposes ports: ContainerExposedPort { Port = 80, Protocol = TCP }. Sanitized list of ports is: 80. Resolved main port to 80.
+2026-05-30T19:47:46.6494345+00:00 ContainerStatus: Setting value of PORT variable to 80
+2026-05-30T19:47:46.6497660+00:00 ContainerStatus: Creating container with image: ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260530194419 from registry: ckmcc0522172320.azurecr.io and fully qualified image name: ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260530194419
+2026-05-30T19:47:47.1102188+00:00 ContainerStatus: Starting container: 488fb97b1a3e_app-financeirax01.
+2026-05-30T19:47:47.1338226+00:00 ContainerStatus: Starting watchers and probes.
+2026-05-30T19:47:47.1346512+00:00 ContainerStatus: Starting metrics collection.
+2026-05-30T19:47:47.1348280+00:00 ContainerStatus: Container is running.
+2026-05-30T19:47:47.1349163+00:00 ContainerStatus: State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-financeirax01 successfully created and is running., DetailsLevel: INFO
+2026-05-30T19:47:47.1569342+00:00 ContainerStatus: Container start method finished after 1274 ms.
+2026-05-30T19:47:47.1573802+00:00 ContainerStatus: State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-financeirax01 successfully created and is running., DetailsLevel: INFO
+2026-05-30T19:47:47.1574095+00:00 ContainerStatus: State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO
+2026-05-30T19:47:47.1806325+00:00 ContainerStream: APP_API_BASE_URL=https://api-financeirax01.azurewebsites.net
+2026-05-30T19:47:47.6034207+00:00 ContainerStream: done
+2026-05-30T19:47:47.6618327+00:00 ContainerStream: 2026/05/30 19:47:47 [notice] 1#1: using the "epoll" event method
+2026-05-30T19:47:47.6618822+00:00 ContainerStream: 2026/05/30 19:47:47 [notice] 1#1: nginx/1.31.1
+2026-05-30T19:47:47.6618937+00:00 ContainerStream: 2026/05/30 19:47:47 [notice] 1#1: built by gcc 15.2.0 (Alpine 15.2.0) 
+2026-05-30T19:47:47.6618983+00:00 ContainerStream: 2026/05/30 19:47:47 [notice] 1#1: OS: Linux 6.6.138.1-1.azl3
+2026-05-30T19:47:47.6619023+00:00 ContainerStream: 2026/05/30 19:47:47 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 131072:131072
+2026-05-30T19:47:47.6626735+00:00 ContainerStream: 2026/05/30 19:47:47 [notice] 1#1: start worker processes
+2026-05-30T19:47:47.6626850+00:00 ContainerStream: 2026/05/30 19:47:47 [notice] 1#1: start worker process 20
+2026-05-30T19:47:47.6626895+00:00 ContainerStream: 2026/05/30 19:47:47 [notice] 1#1: start worker process 21
+2026-05-30T19:47:48.1737337+00:00 ContainerStatus: Site startup probe succeeded after 1.0148689 seconds.
+2026-05-30T19:47:48.1742235+00:00 ContainerStream: 169.254.129.1 - - [30/May/2026:19:47:48 +0000] "GET /robots933456.txt HTTP/1.1" 200 551 "-" "HealthCheck/1.0" "-"
+2026-05-30T19:47:48.2264893+00:00 ContainerStatus: State: Starting, Action: WarmUpProbeSucceeded, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 1.0148689 seconds., DetailsLevel: INFO
+2026-05-30T19:47:48.3029291+00:00 ContainerStatus: State: Starting, Action: StartingAuthContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 1.0148689 seconds., DetailsLevel: INFO
+2026-05-30T19:47:50.1977010+00:00 ContainerStatus: Site is running with deployment version: 1cc2bc00-e644-42c2-978c-0e2b9bcb8657
+2026-05-30T19:47:50.2033834+00:00 ContainerStatus: Site started.
+2026-05-30T19:47:50.2118099+00:00 ContainerStatus: State: Started, Action: None, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 05/30/2026 19:47:50 (UTC), DetailsLevel: INFO
+========== New Cold Start Attempt (2026-05-30T19:48:10.2832587+00:00) ==========
+2026-05-30T19:48:10.2832587+00:00 ContainerStatus: State: Stopping, Action: StoppingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 05/30/2026 19:30:42 (UTC), DetailsLevel: INFO
+2026-05-30T19:48:10.2834334+00:00 ContainerStatus: Container is terminating. Grace period: 5 seconds.
+2026-05-30T19:48:10.2904325+00:00 ContainerStatus: Stop and delete container. Retry count = 0
+2026-05-30T19:48:10.2905592+00:00 ContainerStatus: Stopping container: ab86a611fcc0_app-financeirax01.
+2026-05-30T19:48:10.3386437+00:00 ContainerStream: [Previous Container] 2026/05/30 19:48:10 [notice] 19#19: gracefully shutting down
+2026-05-30T19:48:10.3386484+00:00 ContainerStream: [Previous Container] 2026/05/30 19:48:10 [notice] 20#20: gracefully shutting down
+2026-05-30T19:48:10.3386513+00:00 ContainerStream: [Previous Container] 2026/05/30 19:48:10 [notice] 19#19: exiting
+2026-05-30T19:48:10.3386538+00:00 ContainerStream: [Previous Container] 2026/05/30 19:48:10 [notice] 20#20: exiting
+2026-05-30T19:48:10.3386567+00:00 ContainerStream: [Previous Container] 2026/05/30 19:48:10 [notice] 20#20: exit
+2026-05-30T19:48:10.3387000+00:00 ContainerStream: [Previous Container] 2026/05/30 19:48:10 [notice] 19#19: exit
+2026-05-30T19:48:10.3626093+00:00 ContainerStream: [Previous Container] 2026/05/30 19:48:10 [notice] 1#1: signal 17 (SIGCHLD) received from 19
+2026-05-30T19:48:10.3626408+00:00 ContainerStream: [Previous Container] 2026/05/30 19:48:10 [notice] 1#1: worker process 19 exited with code 0
+2026-05-30T19:48:10.3626630+00:00 ContainerStream: [Previous Container] 2026/05/30 19:48:10 [notice] 1#1: signal 29 (SIGIO) received
+2026-05-30T19:48:10.3788268+00:00 ContainerStream: [Previous Container] 2026/05/30 19:48:10 [notice] 1#1: signal 17 (SIGCHLD) received from 20
+2026-05-30T19:48:10.3788611+00:00 ContainerStream: [Previous Container] 2026/05/30 19:48:10 [notice] 1#1: worker process 20 exited with code 0
+2026-05-30T19:48:10.3814306+00:00 ContainerStream: [Previous Container] 2026/05/30 19:48:10 [notice] 1#1: exit
+2026-05-30T19:48:10.3992054+00:00 ContainerStatus: Deleting container: ab86a611fcc0_app-financeirax01. Retry count = 0
+2026-05-30T19:48:10.4948693+00:00 ContainerStatus: Container spec TerminationMessagePolicy  path 
+2026-05-30T19:48:10.4951052+00:00 ContainerStatus: Container is terminated. Total time elapsed: 211 ms.
+2026-05-30T19:48:10.7053358+00:00 ContainerStatus: Site: app-financeirax01 stopped.
+2026-05-30T19:48:11.0289763+00:00 ContainerStatus: State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-05-30T19:48:11.7197245+00:00 ContainerStatus: State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-05-30T19:48:11.7198733+00:00 ContainerStatus: Container start method called.
+2026-05-30T19:48:11.7199119+00:00 ContainerStatus: State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260530194419 for app-financeirax01., DetailsLevel: INFO
+2026-05-30T19:48:11.7200144+00:00 ContainerStatus: Establishing network.
+2026-05-30T19:48:11.7201833+00:00 ContainerStatus: Pulling image: ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260530194419.
+2026-05-30T19:48:11.8112822+00:00 ContainerStatus: Container is starting.
+2026-05-30T19:48:11.8113436+00:00 ContainerStatus: State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for app-financeirax01., DetailsLevel: INFO
+2026-05-30T19:48:11.8114543+00:00 ContainerStatus: Establishing user namespace if not established already.
+2026-05-30T19:48:11.8115655+00:00 ContainerStatus: Establishing network if not established already.
+2026-05-30T19:48:11.8117001+00:00 ContainerStatus: Mounting volumes.
+2026-05-30T19:48:11.8118484+00:00 ContainerStatus: Nested mountpoint volatile/logs
+2026-05-30T19:48:11.8150006+00:00 ContainerStatus: Nested mountpoint 
+2026-05-30T19:48:11.8241898+00:00 ContainerStatus: State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for app-financeirax01. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO
+2026-05-30T19:48:11.8243383+00:00 ContainerStatus: Creating container.
+2026-05-30T19:48:11.8244548+00:00 ContainerStatus: Creating pipes for streaming container io.
+2026-05-30T19:48:11.8245613+00:00 ContainerStatus: Creating stdout named pipe at /podr/container/pipe/57cd28850a44_app-financeirax01/stdout_c71c6d2f1a7849db9dfe09ebe2d093cb.
+2026-05-30T19:48:11.8247839+00:00 ContainerStatus: Successfully created stdout named pipe at: /podr/container/pipe/57cd28850a44_app-financeirax01/stdout_c71c6d2f1a7849db9dfe09ebe2d093cb.
+2026-05-30T19:48:11.8248988+00:00 ContainerStatus: Opening named pipe /podr/container/pipe/57cd28850a44_app-financeirax01/stdout_c71c6d2f1a7849db9dfe09ebe2d093cb for reading in non-blocking mode.
+2026-05-30T19:48:11.8250272+00:00 ContainerStatus: Successfully opened named pipe: /podr/container/pipe/57cd28850a44_app-financeirax01/stdout_c71c6d2f1a7849db9dfe09ebe2d093cb.
+2026-05-30T19:48:11.8251443+00:00 ContainerStatus: Successfully removed non-blocking flag from /podr/container/pipe/57cd28850a44_app-financeirax01/stdout_c71c6d2f1a7849db9dfe09ebe2d093cb.
+2026-05-30T19:48:11.8253078+00:00 ContainerStatus: Creating stderr named pipe at /podr/container/pipe/57cd28850a44_app-financeirax01/stderr_95419fbba9914b328a23d024839b67b0.
+2026-05-30T19:48:11.8254794+00:00 ContainerStatus: Successfully created stderr named pipe at: /podr/container/pipe/57cd28850a44_app-financeirax01/stderr_95419fbba9914b328a23d024839b67b0.
+2026-05-30T19:48:11.8255797+00:00 ContainerStatus: Opening named pipe /podr/container/pipe/57cd28850a44_app-financeirax01/stderr_95419fbba9914b328a23d024839b67b0 for reading in non-blocking mode.
+2026-05-30T19:48:11.8257061+00:00 ContainerStatus: Successfully opened named pipe: /podr/container/pipe/57cd28850a44_app-financeirax01/stderr_95419fbba9914b328a23d024839b67b0.
+2026-05-30T19:48:11.8258174+00:00 ContainerStatus: Successfully removed non-blocking flag from /podr/container/pipe/57cd28850a44_app-financeirax01/stderr_95419fbba9914b328a23d024839b67b0.
+2026-05-30T19:48:11.8264565+00:00 ContainerStatus: Overriding PORT environment variable with port exposed by container image.
+2026-05-30T19:48:11.8431340+00:00 ContainerStatus: Container image exposes ports: ContainerExposedPort { Port = 80, Protocol = TCP }. Sanitized list of ports is: 80. Resolved main port to 80.
+2026-05-30T19:48:11.8432838+00:00 ContainerStatus: Setting value of PORT variable to 80
+2026-05-30T19:48:11.8434687+00:00 ContainerStatus: Creating container with image: ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260530194419 from registry: ckmcc0522172320.azurecr.io and fully qualified image name: ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260530194419
+2026-05-30T19:48:12.0274521+00:00 ContainerStatus: Starting container: 57cd28850a44_app-financeirax01.
+2026-05-30T19:48:12.0466711+00:00 ContainerStatus: Starting watchers and probes.
+2026-05-30T19:48:12.0480257+00:00 ContainerStatus: Starting metrics collection.
+2026-05-30T19:48:12.0484014+00:00 ContainerStatus: Container is running.
+2026-05-30T19:48:12.0484732+00:00 ContainerStatus: State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-financeirax01 successfully created and is running., DetailsLevel: INFO
+2026-05-30T19:48:12.0588646+00:00 ContainerStatus: Container start method finished after 338 ms.
+2026-05-30T19:48:12.0606401+00:00 ContainerStatus: State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container app-financeirax01 successfully created and is running., DetailsLevel: INFO
+2026-05-30T19:48:12.0610375+00:00 ContainerStatus: State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO
+2026-05-30T19:48:12.0895849+00:00 ContainerStream: APP_API_BASE_URL=https://api-financeirax01.azurewebsites.net
+2026-05-30T19:48:12.5660314+00:00 ContainerStream: done
+2026-05-30T19:48:12.5825476+00:00 ContainerStream: 2026/05/30 19:48:12 [notice] 1#1: using the "epoll" event method
+2026-05-30T19:48:12.5825785+00:00 ContainerStream: 2026/05/30 19:48:12 [notice] 1#1: nginx/1.31.1
+2026-05-30T19:48:12.5825840+00:00 ContainerStream: 2026/05/30 19:48:12 [notice] 1#1: built by gcc 15.2.0 (Alpine 15.2.0) 
+2026-05-30T19:48:12.5825886+00:00 ContainerStream: 2026/05/30 19:48:12 [notice] 1#1: OS: Linux 6.6.138.1-1.azl3
+2026-05-30T19:48:12.5825927+00:00 ContainerStream: 2026/05/30 19:48:12 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 131072:131072
+2026-05-30T19:48:12.5833453+00:00 ContainerStream: 2026/05/30 19:48:12 [notice] 1#1: start worker processes
+2026-05-30T19:48:12.5833565+00:00 ContainerStream: 2026/05/30 19:48:12 [notice] 1#1: start worker process 20
+2026-05-30T19:48:12.5833614+00:00 ContainerStream: 2026/05/30 19:48:12 [notice] 1#1: start worker process 21
+2026-05-30T19:48:13.0767952+00:00 ContainerStream: 169.254.129.1 - - [30/May/2026:19:48:13 +0000] "GET /robots933456.txt HTTP/1.1" 200 551 "-" "HealthCheck/1.0" "-"
+2026-05-30T19:48:13.0778201+00:00 ContainerStatus: Site startup probe succeeded after 1.0124083 seconds.
+2026-05-30T19:48:13.1287029+00:00 ContainerStatus: State: Starting, Action: WarmUpProbeSucceeded, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 1.0124083 seconds., DetailsLevel: INFO
+2026-05-30T19:48:13.1970293+00:00 ContainerStatus: State: Starting, Action: StartingAuthContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 1.0124083 seconds., DetailsLevel: INFO
+2026-05-30T19:48:14.9529421+00:00 ContainerStatus: Site is running with deployment version: 1cc2bc00-e644-42c2-978c-0e2b9bcb8657
+2026-05-30T19:48:14.9541000+00:00 ContainerStatus: Site started.
+2026-05-30T19:48:14.9551675+00:00 ContainerStatus: State: Started, Action: None, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 05/30/2026 19:48:14 (UTC), DetailsLevel: INFO

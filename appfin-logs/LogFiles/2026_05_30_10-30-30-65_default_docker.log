@@ -1,0 +1,225 @@
+2026-05-30T19:09:41.7560912Z APP_API_BASE_URL=https://api-financeirax01.azurewebsites.net
+2026-05-30T19:09:42.3947518Z done
+2026-05-30T19:09:42.4034361Z 2026/05/30 19:09:42 [notice] 1#1: using the "epoll" event method
+2026-05-30T19:09:42.4034917Z 2026/05/30 19:09:42 [notice] 1#1: nginx/1.31.1
+2026-05-30T19:09:42.4035039Z 2026/05/30 19:09:42 [notice] 1#1: built by gcc 15.2.0 (Alpine 15.2.0) 
+2026-05-30T19:09:42.4035186Z 2026/05/30 19:09:42 [notice] 1#1: OS: Linux 6.6.138.1-1.azl3
+2026-05-30T19:09:42.4036613Z 2026/05/30 19:09:42 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 131072:131072
+2026-05-30T19:09:42.4040013Z 2026/05/30 19:09:42 [notice] 1#1: start worker processes
+2026-05-30T19:09:42.4043954Z 2026/05/30 19:09:42 [notice] 1#1: start worker process 19
+2026-05-30T19:09:42.4055295Z 2026/05/30 19:09:42 [notice] 1#1: start worker process 20
+2026-05-30T19:09:42.9114320Z 169.254.129.1 - - [30/May/2026:19:09:42 +0000] "GET /robots933456.txt HTTP/1.1" 200 551 "-" "HealthCheck/1.0" "-"
+2026-05-30T19:10:43.0365055Z 169.254.129.3 - - [30/May/2026:19:10:43 +0000] "GET / HTTP/1.1" 200 551 "https://login.microsoftonline.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:47823"
+2026-05-30T19:10:43.3024444Z 169.254.129.3 - - [30/May/2026:19:10:43 +0000] "GET /static/js/main.151f73dc.js HTTP/1.1" 200 1530387 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:47823"
+2026-05-30T19:10:43.7015082Z 169.254.129.3 - - [30/May/2026:19:10:43 +0000] "GET /static/css/main.fa9b9196.css HTTP/1.1" 200 16059 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:47823"
+2026-05-30T19:10:43.9972444Z 169.254.129.3 - - [30/May/2026:19:10:43 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:47823"
+2026-05-30T19:10:44.0198768Z 169.254.129.3 - - [30/May/2026:19:10:44 +0000] "GET /favicon.ico HTTP/1.1" 200 2031 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:9412"
+2026-05-30T19:10:44.2563645Z 169.254.129.3 - - [30/May/2026:19:10:44 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:47823"
+2026-05-30T19:10:44.2576793Z 169.254.129.3 - - [30/May/2026:19:10:44 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:9412"
+2026-05-30T19:10:44.4519937Z 169.254.129.3 - - [30/May/2026:19:10:44 +0000] "GET /static/media/financeirax01_logo.0dd6749ab16bcfe9a40f.png HTTP/1.1" 200 235429 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:9412"
+2026-05-30T19:10:44.4525436Z 169.254.129.3 - - [30/May/2026:19:10:44 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:47823"
+2026-05-30T19:10:44.6487830Z 169.254.129.3 - - [30/May/2026:19:10:44 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:47823"
+2026-05-30T19:10:44.7096831Z 169.254.129.3 - - [30/May/2026:19:10:44 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:10:44.8553804Z 169.254.129.3 - - [30/May/2026:19:10:44 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:9412"
+2026-05-30T19:10:45.0477559Z 169.254.129.3 - - [30/May/2026:19:10:45 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:11:13.8374886Z 169.254.129.3 - - [30/May/2026:19:11:13 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:11:14.0593981Z 169.254.129.3 - - [30/May/2026:19:11:14 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:11:18.4547921Z 169.254.129.3 - - [30/May/2026:19:11:18 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:11:18.6508922Z 169.254.129.3 - - [30/May/2026:19:11:18 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:11:19.8408854Z 169.254.129.3 - - [30/May/2026:19:11:19 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:11:20.0348981Z 169.254.129.3 - - [30/May/2026:19:11:20 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:11:23.6640827Z 169.254.129.3 - - [30/May/2026:19:11:23 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:11:23.8574206Z 169.254.129.3 - - [30/May/2026:19:11:23 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:11:27.4444067Z 169.254.129.3 - - [30/May/2026:19:11:27 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:11:27.6386309Z 169.254.129.3 - - [30/May/2026:19:11:27 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:11:35.8273228Z 169.254.129.3 - - [30/May/2026:19:11:35 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:11:36.0227028Z 169.254.129.3 - - [30/May/2026:19:11:36 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:11:42.7205070Z 169.254.129.3 - - [30/May/2026:19:11:42 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:11:42.9199240Z 169.254.129.3 - - [30/May/2026:19:11:42 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:13:03.0836969Z 169.254.129.3 - - [30/May/2026:19:13:03 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:13:03.2772446Z 169.254.129.3 - - [30/May/2026:19:13:03 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:13:30.5669556Z 169.254.129.3 - - [30/May/2026:19:13:30 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:13:30.7644964Z 169.254.129.3 - - [30/May/2026:19:13:30 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:43602"
+2026-05-30T19:26:38.7897182Z 169.254.129.3 - - [30/May/2026:19:26:38 +0000] "GET / HTTP/1.1" 200 551 "https://login.microsoftonline.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:36874"
+2026-05-30T19:26:39.0710377Z 169.254.129.3 - - [30/May/2026:19:26:39 +0000] "GET /static/js/main.151f73dc.js HTTP/1.1" 200 1530387 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:36874"
+2026-05-30T19:26:39.4628819Z 169.254.129.3 - - [30/May/2026:19:26:39 +0000] "GET /static/css/main.fa9b9196.css HTTP/1.1" 200 16059 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16977"
+2026-05-30T19:26:39.7714977Z 169.254.129.3 - - [30/May/2026:19:26:39 +0000] "GET /.auth/me HTTP/1.1" 200 210 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16977"
+2026-05-30T19:26:39.7771905Z 169.254.129.3 - - [30/May/2026:19:26:39 +0000] "GET /favicon.ico HTTP/1.1" 200 2031 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:36874"
+2026-05-30T19:26:40.0066826Z 169.254.129.3 - - [30/May/2026:19:26:40 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:36874"
+2026-05-30T19:26:40.0088563Z 169.254.129.3 - - [30/May/2026:19:26:40 +0000] "GET /.auth/me HTTP/1.1" 200 210 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16977"
+2026-05-30T19:26:40.2000102Z 169.254.129.3 - - [30/May/2026:19:26:40 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:36874"
+2026-05-30T19:26:40.2075324Z 169.254.129.3 - - [30/May/2026:19:26:40 +0000] "GET /static/media/financeirax01_logo.0dd6749ab16bcfe9a40f.png HTTP/1.1" 200 235429 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16977"
+2026-05-30T19:26:40.3884987Z 169.254.129.3 - - [30/May/2026:19:26:40 +0000] "GET /.auth/me HTTP/1.1" 200 210 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:36874"
+2026-05-30T19:26:40.4308678Z 169.254.129.3 - - [30/May/2026:19:26:40 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16961"
+2026-05-30T19:26:40.5782972Z 169.254.129.3 - - [30/May/2026:19:26:40 +0000] "GET /.auth/me HTTP/1.1" 200 210 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16977"
+2026-05-30T19:26:40.7699895Z 169.254.129.3 - - [30/May/2026:19:26:40 +0000] "GET /.auth/me HTTP/1.1" 200 210 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16961"
+2026-05-30T19:26:41.6822886Z 169.254.129.3 - - [30/May/2026:19:26:41 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16961"
+2026-05-30T19:26:41.8805037Z 169.254.129.3 - - [30/May/2026:19:26:41 +0000] "GET /.auth/me HTTP/1.1" 200 210 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16961"
+2026-05-30T19:26:43.0660108Z 169.254.129.3 - - [30/May/2026:19:26:43 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16961"
+2026-05-30T19:26:43.2551608Z 169.254.129.3 - - [30/May/2026:19:26:43 +0000] "GET /.auth/me HTTP/1.1" 200 210 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16961"
+2026-05-30T19:28:37.3727153Z 169.254.129.3 - - [30/May/2026:19:28:37 +0000] "GET / HTTP/1.1" 200 551 "https://login.microsoftonline.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16961"
+2026-05-30T19:28:37.6137226Z 169.254.129.3 - - [30/May/2026:19:28:37 +0000] "GET /static/css/main.fa9b9196.css HTTP/1.1" 200 16059 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16977"
+2026-05-30T19:28:37.6146473Z 169.254.129.3 - - [30/May/2026:19:28:37 +0000] "GET /static/js/main.151f73dc.js HTTP/1.1" 200 1530387 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16961"
+2026-05-30T19:28:38.0897259Z 169.254.129.3 - - [30/May/2026:19:28:38 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16961"
+2026-05-30T19:28:38.0947201Z 169.254.129.3 - - [30/May/2026:19:28:38 +0000] "GET /favicon.ico HTTP/1.1" 200 2031 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16977"
+2026-05-30T19:28:38.3223686Z 169.254.129.3 - - [30/May/2026:19:28:38 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16961"
+2026-05-30T19:28:38.3256839Z 169.254.129.3 - - [30/May/2026:19:28:38 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16977"
+2026-05-30T19:28:38.3301754Z 169.254.129.3 - - [30/May/2026:19:28:38 +0000] "GET /static/media/financeirax01_logo.0dd6749ab16bcfe9a40f.png HTTP/1.1" 200 235429 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:36874"
+2026-05-30T19:28:38.5144049Z 169.254.129.3 - - [30/May/2026:19:28:38 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16961"
+2026-05-30T19:28:38.5283882Z 169.254.129.3 - - [30/May/2026:19:28:38 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16977"
+2026-05-30T19:28:38.7064703Z 169.254.129.3 - - [30/May/2026:19:28:38 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:36874"
+2026-05-30T19:28:38.7196339Z 169.254.129.3 - - [30/May/2026:19:28:38 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.99:16961"
+2026-05-30T19:28:38.9048124Z 169.254.129.3 - - [30/May/2026:19:28:38 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:36874"
+2026-05-30T19:28:39.3049102Z 169.254.129.3 - - [30/May/2026:19:28:39 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:36874"
+2026-05-30T19:28:39.5008899Z 169.254.129.3 - - [30/May/2026:19:28:39 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:36874"
+2026-05-30T19:28:40.4647484Z 169.254.129.3 - - [30/May/2026:19:28:40 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:36874"
+2026-05-30T19:28:40.6598784Z 169.254.129.3 - - [30/May/2026:19:28:40 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:36874"
+2026-05-30T19:29:15.5874041Z 169.254.129.3 - - [30/May/2026:19:29:15 +0000] "GET / HTTP/1.1" 200 551 "https://login.microsoftonline.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0" "4.255.188.38:38789"
+2026-05-30T19:29:15.8095797Z 169.254.129.3 - - [30/May/2026:19:29:15 +0000] "GET /static/js/main.151f73dc.js HTTP/1.1" 200 1530387 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0" "4.255.188.38:38789"
+2026-05-30T19:29:15.8135421Z 169.254.129.3 - - [30/May/2026:19:29:15 +0000] "GET /static/css/main.fa9b9196.css HTTP/1.1" 200 16059 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0" "4.255.188.38:52615"
+2026-05-30T19:29:16.2405701Z 169.254.129.3 - - [30/May/2026:19:29:16 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0" "4.255.188.38:38789"
+2026-05-30T19:29:16.2580393Z 169.254.129.3 - - [30/May/2026:19:29:16 +0000] "GET /favicon.ico HTTP/1.1" 200 2031 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0" "4.255.188.38:52615"
+2026-05-30T19:29:16.4643434Z 169.254.129.3 - - [30/May/2026:19:29:16 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0" "4.255.188.38:52615"
+2026-05-30T19:29:16.4655788Z 169.254.129.3 - - [30/May/2026:19:29:16 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0" "4.255.188.38:38789"
+2026-05-30T19:29:16.6576949Z 169.254.129.3 - - [30/May/2026:19:29:16 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0" "4.255.188.38:52615"
+2026-05-30T19:29:16.6598005Z 169.254.129.3 - - [30/May/2026:19:29:16 +0000] "GET /static/media/financeirax01_logo.0dd6749ab16bcfe9a40f.png HTTP/1.1" 200 235429 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0" "4.255.188.38:38789"
+2026-05-30T19:29:16.8501255Z 169.254.129.3 - - [30/May/2026:19:29:16 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0" "4.255.188.38:52615"
+2026-05-30T19:29:16.8715295Z 169.254.129.3 - - [30/May/2026:19:29:16 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0" "4.255.188.38:38789"
+2026-05-30T19:29:17.0392000Z 169.254.129.3 - - [30/May/2026:19:29:17 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0" "4.255.188.38:52615"
+2026-05-30T19:29:17.2243934Z 169.254.129.3 - - [30/May/2026:19:29:17 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0" "4.255.188.38:52615"
+2026-05-30T19:29:18.0940963Z 169.254.129.3 - - [30/May/2026:19:29:18 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0" "4.255.188.38:52615"
+2026-05-30T19:29:18.2822042Z 169.254.129.3 - - [30/May/2026:19:29:18 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0" "4.255.188.38:52615"
+2026-05-30T19:29:19.2009834Z 169.254.129.3 - - [30/May/2026:19:29:19 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0" "4.255.188.38:52615"
+2026-05-30T19:29:19.4011450Z 169.254.129.3 - - [30/May/2026:19:29:19 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0" "4.255.188.38:52615"
+2026-05-30T19:30:05.4037963Z APP_API_BASE_URL=https://api-financeirax01.azurewebsites.net
+2026-05-30T19:30:05.8465981Z done
+2026-05-30T19:30:05.8922319Z 2026/05/30 19:30:05 [notice] 1#1: using the "epoll" event method
+2026-05-30T19:30:05.8927647Z 2026/05/30 19:30:05 [notice] 1#1: nginx/1.31.1
+2026-05-30T19:30:05.8927745Z 2026/05/30 19:30:05 [notice] 1#1: built by gcc 15.2.0 (Alpine 15.2.0) 
+2026-05-30T19:30:05.8927790Z 2026/05/30 19:30:05 [notice] 1#1: OS: Linux 6.6.138.1-1.azl3
+2026-05-30T19:30:05.8927883Z 2026/05/30 19:30:05 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 131072:131072
+2026-05-30T19:30:05.8927935Z 2026/05/30 19:30:05 [notice] 1#1: start worker processes
+2026-05-30T19:30:05.8933142Z 2026/05/30 19:30:05 [notice] 1#1: start worker process 18
+2026-05-30T19:30:05.8936416Z 2026/05/30 19:30:05 [notice] 1#1: start worker process 19
+2026-05-30T19:30:06.4572401Z 169.254.129.1 - - [30/May/2026:19:30:06 +0000] "GET /robots933456.txt HTTP/1.1" 200 551 "-" "HealthCheck/1.0" "-"
+2026-05-30T19:30:28.8232797Z [Previous Container] 2026/05/30 19:30:28 [notice] 1#1: signal 3 (SIGQUIT) received, shutting down
+2026-05-30T19:30:28.8233143Z [Previous Container] 2026/05/30 19:30:28 [notice] 20#20: gracefully shutting down
+2026-05-30T19:30:28.8233184Z [Previous Container] 2026/05/30 19:30:28 [notice] 19#19: gracefully shutting down
+2026-05-30T19:30:28.8233215Z [Previous Container] 2026/05/30 19:30:28 [notice] 19#19: exiting
+2026-05-30T19:30:28.8233246Z [Previous Container] 2026/05/30 19:30:28 [notice] 20#20: exiting
+2026-05-30T19:30:28.8233289Z [Previous Container] 2026/05/30 19:30:28 [notice] 20#20: exit
+2026-05-30T19:30:28.8233318Z [Previous Container] 2026/05/30 19:30:28 [notice] 19#19: exit
+2026-05-30T19:30:28.8427424Z [Previous Container] 2026/05/30 19:30:28 [notice] 1#1: signal 17 (SIGCHLD) received from 20
+2026-05-30T19:30:28.8427556Z [Previous Container] 2026/05/30 19:30:28 [notice] 1#1: worker process 20 exited with code 0
+2026-05-30T19:30:28.8427611Z [Previous Container] 2026/05/30 19:30:28 [notice] 1#1: signal 29 (SIGIO) received
+2026-05-30T19:30:28.8546543Z [Previous Container] 2026/05/30 19:30:28 [notice] 1#1: signal 17 (SIGCHLD) received from 19
+2026-05-30T19:30:28.8546629Z [Previous Container] 2026/05/30 19:30:28 [notice] 1#1: worker process 19 exited with code 0
+2026-05-30T19:30:28.8576995Z [Previous Container] 2026/05/30 19:30:28 [notice] 1#1: exit
+2026-05-30T19:30:39.5774068Z APP_API_BASE_URL=https://api-financeirax01.azurewebsites.net
+2026-05-30T19:30:40.2673683Z done
+2026-05-30T19:30:40.2906051Z 2026/05/30 19:30:40 [notice] 1#1: using the "epoll" event method
+2026-05-30T19:30:40.2906924Z 2026/05/30 19:30:40 [notice] 1#1: nginx/1.31.1
+2026-05-30T19:30:40.2907008Z 2026/05/30 19:30:40 [notice] 1#1: built by gcc 15.2.0 (Alpine 15.2.0) 
+2026-05-30T19:30:40.2907055Z 2026/05/30 19:30:40 [notice] 1#1: OS: Linux 6.6.138.1-1.azl3
+2026-05-30T19:30:40.2907099Z 2026/05/30 19:30:40 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 131072:131072
+2026-05-30T19:30:40.2908986Z 2026/05/30 19:30:40 [notice] 1#1: start worker processes
+2026-05-30T19:30:40.2914502Z 2026/05/30 19:30:40 [notice] 1#1: start worker process 19
+2026-05-30T19:30:40.2914603Z 2026/05/30 19:30:40 [notice] 1#1: start worker process 20
+2026-05-30T19:30:40.4456703Z 169.254.129.1 - - [30/May/2026:19:30:40 +0000] "GET /robots933456.txt HTTP/1.1" 200 551 "-" "HealthCheck/1.0" "-"
+2026-05-30T19:31:02.5404724Z [Previous Container] 2026/05/30 19:31:02 [notice] 1#1: signal 3 (SIGQUIT) received, shutting down
+2026-05-30T19:31:02.5415647Z [Previous Container] 2026/05/30 19:31:02 [notice] 18#18: gracefully shutting down
+2026-05-30T19:31:02.5415733Z [Previous Container] 2026/05/30 19:31:02 [notice] 18#18: exiting
+2026-05-30T19:31:02.5415768Z [Previous Container] 2026/05/30 19:31:02 [notice] 18#18: exit
+2026-05-30T19:31:02.5419246Z [Previous Container] 2026/05/30 19:31:02 [notice] 19#19: gracefully shutting down
+2026-05-30T19:31:02.5421656Z [Previous Container] 2026/05/30 19:31:02 [notice] 19#19: exiting
+2026-05-30T19:31:02.5425338Z [Previous Container] 2026/05/30 19:31:02 [notice] 19#19: exit
+2026-05-30T19:31:02.5875063Z [Previous Container] 2026/05/30 19:31:02 [notice] 1#1: signal 17 (SIGCHLD) received from 19
+2026-05-30T19:31:02.5875821Z [Previous Container] 2026/05/30 19:31:02 [notice] 1#1: worker process 18 exited with code 0
+2026-05-30T19:31:02.5876320Z [Previous Container] 2026/05/30 19:31:02 [notice] 1#1: worker process 19 exited with code 0
+2026-05-30T19:31:02.5877814Z [Previous Container] 2026/05/30 19:31:02 [notice] 1#1: exit
+2026-05-30T19:34:47.3365586Z 169.254.129.2 - - [30/May/2026:19:34:47 +0000] "GET / HTTP/1.1" 200 551 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:34374"
+2026-05-30T19:34:47.5906330Z 169.254.129.2 - - [30/May/2026:19:34:47 +0000] "GET /static/js/main.34f9d586.js HTTP/1.1" 200 1530894 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:34374"
+2026-05-30T19:34:48.0739930Z 169.254.129.2 - - [30/May/2026:19:34:48 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:34374"
+2026-05-30T19:34:48.3136909Z 169.254.129.2 - - [30/May/2026:19:34:48 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:34374"
+2026-05-30T19:34:48.5026076Z 169.254.129.2 - - [30/May/2026:19:34:48 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:34374"
+2026-05-30T19:34:48.7022942Z 169.254.129.2 - - [30/May/2026:19:34:48 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:34374"
+2026-05-30T19:34:48.7286041Z 169.254.129.2 - - [30/May/2026:19:34:48 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:26368"
+2026-05-30T19:34:48.8913728Z 169.254.129.2 - - [30/May/2026:19:34:48 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:34374"
+2026-05-30T19:34:48.9209225Z 169.254.129.2 - - [30/May/2026:19:34:48 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:26368"
+2026-05-30T19:34:49.1122564Z 169.254.129.2 - - [30/May/2026:19:34:49 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:34374"
+2026-05-30T19:35:32.4201854Z 169.254.129.2 - - [30/May/2026:19:35:32 +0000] "GET / HTTP/1.1" 200 551 "https://login.microsoftonline.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:34374"
+2026-05-30T19:35:32.6497339Z 169.254.129.2 - - [30/May/2026:19:35:32 +0000] "GET /static/js/main.34f9d586.js HTTP/1.1" 200 1530894 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:34374"
+2026-05-30T19:35:32.6598795Z 169.254.129.2 - - [30/May/2026:19:35:32 +0000] "GET /static/css/main.fa9b9196.css HTTP/1.1" 200 16059 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:26368"
+2026-05-30T19:35:33.1031566Z 169.254.129.2 - - [30/May/2026:19:35:33 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:34374"
+2026-05-30T19:35:33.1063029Z 169.254.129.2 - - [30/May/2026:19:35:33 +0000] "GET /favicon.ico HTTP/1.1" 200 2031 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:26368"
+2026-05-30T19:35:33.3380147Z 169.254.129.2 - - [30/May/2026:19:35:33 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:34374"
+2026-05-30T19:35:33.3402034Z 169.254.129.2 - - [30/May/2026:19:35:33 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:26368"
+2026-05-30T19:35:33.4635078Z 169.254.129.2 - - [30/May/2026:19:35:33 +0000] "GET /static/media/financeirax01_logo.0dd6749ab16bcfe9a40f.png HTTP/1.1" 200 235429 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:31179"
+2026-05-30T19:35:33.6524272Z 169.254.129.2 - - [30/May/2026:19:35:33 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:34374"
+2026-05-30T19:35:33.6589983Z 169.254.129.2 - - [30/May/2026:19:35:33 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:26368"
+2026-05-30T19:35:33.8794730Z 169.254.129.2 - - [30/May/2026:19:35:33 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:34374"
+2026-05-30T19:35:33.8795272Z 169.254.129.2 - - [30/May/2026:19:35:33 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:26368"
+2026-05-30T19:35:34.0806082Z 169.254.129.2 - - [30/May/2026:19:35:34 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:26368"
+2026-05-30T19:35:34.9189152Z 169.254.129.2 - - [30/May/2026:19:35:34 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:26368"
+2026-05-30T19:35:35.1170318Z 169.254.129.2 - - [30/May/2026:19:35:35 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:26368"
+2026-05-30T19:35:36.2778744Z 169.254.129.2 - - [30/May/2026:19:35:36 +0000] "GET /.auth/refresh HTTP/1.1" 200 2 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:26368"
+2026-05-30T19:35:36.4768009Z 169.254.129.2 - - [30/May/2026:19:35:36 +0000] "GET /.auth/me HTTP/1.1" 200 208 "https://app-financeirax01.azurewebsites.net/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" "4.255.188.38:26368"
+2026-05-30T19:47:47.1806325Z APP_API_BASE_URL=https://api-financeirax01.azurewebsites.net
+2026-05-30T19:47:47.6034207Z done
+2026-05-30T19:47:47.6618327Z 2026/05/30 19:47:47 [notice] 1#1: using the "epoll" event method
+2026-05-30T19:47:47.6618822Z 2026/05/30 19:47:47 [notice] 1#1: nginx/1.31.1
+2026-05-30T19:47:47.6618937Z 2026/05/30 19:47:47 [notice] 1#1: built by gcc 15.2.0 (Alpine 15.2.0) 
+2026-05-30T19:47:47.6618983Z 2026/05/30 19:47:47 [notice] 1#1: OS: Linux 6.6.138.1-1.azl3
+2026-05-30T19:47:47.6619023Z 2026/05/30 19:47:47 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 131072:131072
+2026-05-30T19:47:47.6626735Z 2026/05/30 19:47:47 [notice] 1#1: start worker processes
+2026-05-30T19:47:47.6626850Z 2026/05/30 19:47:47 [notice] 1#1: start worker process 20
+2026-05-30T19:47:47.6626895Z 2026/05/30 19:47:47 [notice] 1#1: start worker process 21
+2026-05-30T19:47:48.1742235Z 169.254.129.1 - - [30/May/2026:19:47:48 +0000] "GET /robots933456.txt HTTP/1.1" 200 551 "-" "HealthCheck/1.0" "-"
+2026-05-30T19:48:10.3385925Z [Previous Container] 2026/05/30 19:48:10 [notice] 1#1: signal 3 (SIGQUIT) received, shutting down
+2026-05-30T19:48:10.3386437Z [Previous Container] 2026/05/30 19:48:10 [notice] 19#19: gracefully shutting down
+2026-05-30T19:48:10.3386484Z [Previous Container] 2026/05/30 19:48:10 [notice] 20#20: gracefully shutting down
+2026-05-30T19:48:10.3386513Z [Previous Container] 2026/05/30 19:48:10 [notice] 19#19: exiting
+2026-05-30T19:48:10.3386538Z [Previous Container] 2026/05/30 19:48:10 [notice] 20#20: exiting
+2026-05-30T19:48:10.3386567Z [Previous Container] 2026/05/30 19:48:10 [notice] 20#20: exit
+2026-05-30T19:48:10.3387000Z [Previous Container] 2026/05/30 19:48:10 [notice] 19#19: exit
+2026-05-30T19:48:10.3626093Z [Previous Container] 2026/05/30 19:48:10 [notice] 1#1: signal 17 (SIGCHLD) received from 19
+2026-05-30T19:48:10.3626408Z [Previous Container] 2026/05/30 19:48:10 [notice] 1#1: worker process 19 exited with code 0
+2026-05-30T19:48:10.3626630Z [Previous Container] 2026/05/30 19:48:10 [notice] 1#1: signal 29 (SIGIO) received
+2026-05-30T19:48:10.3788268Z [Previous Container] 2026/05/30 19:48:10 [notice] 1#1: signal 17 (SIGCHLD) received from 20
+2026-05-30T19:48:10.3788611Z [Previous Container] 2026/05/30 19:48:10 [notice] 1#1: worker process 20 exited with code 0
+2026-05-30T19:48:10.3814306Z [Previous Container] 2026/05/30 19:48:10 [notice] 1#1: exit
+2026-05-30T19:48:12.0895849Z APP_API_BASE_URL=https://api-financeirax01.azurewebsites.net
+2026-05-30T19:48:12.5660314Z done
+2026-05-30T19:48:12.5825476Z 2026/05/30 19:48:12 [notice] 1#1: using the "epoll" event method
+2026-05-30T19:48:12.5825785Z 2026/05/30 19:48:12 [notice] 1#1: nginx/1.31.1
+2026-05-30T19:48:12.5825840Z 2026/05/30 19:48:12 [notice] 1#1: built by gcc 15.2.0 (Alpine 15.2.0) 
+2026-05-30T19:48:12.5825886Z 2026/05/30 19:48:12 [notice] 1#1: OS: Linux 6.6.138.1-1.azl3
+2026-05-30T19:48:12.5825927Z 2026/05/30 19:48:12 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 131072:131072
+2026-05-30T19:48:12.5833453Z 2026/05/30 19:48:12 [notice] 1#1: start worker processes
+2026-05-30T19:48:12.5833565Z 2026/05/30 19:48:12 [notice] 1#1: start worker process 20
+2026-05-30T19:48:12.5833614Z 2026/05/30 19:48:12 [notice] 1#1: start worker process 21
+2026-05-30T19:48:13.0767952Z 169.254.129.1 - - [30/May/2026:19:48:13 +0000] "GET /robots933456.txt HTTP/1.1" 200 551 "-" "HealthCheck/1.0" "-"
+2026-05-30T19:48:35.0764320Z [Previous Container] 2026/05/30 19:48:35 [notice] 1#1: signal 3 (SIGQUIT) received, shutting down
+2026-05-30T19:48:35.0791769Z [Previous Container] 2026/05/30 19:48:35 [notice] 21#21: gracefully shutting down
+2026-05-30T19:48:35.0791858Z [Previous Container] 2026/05/30 19:48:35 [notice] 21#21: exiting
+2026-05-30T19:48:35.0791885Z [Previous Container] 2026/05/30 19:48:35 [notice] 20#20: gracefully shutting down
+2026-05-30T19:48:35.0791906Z [Previous Container] 2026/05/30 19:48:35 [notice] 20#20: exiting
+2026-05-30T19:48:35.0791926Z [Previous Container] 2026/05/30 19:48:35 [notice] 21#21: exit
+2026-05-30T19:48:35.0791945Z [Previous Container] 2026/05/30 19:48:35 [notice] 20#20: exit
+2026-05-30T19:48:35.1472250Z [Previous Container] 2026/05/30 19:48:35 [notice] 1#1: signal 17 (SIGCHLD) received from 21
+2026-05-30T19:48:35.1472535Z [Previous Container] 2026/05/30 19:48:35 [notice] 1#1: worker process 21 exited with code 0
+2026-05-30T19:48:35.1473799Z [Previous Container] 2026/05/30 19:48:35 [notice] 1#1: signal 29 (SIGIO) received
+2026-05-30T19:48:35.1473835Z [Previous Container] 2026/05/30 19:48:35 [notice] 1#1: signal 17 (SIGCHLD) received from 20
+2026-05-30T19:48:35.1473866Z [Previous Container] 2026/05/30 19:48:35 [notice] 1#1: worker process 20 exited with code 0
+2026-05-30T19:48:35.1473895Z [Previous Container] 2026/05/30 19:48:35 [notice] 1#1: exit
+2026-05-30T19:48:55.6307737Z [Previous Container] 2026/05/30 19:48:55 [notice] 1#1: signal 3 (SIGQUIT) received, shutting down
+2026-05-30T19:48:55.6309124Z [Previous Container] 2026/05/30 19:48:55 [notice] 20#20: gracefully shutting down
+2026-05-30T19:48:55.6310534Z [Previous Container] 2026/05/30 19:48:55 [notice] 21#21: gracefully shutting down
+2026-05-30T19:48:55.6310869Z [Previous Container] 2026/05/30 19:48:55 [notice] 21#21: exiting
+2026-05-30T19:48:55.6313679Z [Previous Container] 2026/05/30 19:48:55 [notice] 21#21: exit
+2026-05-30T19:48:55.6325316Z [Previous Container] 2026/05/30 19:48:55 [notice] 20#20: exiting
+2026-05-30T19:48:55.6341090Z [Previous Container] 2026/05/30 19:48:55 [notice] 20#20: exit
+2026-05-30T19:48:55.6667392Z [Previous Container] 2026/05/30 19:48:55 [notice] 1#1: signal 17 (SIGCHLD) received from 20
+2026-05-30T19:48:55.6669533Z [Previous Container] 2026/05/30 19:48:55 [notice] 1#1: worker process 20 exited with code 0
+2026-05-30T19:48:55.6669606Z [Previous Container] 2026/05/30 19:48:55 [notice] 1#1: worker process 21 exited with code 0
+2026-05-30T19:48:55.6669959Z [Previous Container] 2026/05/30 19:48:55 [notice] 1#1: exit

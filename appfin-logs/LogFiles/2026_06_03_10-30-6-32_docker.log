@@ -1,0 +1,62 @@
+2026-06-03T15:20:02.1348147Z State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-06-03T15:20:04.6097382Z State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-06-03T15:20:04.6099190Z Container start method called.
+2026-06-03T15:20:04.6099941Z State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260531170503 for app-financeirax01., DetailsLevel: INFO
+2026-06-03T15:20:04.6101225Z Establishing network.
+2026-06-03T15:20:04.6102726Z Pulling image: ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260531170503.
+2026-06-03T15:20:18.0999020Z Container pull image failed with reason: ImagePullFailure. Revert by terminate.
+2026-06-03T15:20:18.1001185Z Container is terminating. Grace period: 5 seconds.
+2026-06-03T15:20:18.1002690Z Container spec TerminationMessagePolicy  path 
+2026-06-03T15:20:18.1004103Z Container is terminated. Total time elapsed: 0 ms.
+2026-06-03T15:20:18.1006580Z Site container: app-financeirax01 terminated during site startup.
+2026-06-03T15:20:18.1008496Z State: Stopping, Action: CancellingStartup, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site container: app-financeirax01 terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-06-03T15:20:18.1022695Z State: Stopping, Action: CancellingStartup, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:18, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site container: app-financeirax01 terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-06-03T15:20:18.1168099Z Failed to start site. Revert by stopping site.
+2026-06-03T15:20:18.1172712Z State: Stopping, Action: StoppingSite, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:18, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site container: app-financeirax01 terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-06-03T15:20:18.1178105Z State: Stopping, Action: StoppingSiteContainers, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:18, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site container: app-financeirax01 terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-06-03T15:20:18.1178382Z Site: app-financeirax01 stopped.
+2026-06-03T15:20:22.604Z INFO  - Pulling image: ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260531170503
+2026-06-03T15:20:23.061Z ERROR - DockerApiException: Docker API responded with status code=InternalServerError, response={"message":"Get \"https://ckmcc0522172320.azurecr.io/v2/\": dial tcp: lookup ckmcc0522172320.azurecr.io: no such host"}
+
+2026-06-03T15:20:23.062Z ERROR - Pulling docker image ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260531170503 failed:
+2026-06-03T15:20:23.197Z ERROR - DockerApiException: Docker API responded with status code=InternalServerError, response={"message":"Get \"https://ckmcc0522172320.azurecr.io/v2/\": dial tcp: lookup ckmcc0522172320.azurecr.io: no such host"}
+
+2026-06-03T15:20:23.198Z WARN  - Image pull failed. Defaulting to local copy if present.
+2026-06-03T15:20:23.202Z ERROR - Image pull failed: Verify docker image configuration and credentials (if using private repository)
+2026-06-03T15:20:23.204Z INFO  - Stopping site app-financeirax01 because it failed during startup.
+2026-06-03T15:20:33.611Z INFO  - Pulling image: ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260531170503
+2026-06-03T15:20:33.652Z ERROR - DockerApiException: Docker API responded with status code=InternalServerError, response={"message":"Get \"https://ckmcc0522172320.azurecr.io/v2/\": dial tcp: lookup ckmcc0522172320.azurecr.io: no such host"}
+
+2026-06-03T15:20:33.653Z ERROR - Pulling docker image ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260531170503 failed:
+2026-06-03T15:20:33.684Z ERROR - DockerApiException: Docker API responded with status code=InternalServerError, response={"message":"Get \"https://ckmcc0522172320.azurecr.io/v2/\": dial tcp: lookup ckmcc0522172320.azurecr.io: no such host"}
+
+2026-06-03T15:20:33.685Z WARN  - Image pull failed. Defaulting to local copy if present.
+2026-06-03T15:20:33.687Z ERROR - Image pull failed: Verify docker image configuration and credentials (if using private repository)
+2026-06-03T15:20:33.690Z INFO  - Stopping site app-financeirax01 because it failed during startup.
+2026-06-03T15:20:44.810Z INFO  - Pulling image: ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260531170503
+2026-06-03T15:20:44.840Z ERROR - DockerApiException: Docker API responded with status code=InternalServerError, response={"message":"Get \"https://ckmcc0522172320.azurecr.io/v2/\": dial tcp: lookup ckmcc0522172320.azurecr.io: no such host"}
+
+2026-06-03T15:20:44.841Z ERROR - Pulling docker image ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260531170503 failed:
+2026-06-03T15:20:44.870Z ERROR - DockerApiException: Docker API responded with status code=InternalServerError, response={"message":"Get \"https://ckmcc0522172320.azurecr.io/v2/\": dial tcp: lookup ckmcc0522172320.azurecr.io: no such host"}
+
+2026-06-03T15:20:44.871Z WARN  - Image pull failed. Defaulting to local copy if present.
+2026-06-03T15:20:44.875Z ERROR - Image pull failed: Verify docker image configuration and credentials (if using private repository)
+2026-06-03T15:20:44.877Z INFO  - Stopping site app-financeirax01 because it failed during startup.
+2026-06-03T15:20:55.825Z INFO  - Pulling image: ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260531170503
+2026-06-03T15:20:55.989Z ERROR - DockerApiException: Docker API responded with status code=InternalServerError, response={"message":"Get \"https://ckmcc0522172320.azurecr.io/v2/\": dial tcp: lookup ckmcc0522172320.azurecr.io: no such host"}
+
+2026-06-03T15:20:55.990Z ERROR - Pulling docker image ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260531170503 failed:
+2026-06-03T15:20:56.040Z ERROR - DockerApiException: Docker API responded with status code=InternalServerError, response={"message":"Get \"https://ckmcc0522172320.azurecr.io/v2/\": dial tcp: lookup ckmcc0522172320.azurecr.io: no such host"}
+
+2026-06-03T15:20:56.041Z WARN  - Image pull failed. Defaulting to local copy if present.
+2026-06-03T15:20:56.043Z ERROR - Image pull failed: Verify docker image configuration and credentials (if using private repository)
+2026-06-03T15:20:56.046Z INFO  - Stopping site app-financeirax01 because it failed during startup.
+2026-06-03T15:23:12.794Z INFO  - Pulling image: ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260531170503
+2026-06-03T15:23:12.826Z ERROR - DockerApiException: Docker API responded with status code=InternalServerError, response={"message":"Get \"https://ckmcc0522172320.azurecr.io/v2/\": dial tcp: lookup ckmcc0522172320.azurecr.io: no such host"}
+
+2026-06-03T15:23:12.830Z ERROR - Pulling docker image ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260531170503 failed:
+2026-06-03T15:23:12.886Z ERROR - DockerApiException: Docker API responded with status code=InternalServerError, response={"message":"Get \"https://ckmcc0522172320.azurecr.io/v2/\": dial tcp: lookup ckmcc0522172320.azurecr.io: no such host"}
+
+2026-06-03T15:23:12.895Z WARN  - Image pull failed. Defaulting to local copy if present.
+2026-06-03T15:23:12.897Z ERROR - Image pull failed: Verify docker image configuration and credentials (if using private repository)
+2026-06-03T15:23:12.899Z INFO  - Stopping site app-financeirax01 because it failed during startup.

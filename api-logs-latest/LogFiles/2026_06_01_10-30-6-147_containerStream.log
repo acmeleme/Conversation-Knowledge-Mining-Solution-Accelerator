@@ -1,0 +1,452 @@
+2026-06-01T12:14:19.1105322Z INFO:api.api_routes:[/api/me] email=(none) name=(none) (token_present=False)
+2026-06-01T12:14:19.1109567Z INFO:     169.254.130.1:52935 - "GET /api/me HTTP/1.1" 200 OK
+2026-06-01T12:14:19.1115716Z INFO:     169.254.130.1:52923 - "GET / HTTP/1.1" 404 Not Found
+2026-06-01T12:14:19.1491962Z INFO:     169.254.130.1:52923 - "GET / HTTP/1.1" 404 Not Found
+2026-06-01T12:14:19.3784551Z INFO:     169.254.130.1:52923 - "GET /api/version HTTP/1.1" 200 OK
+2026-06-01T12:14:20.3719137Z INFO:     169.254.130.1:52923 - "OPTIONS /api/display-chart-default HTTP/1.1" 200 OK
+2026-06-01T12:14:20.4160292Z INFO:     169.254.130.1:52923 - "OPTIONS /api/layout-config HTTP/1.1" 200 OK
+2026-06-01T12:14:20.5558434Z INFO:     169.254.130.1:52923 - "OPTIONS /history/list?offset=0 HTTP/1.1" 200 OK
+2026-06-01T12:14:20.6015201Z WARNING:root:Skipping track_event for LayoutConfigFetched as Application Insights is not configured
+2026-06-01T12:14:20.6249350Z Instrumentation Key: 
+2026-06-01T12:14:20.6249818Z INFO:     169.254.130.1:52923 - "GET /api/layout-config HTTP/1.1" 200 OK
+2026-06-01T12:14:20.6250667Z Instrumentation Key: 
+2026-06-01T12:14:20.6250732Z INFO:     169.254.130.1:52935 - "GET /api/display-chart-default HTTP/1.1" 200 OK
+2026-06-01T12:14:20.6252877Z WARNING:root:Skipping track_event for ChartDisplayDefaultFetched as Application Insights is not configured
+2026-06-01T12:14:20.7426619Z INFO:api.history_routes:user_id: , offset: 0, limit: 25
+2026-06-01T12:14:20.7427268Z INFO:azure.identity._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity with client_id: e445e544-9d78-419d-8597-1c5ac4c7e073
+2026-06-01T12:14:20.7843197Z INFO:azure.identity._internal.msal_managed_identity_client:AppServiceCredential.get_token_info succeeded
+2026-06-01T12:14:20.7843540Z INFO:azure.identity._internal.decorators:ManagedIdentityCredential.get_token_info succeeded
+2026-06-01T12:14:20.8767730Z ERROR:services.history_service:Error retrieving conversations for user 
+2026-06-01T12:14:20.8768138Z Traceback (most recent call last):
+2026-06-01T12:14:20.8768721Z   File "/app/services/history_service.py", line 313, in get_conversations
+2026-06-01T12:14:20.8768766Z     conversations = await cosmos_conversation_client.get_conversations(user_id, offset=offset, limit=limit)
+2026-06-01T12:14:20.8768798Z                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:20.8768854Z   File "/app/common/database/cosmosdb_service.py", line 127, in get_conversations
+2026-06-01T12:14:20.8768886Z     async for item in self.container_client.query_items(
+2026-06-01T12:14:20.8768915Z   File "/usr/local/lib/python3.11/site-packages/azure/core/async_paging.py", line 142, in __anext__
+2026-06-01T12:14:20.8768941Z     return await self.__anext__()
+2026-06-01T12:14:20.8768972Z            ^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:20.8769020Z   File "/usr/local/lib/python3.11/site-packages/azure/core/async_paging.py", line 145, in __anext__
+2026-06-01T12:14:20.8769050Z     self._page = await self._page_iterator.__anext__()
+2026-06-01T12:14:20.8769079Z                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:20.8769109Z   File "/usr/local/lib/python3.11/site-packages/azure/core/async_paging.py", line 94, in __anext__
+2026-06-01T12:14:20.8769138Z     self._response = await self._get_next(self.continuation_token)
+2026-06-01T12:14:20.8769167Z                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:20.8769199Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_query_iterable_async.py", line 103, in _fetch_next
+2026-06-01T12:14:20.8769234Z     block = await self._ex_context.fetch_next_block()
+2026-06-01T12:14:20.8769263Z             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:20.8769305Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/_execution_context/aio/execution_dispatcher.py", line 99, in fetch_next_block
+2026-06-01T12:14:20.8769333Z     raise e
+2026-06-01T12:14:20.8769365Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/_execution_context/aio/execution_dispatcher.py", line 91, in fetch_next_block
+2026-06-01T12:14:20.8769395Z     return await self._execution_context.fetch_next_block()
+2026-06-01T12:14:20.8769423Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:20.8769457Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/_execution_context/aio/base_execution_context.py", line 80, in fetch_next_block
+2026-06-01T12:14:20.8769483Z     await self._ensure()
+2026-06-01T12:14:20.8769514Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/_execution_context/aio/base_execution_context.py", line 65, in _ensure
+2026-06-01T12:14:20.8769543Z     results = await self._fetch_next_block()
+2026-06-01T12:14:20.8769572Z               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:20.8769613Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/_execution_context/aio/base_execution_context.py", line 163, in _fetch_next_block
+2026-06-01T12:14:20.8769642Z     return await self._fetch_items_helper_with_retries(self._fetch_function)
+2026-06-01T12:14:20.8769674Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:20.8769707Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/_execution_context/aio/base_execution_context.py", line 137, in _fetch_items_helper_with_retries
+2026-06-01T12:14:20.8769743Z     return await _retry_utility_async.ExecuteAsync(self._client, self._client._global_endpoint_manager, callback)
+2026-06-01T12:14:20.8769776Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:20.8769809Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_retry_utility_async.py", line 98, in ExecuteAsync
+2026-06-01T12:14:20.8769847Z     result = await ExecuteFunctionAsync(function, *args, **kwargs)
+2026-06-01T12:14:20.8769874Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:20.8769906Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_retry_utility_async.py", line 200, in ExecuteFunctionAsync
+2026-06-01T12:14:20.8769938Z     return await function(*args, **kwargs)
+2026-06-01T12:14:20.8769968Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:20.8770001Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/_execution_context/aio/base_execution_context.py", line 135, in callback
+2026-06-01T12:14:20.8770032Z     return await self._fetch_items_helper_no_retries(fetch_function)
+2026-06-01T12:14:20.8770063Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:20.8770096Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/_execution_context/aio/base_execution_context.py", line 122, in _fetch_items_helper_no_retries
+2026-06-01T12:14:20.8770128Z     (fetched_items, response_headers) = await fetch_function(new_options)
+2026-06-01T12:14:20.8770167Z                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:20.8770199Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_cosmos_client_connection_async.py", line 2211, in fetch_fn
+2026-06-01T12:14:20.8770227Z     await self.__QueryFeed(
+2026-06-01T12:14:20.8770550Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_cosmos_client_connection_async.py", line 2920, in __QueryFeed
+2026-06-01T12:14:20.8770587Z     result, self.last_response_headers = await self.__Post(path, request_params, query, req_headers, **kwargs)
+2026-06-01T12:14:20.8770622Z                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:20.8770659Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_cosmos_client_connection_async.py", line 902, in __Post
+2026-06-01T12:14:20.8770690Z     return await asynchronous_request.AsynchronousRequest(
+2026-06-01T12:14:20.8770720Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:20.8770756Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_asynchronous_request.py", line 172, in AsynchronousRequest
+2026-06-01T12:14:20.8770801Z     return await _retry_utility_async.ExecuteAsync(
+2026-06-01T12:14:20.8770835Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:20.8770871Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_retry_utility_async.py", line 96, in ExecuteAsync
+2026-06-01T12:14:20.8770899Z     result = await ExecuteFunctionAsync(function, global_endpoint_manager, *args, **kwargs)
+2026-06-01T12:14:20.8770928Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:20.8770958Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_retry_utility_async.py", line 200, in ExecuteFunctionAsync
+2026-06-01T12:14:20.8770983Z     return await function(*args, **kwargs)
+2026-06-01T12:14:20.8771009Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:20.8771038Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_asynchronous_request.py", line 61, in _Request
+2026-06-01T12:14:20.8771090Z     await global_endpoint_manager.refresh_endpoint_list(None, **kwargs)
+2026-06-01T12:14:20.8771123Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_global_endpoint_manager_async.py", line 97, in refresh_endpoint_list
+2026-06-01T12:14:20.8771148Z     raise e
+2026-06-01T12:14:20.8771178Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_global_endpoint_manager_async.py", line 95, in refresh_endpoint_list
+2026-06-01T12:14:20.8771205Z     await self._refresh_endpoint_list_private(database_account, **kwargs)
+2026-06-01T12:14:20.8771235Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_global_endpoint_manager_async.py", line 108, in _refresh_endpoint_list_private
+2026-06-01T12:14:20.8771278Z     database_account = await self._GetDatabaseAccount(**kwargs)
+2026-06-01T12:14:20.8771310Z                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:20.8771343Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_global_endpoint_manager_async.py", line 121, in _GetDatabaseAccount
+2026-06-01T12:14:20.8771375Z     database_account = await self._GetDatabaseAccountStub(self.DefaultEndpoint, **kwargs)
+2026-06-01T12:14:20.8771407Z                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:20.8771438Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_global_endpoint_manager_async.py", line 147, in _GetDatabaseAccountStub
+2026-06-01T12:14:20.8771469Z     return await self.client.GetDatabaseAccount(endpoint, **kwargs)
+2026-06-01T12:14:20.8771500Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:20.8771531Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_cosmos_client_connection_async.py", line 410, in GetDatabaseAccount
+2026-06-01T12:14:20.8771563Z     result, self.last_response_headers = await self.__Get("", request_params, headers, **kwargs)
+2026-06-01T12:14:20.8771606Z                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:20.8771642Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_cosmos_client_connection_async.py", line 1198, in __Get
+2026-06-01T12:14:20.8771672Z     return await asynchronous_request.AsynchronousRequest(
+2026-06-01T12:14:20.8771702Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:20.8771734Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_asynchronous_request.py", line 172, in AsynchronousRequest
+2026-06-01T12:14:20.8771764Z     return await _retry_utility_async.ExecuteAsync(
+2026-06-01T12:14:20.8771793Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:20.8771825Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_retry_utility_async.py", line 96, in ExecuteAsync
+2026-06-01T12:14:20.8771855Z     result = await ExecuteFunctionAsync(function, global_endpoint_manager, *args, **kwargs)
+2026-06-01T12:14:20.8771888Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:20.8771931Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_retry_utility_async.py", line 200, in ExecuteFunctionAsync
+2026-06-01T12:14:20.8771961Z     return await function(*args, **kwargs)
+2026-06-01T12:14:20.8771990Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:20.8772113Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_asynchronous_request.py", line 123, in _Request
+2026-06-01T12:14:20.8772148Z     raise exceptions.CosmosHttpResponseError(message=data, response=response)
+2026-06-01T12:14:20.8772184Z azure.cosmos.exceptions.CosmosHttpResponseError: (Forbidden) Request originated from IP 52.185.93.127 through public internet. This is blocked by your Cosmos DB account firewall settings. More info: https://aka.ms/cosmosdb-tsg-forbidden
+2026-06-01T12:14:20.8772216Z ActivityId: 29c79c57-d402-4606-8862-b8de5d7f4466, Microsoft.Azure.Documents.Common/2.14.0
+2026-06-01T12:14:20.8772245Z Code: Forbidden
+2026-06-01T12:14:20.8772280Z Message: Request originated from IP 52.185.93.127 through public internet. This is blocked by your Cosmos DB account firewall settings. More info: https://aka.ms/cosmosdb-tsg-forbidden
+2026-06-01T12:14:20.8772321Z ActivityId: 29c79c57-d402-4606-8862-b8de5d7f4466, Microsoft.Azure.Documents.Common/2.14.0
+2026-06-01T12:14:20.8772352Z WARNING:root:Skipping track_event for ConversationsListed as Application Insights is not configured
+2026-06-01T12:14:20.8851408Z Instrumentation Key: 
+2026-06-01T12:14:20.8851520Z INFO:     169.254.130.1:52935 - "GET /history/list?offset=0 HTTP/1.1" 200 OK
+2026-06-01T12:14:21.2109112Z INFO:     169.254.130.1:52935 - "OPTIONS /api/fetchFilterData HTTP/1.1" 200 OK
+2026-06-01T12:14:21.3946562Z INFO:auth.auth_utils:Demo mode: using role 'operador' from x-demo-role header.
+2026-06-01T12:14:21.3949206Z INFO:azure.identity.aio._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity with client_id: 6d9e9bfa-604d-4ad9-a61a-bb4dd4cb5c70
+2026-06-01T12:14:21.4040374Z WARNING:azure.identity.aio._internal.get_token_mixin:AppServiceCredential.get_token failed: (None) No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-01T12:14:21.4040597Z Code: None
+2026-06-01T12:14:21.4040640Z Message: No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-01T12:14:21.4047796Z WARNING:azure.identity.aio._internal.decorators:ManagedIdentityCredential.get_token failed: (None) No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-01T12:14:21.4047883Z Code: None
+2026-06-01T12:14:21.4047945Z Message: No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-01T12:14:21.4051584Z INFO:azure.identity.aio._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity
+2026-06-01T12:14:22.1198425Z ERROR:root:Failed with Azure Credential: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-01T12:14:22.1231973Z ERROR:services.chart_service:Error in fetch_filter_data_for_roles: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-01T12:14:22.1232183Z Traceback (most recent call last):
+2026-06-01T12:14:22.1232228Z   File "/app/services/chart_service.py", line 39, in fetch_filter_data_for_roles
+2026-06-01T12:14:22.1232286Z     await adjust_processed_data_dates()
+2026-06-01T12:14:22.1232318Z   File "/app/common/database/sqldb_service.py", line 97, in adjust_processed_data_dates
+2026-06-01T12:14:22.1232346Z     conn = await get_db_connection()
+2026-06-01T12:14:22.1232374Z            ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:22.1232405Z   File "/app/common/database/sqldb_service.py", line 76, in get_db_connection
+2026-06-01T12:14:22.1232436Z     raise last_exc
+2026-06-01T12:14:22.1232466Z   File "/app/common/database/sqldb_service.py", line 61, in get_db_connection
+2026-06-01T12:14:22.1232494Z     conn = pyodbc.connect(
+2026-06-01T12:14:22.1232521Z            ^^^^^^^^^^^^^^^
+2026-06-01T12:14:22.1232564Z pyodbc.ProgrammingError: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-01T12:14:22.1250284Z ERROR:api.api_routes:Error in fetch_filter_data: 500: An error occurred while fetching role-filtered filter data.
+2026-06-01T12:14:22.1250475Z Traceback (most recent call last):
+2026-06-01T12:14:22.1250515Z   File "/app/services/chart_service.py", line 39, in fetch_filter_data_for_roles
+2026-06-01T12:14:22.1250546Z     await adjust_processed_data_dates()
+2026-06-01T12:14:22.1250575Z   File "/app/common/database/sqldb_service.py", line 97, in adjust_processed_data_dates
+2026-06-01T12:14:22.1250604Z     conn = await get_db_connection()
+2026-06-01T12:14:22.1250631Z            ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:22.1250663Z   File "/app/common/database/sqldb_service.py", line 76, in get_db_connection
+2026-06-01T12:14:22.1250692Z     raise last_exc
+2026-06-01T12:14:22.1250720Z   File "/app/common/database/sqldb_service.py", line 61, in get_db_connection
+2026-06-01T12:14:22.1250753Z     conn = pyodbc.connect(
+2026-06-01T12:14:22.1250807Z            ^^^^^^^^^^^^^^^
+2026-06-01T12:14:22.1250852Z pyodbc.ProgrammingError: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-01T12:14:22.1250880Z 
+2026-06-01T12:14:22.1250909Z During handling of the above exception, another exception occurred:
+2026-06-01T12:14:22.1250933Z 
+2026-06-01T12:14:22.1250962Z Traceback (most recent call last):
+2026-06-01T12:14:22.1250992Z   File "/app/api/api_routes.py", line 230, in fetch_filter_data
+2026-06-01T12:14:22.1251024Z     response = await chart_service.fetch_filter_data_for_roles(roles)
+2026-06-01T12:14:22.1251056Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:22.1251087Z   File "/app/services/chart_service.py", line 71, in fetch_filter_data_for_roles
+2026-06-01T12:14:22.1251128Z     raise HTTPException(
+2026-06-01T12:14:22.1251160Z fastapi.exceptions.HTTPException: 500: An error occurred while fetching role-filtered filter data.
+2026-06-01T12:14:22.1254206Z INFO:     169.254.130.1:52935 - "GET /api/fetchFilterData HTTP/1.1" 500 Internal Server Error
+2026-06-01T12:14:22.7109973Z INFO:     169.254.130.1:52935 - "OPTIONS /api/fetchChartDataWithFilters HTTP/1.1" 200 OK
+2026-06-01T12:14:22.8991918Z INFO:auth.auth_utils:Demo mode: using role 'operador' from x-demo-role header.
+2026-06-01T12:14:22.9003069Z INFO:api.api_routes:Received filters: {"selected_filters": {"Topic": [], "Sentiment": [], "DateRange": ["Year to Date"]}}
+2026-06-01T12:14:22.9003273Z INFO:azure.identity.aio._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity with client_id: 6d9e9bfa-604d-4ad9-a61a-bb4dd4cb5c70
+2026-06-01T12:14:22.9066502Z WARNING:azure.identity.aio._internal.get_token_mixin:AppServiceCredential.get_token failed: (None) No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-01T12:14:22.9066723Z Code: None
+2026-06-01T12:14:22.9066768Z Message: No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-01T12:14:22.9095343Z WARNING:azure.identity.aio._internal.decorators:ManagedIdentityCredential.get_token failed: (None) No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-01T12:14:22.9095427Z Code: None
+2026-06-01T12:14:22.9095458Z Message: No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-01T12:14:22.9095483Z INFO:azure.identity.aio._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity
+2026-06-01T12:14:23.2549586Z ERROR:root:Failed with Azure Credential: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-01T12:14:23.2567571Z INFO:     169.254.130.1:52935 - "POST /api/fetchChartDataWithFilters HTTP/1.1" 500 Internal Server Error
+2026-06-01T12:14:23.2569291Z ERROR:services.chart_service:Error in fetch_chart_data_with_filters: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-01T12:14:23.2569360Z Traceback (most recent call last):
+2026-06-01T12:14:23.2569394Z   File "/app/services/chart_service.py", line 94, in fetch_chart_data_with_filters
+2026-06-01T12:14:23.2569441Z     return await fetch_chart_data(chart_filters)
+2026-06-01T12:14:23.2569470Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:23.2569500Z   File "/app/common/database/sqldb_service.py", line 190, in fetch_chart_data
+2026-06-01T12:14:23.2569530Z     conn = await get_db_connection()
+2026-06-01T12:14:23.2569556Z            ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:23.2569583Z   File "/app/common/database/sqldb_service.py", line 76, in get_db_connection
+2026-06-01T12:14:23.2569610Z     raise last_exc
+2026-06-01T12:14:23.2569637Z   File "/app/common/database/sqldb_service.py", line 61, in get_db_connection
+2026-06-01T12:14:23.2569666Z     conn = pyodbc.connect(
+2026-06-01T12:14:23.2569696Z            ^^^^^^^^^^^^^^^
+2026-06-01T12:14:23.2569748Z pyodbc.ProgrammingError: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-01T12:14:23.2569782Z ERROR:api.api_routes:Error in fetch_chart_data_with_filters: 500: An error occurred while fetching filtered chart data.
+2026-06-01T12:14:23.2569811Z Traceback (most recent call last):
+2026-06-01T12:14:23.2569841Z   File "/app/services/chart_service.py", line 94, in fetch_chart_data_with_filters
+2026-06-01T12:14:23.2569872Z     return await fetch_chart_data(chart_filters)
+2026-06-01T12:14:23.2569902Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:23.2569933Z   File "/app/common/database/sqldb_service.py", line 190, in fetch_chart_data
+2026-06-01T12:14:23.2569963Z     conn = await get_db_connection()
+2026-06-01T12:14:23.2570000Z            ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:23.2570031Z   File "/app/common/database/sqldb_service.py", line 76, in get_db_connection
+2026-06-01T12:14:23.2570059Z     raise last_exc
+2026-06-01T12:14:23.2570101Z   File "/app/common/database/sqldb_service.py", line 61, in get_db_connection
+2026-06-01T12:14:23.2570131Z     conn = pyodbc.connect(
+2026-06-01T12:14:23.2570159Z            ^^^^^^^^^^^^^^^
+2026-06-01T12:14:23.2570203Z pyodbc.ProgrammingError: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-01T12:14:23.2570229Z 
+2026-06-01T12:14:23.2570259Z During handling of the above exception, another exception occurred:
+2026-06-01T12:14:23.2570286Z 
+2026-06-01T12:14:23.2570315Z Traceback (most recent call last):
+2026-06-01T12:14:23.2570346Z   File "/app/api/api_routes.py", line 199, in fetch_chart_data_with_filters
+2026-06-01T12:14:23.2570378Z     response = await chart_service.fetch_chart_data_with_filters(chart_filters)
+2026-06-01T12:14:23.2570417Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:23.2570448Z   File "/app/services/chart_service.py", line 97, in fetch_chart_data_with_filters
+2026-06-01T12:14:23.2570476Z     raise HTTPException(
+2026-06-01T12:14:23.2570509Z fastapi.exceptions.HTTPException: 500: An error occurred while fetching filtered chart data.
+2026-06-01T12:14:50.8055005Z INFO:api.api_routes:[/api/me] email=(none) name=(none) (token_present=False)
+2026-06-01T12:14:50.8055005Z INFO:     169.254.130.1:55351 - "GET /api/me HTTP/1.1" 200 OK
+2026-06-01T12:14:51.0297194Z INFO:     169.254.130.1:55351 - "GET /api/version HTTP/1.1" 200 OK
+2026-06-01T12:14:52.0540292Z INFO:     169.254.130.1:55351 - "OPTIONS /api/display-chart-default HTTP/1.1" 200 OK
+2026-06-01T12:14:52.2273974Z INFO:     169.254.130.1:55351 - "OPTIONS /api/layout-config HTTP/1.1" 200 OK
+2026-06-01T12:14:52.2491423Z INFO:     169.254.130.1:55351 - "OPTIONS /history/list?offset=0 HTTP/1.1" 200 OK
+2026-06-01T12:14:52.4164854Z WARNING:root:Skipping track_event for ChartDisplayDefaultFetched as Application Insights is not configured
+2026-06-01T12:14:52.4177806Z Instrumentation Key: 
+2026-06-01T12:14:52.4177920Z INFO:     169.254.130.1:55351 - "GET /api/display-chart-default HTTP/1.1" 200 OK
+2026-06-01T12:14:52.4182969Z WARNING:root:Skipping track_event for LayoutConfigFetched as Application Insights is not configured
+2026-06-01T12:14:52.4186048Z Instrumentation Key: 
+2026-06-01T12:14:52.4186139Z INFO:     169.254.130.1:55361 - "GET /api/layout-config HTTP/1.1" 200 OK
+2026-06-01T12:14:52.4326708Z INFO:api.history_routes:user_id: , offset: 0, limit: 25
+2026-06-01T12:14:52.4333289Z INFO:azure.identity._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity with client_id: e445e544-9d78-419d-8597-1c5ac4c7e073
+2026-06-01T12:14:52.4644696Z INFO:azure.identity._internal.msal_managed_identity_client:AppServiceCredential.get_token_info succeeded
+2026-06-01T12:14:52.4645401Z INFO:azure.identity._internal.decorators:ManagedIdentityCredential.get_token_info succeeded
+2026-06-01T12:14:52.5627804Z ERROR:services.history_service:Error retrieving conversations for user 
+2026-06-01T12:14:52.5628219Z Traceback (most recent call last):
+2026-06-01T12:14:52.5628263Z   File "/app/services/history_service.py", line 313, in get_conversations
+2026-06-01T12:14:52.5628298Z     conversations = await cosmos_conversation_client.get_conversations(user_id, offset=offset, limit=limit)
+2026-06-01T12:14:52.5628329Z                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:52.5628360Z   File "/app/common/database/cosmosdb_service.py", line 127, in get_conversations
+2026-06-01T12:14:52.5628390Z     async for item in self.container_client.query_items(
+2026-06-01T12:14:52.5628421Z   File "/usr/local/lib/python3.11/site-packages/azure/core/async_paging.py", line 142, in __anext__
+2026-06-01T12:14:52.5628449Z     return await self.__anext__()
+2026-06-01T12:14:52.5628476Z            ^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:52.5628507Z   File "/usr/local/lib/python3.11/site-packages/azure/core/async_paging.py", line 145, in __anext__
+2026-06-01T12:14:52.5628552Z     self._page = await self._page_iterator.__anext__()
+2026-06-01T12:14:52.5628582Z                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:52.5628616Z   File "/usr/local/lib/python3.11/site-packages/azure/core/async_paging.py", line 94, in __anext__
+2026-06-01T12:14:52.5628646Z     self._response = await self._get_next(self.continuation_token)
+2026-06-01T12:14:52.5628674Z                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:52.5628705Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_query_iterable_async.py", line 103, in _fetch_next
+2026-06-01T12:14:52.5628734Z     block = await self._ex_context.fetch_next_block()
+2026-06-01T12:14:52.5628765Z             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:52.5628796Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/_execution_context/aio/execution_dispatcher.py", line 99, in fetch_next_block
+2026-06-01T12:14:52.5628825Z     raise e
+2026-06-01T12:14:52.5628871Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/_execution_context/aio/execution_dispatcher.py", line 91, in fetch_next_block
+2026-06-01T12:14:52.5628903Z     return await self._execution_context.fetch_next_block()
+2026-06-01T12:14:52.5628931Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:52.5628963Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/_execution_context/aio/base_execution_context.py", line 80, in fetch_next_block
+2026-06-01T12:14:52.5628988Z     await self._ensure()
+2026-06-01T12:14:52.5629017Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/_execution_context/aio/base_execution_context.py", line 65, in _ensure
+2026-06-01T12:14:52.5629045Z     results = await self._fetch_next_block()
+2026-06-01T12:14:52.5629075Z               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:52.5629113Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/_execution_context/aio/base_execution_context.py", line 163, in _fetch_next_block
+2026-06-01T12:14:52.5629145Z     return await self._fetch_items_helper_with_retries(self._fetch_function)
+2026-06-01T12:14:52.5629175Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:52.5629216Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/_execution_context/aio/base_execution_context.py", line 137, in _fetch_items_helper_with_retries
+2026-06-01T12:14:52.5629247Z     return await _retry_utility_async.ExecuteAsync(self._client, self._client._global_endpoint_manager, callback)
+2026-06-01T12:14:52.5629279Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:52.5629313Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_retry_utility_async.py", line 98, in ExecuteAsync
+2026-06-01T12:14:52.5629344Z     result = await ExecuteFunctionAsync(function, *args, **kwargs)
+2026-06-01T12:14:52.5629373Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:52.5629407Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_retry_utility_async.py", line 200, in ExecuteFunctionAsync
+2026-06-01T12:14:52.5629440Z     return await function(*args, **kwargs)
+2026-06-01T12:14:52.5629471Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:52.5629505Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/_execution_context/aio/base_execution_context.py", line 135, in callback
+2026-06-01T12:14:52.5629551Z     return await self._fetch_items_helper_no_retries(fetch_function)
+2026-06-01T12:14:52.5629581Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:52.5629613Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/_execution_context/aio/base_execution_context.py", line 122, in _fetch_items_helper_no_retries
+2026-06-01T12:14:52.5629642Z     (fetched_items, response_headers) = await fetch_function(new_options)
+2026-06-01T12:14:52.5629671Z                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:52.5629702Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_cosmos_client_connection_async.py", line 2211, in fetch_fn
+2026-06-01T12:14:52.5629730Z     await self.__QueryFeed(
+2026-06-01T12:14:52.5630019Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_cosmos_client_connection_async.py", line 2920, in __QueryFeed
+2026-06-01T12:14:52.5630059Z     result, self.last_response_headers = await self.__Post(path, request_params, query, req_headers, **kwargs)
+2026-06-01T12:14:52.5630104Z                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:52.5630137Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_cosmos_client_connection_async.py", line 902, in __Post
+2026-06-01T12:14:52.5630168Z     return await asynchronous_request.AsynchronousRequest(
+2026-06-01T12:14:52.5630196Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:52.5630229Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_asynchronous_request.py", line 172, in AsynchronousRequest
+2026-06-01T12:14:52.5630261Z     return await _retry_utility_async.ExecuteAsync(
+2026-06-01T12:14:52.5630291Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:52.5630324Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_retry_utility_async.py", line 96, in ExecuteAsync
+2026-06-01T12:14:52.5630353Z     result = await ExecuteFunctionAsync(function, global_endpoint_manager, *args, **kwargs)
+2026-06-01T12:14:52.5630385Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:52.5630428Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_retry_utility_async.py", line 200, in ExecuteFunctionAsync
+2026-06-01T12:14:52.5630458Z     return await function(*args, **kwargs)
+2026-06-01T12:14:52.5630485Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:52.5630519Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_asynchronous_request.py", line 61, in _Request
+2026-06-01T12:14:52.5630551Z     await global_endpoint_manager.refresh_endpoint_list(None, **kwargs)
+2026-06-01T12:14:52.5630585Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_global_endpoint_manager_async.py", line 97, in refresh_endpoint_list
+2026-06-01T12:14:52.5630612Z     raise e
+2026-06-01T12:14:52.5630644Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_global_endpoint_manager_async.py", line 95, in refresh_endpoint_list
+2026-06-01T12:14:52.5630674Z     await self._refresh_endpoint_list_private(database_account, **kwargs)
+2026-06-01T12:14:52.5630709Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_global_endpoint_manager_async.py", line 108, in _refresh_endpoint_list_private
+2026-06-01T12:14:52.5630748Z     database_account = await self._GetDatabaseAccount(**kwargs)
+2026-06-01T12:14:52.5630781Z                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:52.5630814Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_global_endpoint_manager_async.py", line 121, in _GetDatabaseAccount
+2026-06-01T12:14:52.5630845Z     database_account = await self._GetDatabaseAccountStub(self.DefaultEndpoint, **kwargs)
+2026-06-01T12:14:52.5630874Z                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:52.5630905Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_global_endpoint_manager_async.py", line 147, in _GetDatabaseAccountStub
+2026-06-01T12:14:52.5630936Z     return await self.client.GetDatabaseAccount(endpoint, **kwargs)
+2026-06-01T12:14:52.5630966Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:52.5631001Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_cosmos_client_connection_async.py", line 410, in GetDatabaseAccount
+2026-06-01T12:14:52.5631033Z     result, self.last_response_headers = await self.__Get("", request_params, headers, **kwargs)
+2026-06-01T12:14:52.5631074Z                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:52.5631108Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_cosmos_client_connection_async.py", line 1198, in __Get
+2026-06-01T12:14:52.5631138Z     return await asynchronous_request.AsynchronousRequest(
+2026-06-01T12:14:52.5631176Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:52.5631209Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_asynchronous_request.py", line 172, in AsynchronousRequest
+2026-06-01T12:14:52.5631238Z     return await _retry_utility_async.ExecuteAsync(
+2026-06-01T12:14:52.5631265Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:52.5631299Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_retry_utility_async.py", line 96, in ExecuteAsync
+2026-06-01T12:14:52.5631331Z     result = await ExecuteFunctionAsync(function, global_endpoint_manager, *args, **kwargs)
+2026-06-01T12:14:52.5631364Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:52.5631407Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_retry_utility_async.py", line 200, in ExecuteFunctionAsync
+2026-06-01T12:14:52.5631436Z     return await function(*args, **kwargs)
+2026-06-01T12:14:52.5631468Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:52.5631617Z   File "/usr/local/lib/python3.11/site-packages/azure/cosmos/aio/_asynchronous_request.py", line 123, in _Request
+2026-06-01T12:14:52.5631652Z     raise exceptions.CosmosHttpResponseError(message=data, response=response)
+2026-06-01T12:14:52.5631688Z azure.cosmos.exceptions.CosmosHttpResponseError: (Forbidden) Request originated from IP 52.185.93.127 through public internet. This is blocked by your Cosmos DB account firewall settings. More info: https://aka.ms/cosmosdb-tsg-forbidden
+2026-06-01T12:14:52.5631720Z ActivityId: 9c87af71-ac02-43f8-bb14-81dc0ce22d24, Microsoft.Azure.Documents.Common/2.14.0
+2026-06-01T12:14:52.5631749Z Code: Forbidden
+2026-06-01T12:14:52.5631784Z Message: Request originated from IP 52.185.93.127 through public internet. This is blocked by your Cosmos DB account firewall settings. More info: https://aka.ms/cosmosdb-tsg-forbidden
+2026-06-01T12:14:52.5631812Z ActivityId: 9c87af71-ac02-43f8-bb14-81dc0ce22d24, Microsoft.Azure.Documents.Common/2.14.0
+2026-06-01T12:14:52.5632956Z Instrumentation Key: 
+2026-06-01T12:14:52.5633020Z INFO:     169.254.130.1:55361 - "GET /history/list?offset=0 HTTP/1.1" 200 OK
+2026-06-01T12:14:52.5633326Z WARNING:root:Skipping track_event for ConversationsListed as Application Insights is not configured
+2026-06-01T12:14:53.0201005Z INFO:     169.254.130.1:55361 - "OPTIONS /api/fetchFilterData HTTP/1.1" 200 OK
+2026-06-01T12:14:53.2087972Z INFO:auth.auth_utils:Demo mode: using role 'operador' from x-demo-role header.
+2026-06-01T12:14:53.2093364Z INFO:azure.identity.aio._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity with client_id: 6d9e9bfa-604d-4ad9-a61a-bb4dd4cb5c70
+2026-06-01T12:14:53.2140015Z WARNING:azure.identity.aio._internal.get_token_mixin:AppServiceCredential.get_token failed: (None) No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-01T12:14:53.2140194Z Code: None
+2026-06-01T12:14:53.2140240Z Message: No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-01T12:14:53.2140413Z WARNING:azure.identity.aio._internal.decorators:ManagedIdentityCredential.get_token failed: (None) No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-01T12:14:53.2140474Z Code: None
+2026-06-01T12:14:53.2140506Z Message: No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-01T12:14:53.2148887Z INFO:azure.identity.aio._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity
+2026-06-01T12:14:53.2168700Z ERROR:asyncio:Unclosed client session
+2026-06-01T12:14:53.2168791Z client_session: <aiohttp.client.ClientSession object at 0x7b562c2d5b90>
+2026-06-01T12:14:53.2170242Z ERROR:asyncio:Unclosed connector
+2026-06-01T12:14:53.2170320Z connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x7b56264e83d0>, 1200.030265564)])']
+2026-06-01T12:14:53.2170357Z connector: <aiohttp.connector.TCPConnector object at 0x7b562c2d6e50>
+2026-06-01T12:14:53.5526260Z ERROR:root:Failed with Azure Credential: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-01T12:14:53.5526499Z ERROR:services.chart_service:Error in fetch_filter_data_for_roles: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-01T12:14:53.5526535Z Traceback (most recent call last):
+2026-06-01T12:14:53.5526566Z   File "/app/services/chart_service.py", line 39, in fetch_filter_data_for_roles
+2026-06-01T12:14:53.5526595Z     await adjust_processed_data_dates()
+2026-06-01T12:14:53.5526625Z   File "/app/common/database/sqldb_service.py", line 97, in adjust_processed_data_dates
+2026-06-01T12:14:53.5526653Z     conn = await get_db_connection()
+2026-06-01T12:14:53.5526680Z            ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:53.5526710Z   File "/app/common/database/sqldb_service.py", line 76, in get_db_connection
+2026-06-01T12:14:53.5526750Z     raise last_exc
+2026-06-01T12:14:53.5526779Z   File "/app/common/database/sqldb_service.py", line 61, in get_db_connection
+2026-06-01T12:14:53.5526806Z     conn = pyodbc.connect(
+2026-06-01T12:14:53.5526833Z            ^^^^^^^^^^^^^^^
+2026-06-01T12:14:53.5526877Z pyodbc.ProgrammingError: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-01T12:14:53.5526910Z ERROR:api.api_routes:Error in fetch_filter_data: 500: An error occurred while fetching role-filtered filter data.
+2026-06-01T12:14:53.5526940Z Traceback (most recent call last):
+2026-06-01T12:14:53.5526971Z   File "/app/services/chart_service.py", line 39, in fetch_filter_data_for_roles
+2026-06-01T12:14:53.5527002Z     await adjust_processed_data_dates()
+2026-06-01T12:14:53.5527037Z   File "/app/common/database/sqldb_service.py", line 97, in adjust_processed_data_dates
+2026-06-01T12:14:53.5527081Z     conn = await get_db_connection()
+2026-06-01T12:14:53.5527114Z            ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:53.5527148Z   File "/app/common/database/sqldb_service.py", line 76, in get_db_connection
+2026-06-01T12:14:53.5527180Z     raise last_exc
+2026-06-01T12:14:53.5527211Z   File "/app/common/database/sqldb_service.py", line 61, in get_db_connection
+2026-06-01T12:14:53.5527238Z     conn = pyodbc.connect(
+2026-06-01T12:14:53.5527268Z            ^^^^^^^^^^^^^^^
+2026-06-01T12:14:53.5527310Z pyodbc.ProgrammingError: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-01T12:14:53.5527340Z 
+2026-06-01T12:14:53.5527373Z During handling of the above exception, another exception occurred:
+2026-06-01T12:14:53.5527400Z 
+2026-06-01T12:14:53.5527449Z Traceback (most recent call last):
+2026-06-01T12:14:53.5527484Z   File "/app/api/api_routes.py", line 230, in fetch_filter_data
+2026-06-01T12:14:53.5527516Z     response = await chart_service.fetch_filter_data_for_roles(roles)
+2026-06-01T12:14:53.5527547Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:53.5527578Z   File "/app/services/chart_service.py", line 71, in fetch_filter_data_for_roles
+2026-06-01T12:14:53.5527608Z     raise HTTPException(
+2026-06-01T12:14:53.5527640Z fastapi.exceptions.HTTPException: 500: An error occurred while fetching role-filtered filter data.
+2026-06-01T12:14:53.5542443Z INFO:     169.254.130.1:55361 - "GET /api/fetchFilterData HTTP/1.1" 500 Internal Server Error
+2026-06-01T12:14:54.1257191Z INFO:     169.254.130.1:55361 - "OPTIONS /api/fetchChartDataWithFilters HTTP/1.1" 200 OK
+2026-06-01T12:14:54.3182942Z INFO:auth.auth_utils:Demo mode: using role 'operador' from x-demo-role header.
+2026-06-01T12:14:54.3183321Z INFO:api.api_routes:Received filters: {"selected_filters": {"Topic": [], "Sentiment": [], "DateRange": ["Year to Date"]}}
+2026-06-01T12:14:54.3183372Z INFO:azure.identity.aio._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity with client_id: 6d9e9bfa-604d-4ad9-a61a-bb4dd4cb5c70
+2026-06-01T12:14:54.3289917Z WARNING:azure.identity.aio._internal.get_token_mixin:AppServiceCredential.get_token failed: (None) No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-01T12:14:54.3290187Z Code: None
+2026-06-01T12:14:54.3290230Z Message: No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-01T12:14:54.3298504Z WARNING:azure.identity.aio._internal.decorators:ManagedIdentityCredential.get_token failed: (None) No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-01T12:14:54.3298654Z Code: None
+2026-06-01T12:14:54.3298695Z Message: No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-01T12:14:54.3310371Z INFO:azure.identity.aio._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity
+2026-06-01T12:14:54.6980333Z ERROR:root:Failed with Azure Credential: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-01T12:14:54.6992807Z ERROR:services.chart_service:Error in fetch_chart_data_with_filters: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-01T12:14:54.6992895Z Traceback (most recent call last):
+2026-06-01T12:14:54.6992931Z   File "/app/services/chart_service.py", line 94, in fetch_chart_data_with_filters
+2026-06-01T12:14:54.6992960Z     return await fetch_chart_data(chart_filters)
+2026-06-01T12:14:54.6992996Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:54.6993031Z   File "/app/common/database/sqldb_service.py", line 190, in fetch_chart_data
+2026-06-01T12:14:54.6993062Z     conn = await get_db_connection()
+2026-06-01T12:14:54.6993091Z            ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:54.6993144Z   File "/app/common/database/sqldb_service.py", line 76, in get_db_connection
+2026-06-01T12:14:54.6993174Z     raise last_exc
+2026-06-01T12:14:54.6993201Z   File "/app/common/database/sqldb_service.py", line 61, in get_db_connection
+2026-06-01T12:14:54.6993224Z     conn = pyodbc.connect(
+2026-06-01T12:14:54.6993242Z            ^^^^^^^^^^^^^^^
+2026-06-01T12:14:54.6993272Z pyodbc.ProgrammingError: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-01T12:14:54.6993295Z ERROR:api.api_routes:Error in fetch_chart_data_with_filters: 500: An error occurred while fetching filtered chart data.
+2026-06-01T12:14:54.6993314Z Traceback (most recent call last):
+2026-06-01T12:14:54.6993335Z   File "/app/services/chart_service.py", line 94, in fetch_chart_data_with_filters
+2026-06-01T12:14:54.6993355Z     return await fetch_chart_data(chart_filters)
+2026-06-01T12:14:54.6993383Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:54.6993403Z   File "/app/common/database/sqldb_service.py", line 190, in fetch_chart_data
+2026-06-01T12:14:54.6993426Z     conn = await get_db_connection()
+2026-06-01T12:14:54.6993444Z            ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:54.6993465Z   File "/app/common/database/sqldb_service.py", line 76, in get_db_connection
+2026-06-01T12:14:54.6993483Z     raise last_exc
+2026-06-01T12:14:54.6993504Z   File "/app/common/database/sqldb_service.py", line 61, in get_db_connection
+2026-06-01T12:14:54.6993522Z     conn = pyodbc.connect(
+2026-06-01T12:14:54.6993539Z            ^^^^^^^^^^^^^^^
+2026-06-01T12:14:54.6993568Z pyodbc.ProgrammingError: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-01T12:14:54.6993585Z 
+2026-06-01T12:14:54.6993613Z During handling of the above exception, another exception occurred:
+2026-06-01T12:14:54.6993631Z 
+2026-06-01T12:14:54.6993650Z Traceback (most recent call last):
+2026-06-01T12:14:54.6993670Z   File "/app/api/api_routes.py", line 199, in fetch_chart_data_with_filters
+2026-06-01T12:14:54.6993690Z     response = await chart_service.fetch_chart_data_with_filters(chart_filters)
+2026-06-01T12:14:54.6993710Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-01T12:14:54.6993730Z   File "/app/services/chart_service.py", line 97, in fetch_chart_data_with_filters
+2026-06-01T12:14:54.6993750Z     raise HTTPException(
+2026-06-01T12:14:54.6993771Z fastapi.exceptions.HTTPException: 500: An error occurred while fetching filtered chart data.
+2026-06-01T12:14:54.7018746Z INFO:     169.254.130.1:55361 - "POST /api/fetchChartDataWithFilters HTTP/1.1" 500 Internal Server Error
+2026-06-01T12:15:23.2174500Z ERROR:asyncio:Future exception was never retrieved
+2026-06-01T12:15:23.2174972Z future: <Future finished exception=ClientConnectionError('Connection lost: SSL shutdown timed out')>
+2026-06-01T12:15:23.2175025Z TimeoutError: SSL shutdown timed out
+2026-06-01T12:15:23.2175056Z 
+2026-06-01T12:15:23.2175087Z The above exception was the direct cause of the following exception:
+2026-06-01T12:15:23.2175112Z 
+2026-06-01T12:15:23.2175142Z aiohttp.client_exceptions.ClientConnectionError: Connection lost: SSL shutdown timed out

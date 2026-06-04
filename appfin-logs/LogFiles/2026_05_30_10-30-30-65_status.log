@@ -1,0 +1,18 @@
+2026-05-30T19:48:35.0451772Z State: Stopping, Action: StoppingSite, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 05/30/2026 19:47:50 (UTC), DetailsLevel: INFO
+2026-05-30T19:48:35.0454861Z State: Stopping, Action: StoppingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 05/30/2026 19:47:50 (UTC), DetailsLevel: INFO
+2026-05-30T19:48:35.0455753Z Container is terminating. Grace period: 5 seconds.
+2026-05-30T19:48:35.0479128Z Stop and delete container. Retry count = 0
+2026-05-30T19:48:35.0480503Z Stopping container: 488fb97b1a3e_app-financeirax01.
+2026-05-30T19:48:35.1557240Z Deleting container: 488fb97b1a3e_app-financeirax01. Retry count = 0
+2026-05-30T19:48:35.2188935Z Container spec TerminationMessagePolicy  path 
+2026-05-30T19:48:35.2190344Z Container is terminated. Total time elapsed: 173 ms.
+2026-05-30T19:48:35.3637999Z Site: app-financeirax01 stopped.
+2026-05-30T19:48:55.6086911Z State: Stopping, Action: StoppingSite, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 05/30/2026 19:48:14 (UTC), DetailsLevel: INFO
+2026-05-30T19:48:55.6090045Z State: Stopping, Action: StoppingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 05/30/2026 19:48:14 (UTC), DetailsLevel: INFO
+2026-05-30T19:48:55.6091653Z Container is terminating. Grace period: 5 seconds.
+2026-05-30T19:48:55.6112420Z Stop and delete container. Retry count = 0
+2026-05-30T19:48:55.6113671Z Stopping container: 57cd28850a44_app-financeirax01.
+2026-05-30T19:48:55.6811550Z Deleting container: 57cd28850a44_app-financeirax01. Retry count = 0
+2026-05-30T19:48:55.7440352Z Container spec TerminationMessagePolicy  path 
+2026-05-30T19:48:55.7442504Z Container is terminated. Total time elapsed: 134 ms.
+2026-05-30T19:48:55.8790914Z Site: app-financeirax01 stopped.

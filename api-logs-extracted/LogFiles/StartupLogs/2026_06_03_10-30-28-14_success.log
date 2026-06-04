@@ -1,0 +1,279 @@
+2026-06-03T21:03:17.1584009+00:00 ContainerStatus: State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-06-03T21:03:17.7138251+00:00 ContainerStatus: State: Starting, Action: StartingMsiContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-06-03T21:03:20.4247617+00:00 ContainerStatus: State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-06-03T21:03:20.4254194+00:00 ContainerStatus: Container start method called.
+2026-06-03T21:03:20.4255165+00:00 ContainerStatus: State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image acrcallcenter100.azurecr.io/api-app:latest for api-financeirax01., DetailsLevel: INFO
+2026-06-03T21:03:20.4256817+00:00 ContainerStatus: Establishing network.
+2026-06-03T21:03:20.4265576+00:00 ContainerStatus: Pulling image: acrcallcenter100.azurecr.io/api-app:latest.
+2026-06-03T21:03:36.8781257+00:00 ContainerStatus: Image acrcallcenter100.azurecr.io/api-app:latest is pulled from registry acrcallcenter100.azurecr.io
+2026-06-03T21:03:36.8785172+00:00 ContainerStatus: Container is starting.
+2026-06-03T21:03:36.8931316+00:00 ContainerStatus: State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for api-financeirax01., DetailsLevel: INFO
+2026-06-03T21:03:36.8933358+00:00 ContainerStatus: Establishing user namespace if not established already.
+2026-06-03T21:03:36.8934758+00:00 ContainerStatus: Establishing network if not established already.
+2026-06-03T21:03:36.8936770+00:00 ContainerStatus: Mounting volumes.
+2026-06-03T21:03:36.8938995+00:00 ContainerStatus: Nested mountpoint volatile/logs
+2026-06-03T21:03:36.8977658+00:00 ContainerStatus: Nested mountpoint 
+2026-06-03T21:03:36.9122132+00:00 ContainerStatus: State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for api-financeirax01. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO
+2026-06-03T21:03:36.9123581+00:00 ContainerStatus: Creating container.
+2026-06-03T21:03:36.9124865+00:00 ContainerStatus: Creating pipes for streaming container io.
+2026-06-03T21:03:36.9126108+00:00 ContainerStatus: Creating stdout named pipe at /podr/container/pipe/b374186ec546_api-financeirax01/stdout_16ca54f498fa4517a76dbba49ed5791a.
+2026-06-03T21:03:36.9156681+00:00 ContainerStatus: Successfully created stdout named pipe at: /podr/container/pipe/b374186ec546_api-financeirax01/stdout_16ca54f498fa4517a76dbba49ed5791a.
+2026-06-03T21:03:36.9158463+00:00 ContainerStatus: Opening named pipe /podr/container/pipe/b374186ec546_api-financeirax01/stdout_16ca54f498fa4517a76dbba49ed5791a for reading in non-blocking mode.
+2026-06-03T21:03:36.9159910+00:00 ContainerStatus: Successfully opened named pipe: /podr/container/pipe/b374186ec546_api-financeirax01/stdout_16ca54f498fa4517a76dbba49ed5791a.
+2026-06-03T21:03:36.9164773+00:00 ContainerStatus: Successfully removed non-blocking flag from /podr/container/pipe/b374186ec546_api-financeirax01/stdout_16ca54f498fa4517a76dbba49ed5791a.
+2026-06-03T21:03:36.9167649+00:00 ContainerStatus: Creating stderr named pipe at /podr/container/pipe/b374186ec546_api-financeirax01/stderr_a20fb84fd4374eb2b122ee6c213a56cd.
+2026-06-03T21:03:36.9169486+00:00 ContainerStatus: Successfully created stderr named pipe at: /podr/container/pipe/b374186ec546_api-financeirax01/stderr_a20fb84fd4374eb2b122ee6c213a56cd.
+2026-06-03T21:03:36.9173017+00:00 ContainerStatus: Opening named pipe /podr/container/pipe/b374186ec546_api-financeirax01/stderr_a20fb84fd4374eb2b122ee6c213a56cd for reading in non-blocking mode.
+2026-06-03T21:03:36.9312704+00:00 ContainerStatus: Successfully opened named pipe: /podr/container/pipe/b374186ec546_api-financeirax01/stderr_a20fb84fd4374eb2b122ee6c213a56cd.
+2026-06-03T21:03:36.9317747+00:00 ContainerStatus: Successfully removed non-blocking flag from /podr/container/pipe/b374186ec546_api-financeirax01/stderr_a20fb84fd4374eb2b122ee6c213a56cd.
+2026-06-03T21:03:36.9319599+00:00 ContainerStatus: Overriding PORT environment variable with port exposed by container image.
+2026-06-03T21:03:36.9841770+00:00 ContainerStatus: Container image exposes ports: ContainerExposedPort { Port = 80, Protocol = TCP }. Sanitized list of ports is: 80. Resolved main port to 80.
+2026-06-03T21:03:36.9843583+00:00 ContainerStatus: Setting value of PORT variable to 80
+2026-06-03T21:03:36.9853556+00:00 ContainerStatus: Creating container with image: acrcallcenter100.azurecr.io/api-app:latest from registry: acrcallcenter100.azurecr.io and fully qualified image name: acrcallcenter100.azurecr.io/api-app:latest
+2026-06-03T21:03:37.2964604+00:00 ContainerStatus: Starting container: b374186ec546_api-financeirax01.
+2026-06-03T21:03:37.3210661+00:00 ContainerStatus: Starting watchers and probes.
+2026-06-03T21:03:37.3213481+00:00 ContainerStatus: Starting metrics collection.
+2026-06-03T21:03:37.3215409+00:00 ContainerStatus: Container is running.
+2026-06-03T21:03:37.3216442+00:00 ContainerStatus: State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container api-financeirax01 successfully created and is running., DetailsLevel: INFO
+2026-06-03T21:03:37.3384455+00:00 ContainerStatus: Container start method finished after 16912 ms.
+2026-06-03T21:03:37.3390821+00:00 ContainerStatus: State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container api-financeirax01 successfully created and is running., DetailsLevel: INFO
+2026-06-03T21:03:37.3391124+00:00 ContainerStatus: State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO
+2026-06-03T21:03:44.5843502+00:00 ContainerStream: WARNING:root:No Application Insights Instrumentation Key found. Skipping configuration
+2026-06-03T21:03:44.6840698+00:00 ContainerStream: WARNING:root:No Application Insights Instrumentation Key found. Skipping configuration
+2026-06-03T21:03:44.7266387+00:00 ContainerStream: INFO:     Started server process [1]
+2026-06-03T21:03:44.7267433+00:00 ContainerStream: INFO:     Waiting for application startup.
+2026-06-03T21:03:44.7364705+00:00 ContainerStream: INFO:azure.identity.aio._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity with client_id: e445e544-9d78-419d-8597-1c5ac4c7e073
+2026-06-03T21:03:46.8298792+00:00 ContainerStream: INFO:azure.identity._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity with client_id: e445e544-9d78-419d-8597-1c5ac4c7e073
+2026-06-03T21:03:46.8590399+00:00 ContainerStream: INFO:azure.identity._internal.msal_managed_identity_client:AppServiceCredential.get_token_info succeeded
+2026-06-03T21:03:46.8597932+00:00 ContainerStream: INFO:azure.identity._internal.decorators:ManagedIdentityCredential.get_token_info succeeded
+2026-06-03T21:04:05.8953933+00:00 ContainerStream: INFO:azure.identity._internal.msal_managed_identity_client:AppServiceCredential.get_token_info succeeded
+2026-06-03T21:04:05.8954709+00:00 ContainerStream: INFO:azure.identity._internal.decorators:ManagedIdentityCredential.get_token_info succeeded
+2026-06-03T21:04:06.4357589+00:00 ContainerStream: INFO:azure.identity._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity with client_id: e445e544-9d78-419d-8597-1c5ac4c7e073
+2026-06-03T21:04:06.4530091+00:00 ContainerStream: INFO:azure.identity._internal.msal_managed_identity_client:AppServiceCredential.get_token_info succeeded
+2026-06-03T21:04:06.4530550+00:00 ContainerStream: INFO:azure.identity._internal.decorators:ManagedIdentityCredential.get_token_info succeeded
+2026-06-03T21:04:06.9865856+00:00 ContainerStream: INFO:azure.identity._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity with client_id: e445e544-9d78-419d-8597-1c5ac4c7e073
+2026-06-03T21:04:07.0078635+00:00 ContainerStream: INFO:azure.identity._internal.msal_managed_identity_client:AppServiceCredential.get_token_info succeeded
+2026-06-03T21:04:07.0082104+00:00 ContainerStream: INFO:azure.identity._internal.decorators:ManagedIdentityCredential.get_token_info succeeded
+2026-06-03T21:04:07.4732876+00:00 ContainerStream: INFO:     Application startup complete.
+2026-06-03T21:04:07.4746739+00:00 ContainerStream: INFO:     Uvicorn running on http://0.0.0.0:80 (Press CTRL+C to quit)
+2026-06-03T21:04:08.3600136+00:00 ContainerStream: INFO:     169.254.130.1:43529 - "GET /robots933456.txt HTTP/1.1" 404 Not Found
+2026-06-03T21:04:08.3676304+00:00 ContainerStatus: Site startup probe succeeded after 31.0270365 seconds.
+2026-06-03T21:04:08.4222825+00:00 ContainerStatus: State: Starting, Action: WarmUpProbeSucceeded, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 31.0270365 seconds., DetailsLevel: INFO
+2026-06-03T21:04:08.5336840+00:00 ContainerStatus: Site started.
+2026-06-03T21:04:08.5337892+00:00 ContainerStatus: State: Started, Action: None, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 06/03/2026 21:04:08 (UTC), DetailsLevel: INFO
+========== New Cold Start Attempt (2026-06-03T21:04:08.6378078+00:00) ==========
+2026-06-03T21:04:08.6378078+00:00 ContainerStream: INFO:     169.254.130.1:33179 - "GET / HTTP/1.1" 404 Not Found
+2026-06-03T21:04:08.6384461+00:00 ContainerStream: INFO:     169.254.130.1:33177 - "GET /health HTTP/1.1" 200 OK
+2026-06-03T21:04:08.6516197+00:00 ContainerStream: INFO:     169.254.130.1:33177 - "GET / HTTP/1.1" 404 Not Found
+2026-06-03T21:04:31.7778323+00:00 ContainerStream: INFO:     169.254.130.1:61393 - "GET /health HTTP/1.1" 200 OK
+2026-06-03T21:04:32.2991445+00:00 ContainerStream: INFO:     169.254.130.1:61393 - "GET /health HTTP/1.1" 200 OK
+2026-06-03T21:04:32.7466476+00:00 ContainerStream: INFO:auth.auth_utils:x-ms-client-principal header not present; defaulting to callcenter role for development.
+2026-06-03T21:04:32.7481773+00:00 ContainerStream: INFO:azure.identity.aio._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity with client_id: 6d9e9bfa-604d-4ad9-a61a-bb4dd4cb5c70
+2026-06-03T21:04:32.7677819+00:00 ContainerStream: WARNING:azure.identity.aio._internal.get_token_mixin:AppServiceCredential.get_token failed: (None) No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-03T21:04:32.7678226+00:00 ContainerStream: Code: None
+2026-06-03T21:04:32.7678272+00:00 ContainerStream: Message: No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-03T21:04:32.7678659+00:00 ContainerStream: WARNING:azure.identity.aio._internal.decorators:ManagedIdentityCredential.get_token failed: (None) No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-03T21:04:32.7678691+00:00 ContainerStream: Code: None
+2026-06-03T21:04:32.7678747+00:00 ContainerStream: Message: No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-03T21:04:32.7691115+00:00 ContainerStream: INFO:azure.identity.aio._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity
+2026-06-03T21:04:33.5648609+00:00 ContainerStream: ERROR:root:Failed with Azure Credential: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-03T21:04:33.5694583+00:00 ContainerStream: ERROR:services.chart_service:Error in fetch_filter_data_for_roles: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-03T21:04:33.5695024+00:00 ContainerStream: Traceback (most recent call last):
+2026-06-03T21:04:33.5695072+00:00 ContainerStream:   File "/app/services/chart_service.py", line 39, in fetch_filter_data_for_roles
+2026-06-03T21:04:33.5695103+00:00 ContainerStream:     await adjust_processed_data_dates()
+2026-06-03T21:04:33.5695135+00:00 ContainerStream:   File "/app/common/database/sqldb_service.py", line 97, in adjust_processed_data_dates
+2026-06-03T21:04:33.5695191+00:00 ContainerStream:     conn = await get_db_connection()
+2026-06-03T21:04:33.5695221+00:00 ContainerStream:            ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-03T21:04:33.5695252+00:00 ContainerStream:   File "/app/common/database/sqldb_service.py", line 76, in get_db_connection
+2026-06-03T21:04:33.5695280+00:00 ContainerStream:     raise last_exc
+2026-06-03T21:04:33.5695607+00:00 ContainerStream:   File "/app/common/database/sqldb_service.py", line 61, in get_db_connection
+2026-06-03T21:04:33.5695641+00:00 ContainerStream:     conn = pyodbc.connect(
+2026-06-03T21:04:33.5695671+00:00 ContainerStream:            ^^^^^^^^^^^^^^^
+2026-06-03T21:04:33.5695878+00:00 ContainerStream: pyodbc.ProgrammingError: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-03T21:04:33.5755424+00:00 ContainerStream: ERROR:api.api_routes:Error in fetch_filter_data: 500: An error occurred while fetching role-filtered filter data.
+2026-06-03T21:04:33.5756339+00:00 ContainerStream: Traceback (most recent call last):
+2026-06-03T21:04:33.5756391+00:00 ContainerStream:   File "/app/services/chart_service.py", line 39, in fetch_filter_data_for_roles
+2026-06-03T21:04:33.5756425+00:00 ContainerStream:     await adjust_processed_data_dates()
+2026-06-03T21:04:33.5756460+00:00 ContainerStream:   File "/app/common/database/sqldb_service.py", line 97, in adjust_processed_data_dates
+2026-06-03T21:04:33.5756490+00:00 ContainerStream:     conn = await get_db_connection()
+2026-06-03T21:04:33.5756517+00:00 ContainerStream:            ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-03T21:04:33.5756549+00:00 ContainerStream:   File "/app/common/database/sqldb_service.py", line 76, in get_db_connection
+2026-06-03T21:04:33.5756577+00:00 ContainerStream:     raise last_exc
+2026-06-03T21:04:33.5756608+00:00 ContainerStream:   File "/app/common/database/sqldb_service.py", line 61, in get_db_connection
+2026-06-03T21:04:33.5756637+00:00 ContainerStream:     conn = pyodbc.connect(
+2026-06-03T21:04:33.5756665+00:00 ContainerStream:            ^^^^^^^^^^^^^^^
+2026-06-03T21:04:33.5756721+00:00 ContainerStream: pyodbc.ProgrammingError: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-03T21:04:33.5756747+00:00 ContainerStream: 
+2026-06-03T21:04:33.5756778+00:00 ContainerStream: During handling of the above exception, another exception occurred:
+2026-06-03T21:04:33.5756803+00:00 ContainerStream: 
+2026-06-03T21:04:33.5756831+00:00 ContainerStream: Traceback (most recent call last):
+2026-06-03T21:04:33.5756872+00:00 ContainerStream:   File "/app/api/api_routes.py", line 230, in fetch_filter_data
+2026-06-03T21:04:33.5756903+00:00 ContainerStream:     response = await chart_service.fetch_filter_data_for_roles(roles)
+2026-06-03T21:04:33.5756931+00:00 ContainerStream:                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-03T21:04:33.5756962+00:00 ContainerStream:   File "/app/services/chart_service.py", line 71, in fetch_filter_data_for_roles
+2026-06-03T21:04:33.5757007+00:00 ContainerStream:     raise HTTPException(
+2026-06-03T21:04:33.5757040+00:00 ContainerStream: fastapi.exceptions.HTTPException: 500: An error occurred while fetching role-filtered filter data.
+2026-06-03T21:04:33.5781629+00:00 ContainerStream: INFO:     169.254.130.1:61393 - "GET /api/fetchFilterData HTTP/1.1" 500 Internal Server Error
+2026-06-03T21:04:34.0623460+00:00 ContainerStream: INFO:api.api_routes:Request from user: anonymous (route=/fetchChartData)
+2026-06-03T21:04:34.0623874+00:00 ContainerStream: INFO:azure.identity.aio._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity with client_id: 6d9e9bfa-604d-4ad9-a61a-bb4dd4cb5c70
+2026-06-03T21:04:34.0729254+00:00 ContainerStream: WARNING:azure.identity.aio._internal.get_token_mixin:AppServiceCredential.get_token failed: (None) No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-03T21:04:34.0729569+00:00 ContainerStream: Code: None
+2026-06-03T21:04:34.0729614+00:00 ContainerStream: Message: No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-03T21:04:34.0736582+00:00 ContainerStream: WARNING:azure.identity.aio._internal.decorators:ManagedIdentityCredential.get_token failed: (None) No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-03T21:04:34.0736704+00:00 ContainerStream: Code: None
+2026-06-03T21:04:34.0736746+00:00 ContainerStream: Message: No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-03T21:04:34.0737675+00:00 ContainerStream: INFO:azure.identity.aio._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity
+2026-06-03T21:04:34.4539900+00:00 ContainerStream: ERROR:root:Failed with Azure Credential: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-03T21:04:34.4554472+00:00 ContainerStream: ERROR:services.chart_service:Error in fetch_chart_data: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-03T21:04:34.4554928+00:00 ContainerStream: Traceback (most recent call last):
+2026-06-03T21:04:34.4554967+00:00 ContainerStream:   File "/app/services/chart_service.py", line 81, in fetch_chart_data
+2026-06-03T21:04:34.4554994+00:00 ContainerStream:     return await fetch_chart_data()
+2026-06-03T21:04:34.4555020+00:00 ContainerStream:            ^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-03T21:04:34.4555048+00:00 ContainerStream:   File "/app/common/database/sqldb_service.py", line 190, in fetch_chart_data
+2026-06-03T21:04:34.4555073+00:00 ContainerStream:     conn = await get_db_connection()
+2026-06-03T21:04:34.4555168+00:00 ContainerStream:            ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-03T21:04:34.4555200+00:00 ContainerStream:   File "/app/common/database/sqldb_service.py", line 76, in get_db_connection
+2026-06-03T21:04:34.4555227+00:00 ContainerStream:     raise last_exc
+2026-06-03T21:04:34.4555255+00:00 ContainerStream:   File "/app/common/database/sqldb_service.py", line 61, in get_db_connection
+2026-06-03T21:04:34.4555281+00:00 ContainerStream:     conn = pyodbc.connect(
+2026-06-03T21:04:34.4555307+00:00 ContainerStream:            ^^^^^^^^^^^^^^^
+2026-06-03T21:04:34.4555346+00:00 ContainerStream: pyodbc.ProgrammingError: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-03T21:04:34.4564499+00:00 ContainerStream: ERROR:api.api_routes:Error in fetch_chart_data: 500: An error occurred while fetching chart data.
+2026-06-03T21:04:34.4564623+00:00 ContainerStream: Traceback (most recent call last):
+2026-06-03T21:04:34.4564663+00:00 ContainerStream:   File "/app/services/chart_service.py", line 81, in fetch_chart_data
+2026-06-03T21:04:34.4564721+00:00 ContainerStream:     return await fetch_chart_data()
+2026-06-03T21:04:34.4564757+00:00 ContainerStream:            ^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-03T21:04:34.4564791+00:00 ContainerStream:   File "/app/common/database/sqldb_service.py", line 190, in fetch_chart_data
+2026-06-03T21:04:34.4564830+00:00 ContainerStream:     conn = await get_db_connection()
+2026-06-03T21:04:34.4564859+00:00 ContainerStream:            ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-03T21:04:34.4564894+00:00 ContainerStream:   File "/app/common/database/sqldb_service.py", line 76, in get_db_connection
+2026-06-03T21:04:34.4564924+00:00 ContainerStream:     raise last_exc
+2026-06-03T21:04:34.4564958+00:00 ContainerStream:   File "/app/common/database/sqldb_service.py", line 61, in get_db_connection
+2026-06-03T21:04:34.4564987+00:00 ContainerStream:     conn = pyodbc.connect(
+2026-06-03T21:04:34.4565014+00:00 ContainerStream:            ^^^^^^^^^^^^^^^
+2026-06-03T21:04:34.4565075+00:00 ContainerStream: pyodbc.ProgrammingError: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-03T21:04:34.4565107+00:00 ContainerStream: 
+2026-06-03T21:04:34.4565138+00:00 ContainerStream: During handling of the above exception, another exception occurred:
+2026-06-03T21:04:34.4565166+00:00 ContainerStream: 
+2026-06-03T21:04:34.4565193+00:00 ContainerStream: Traceback (most recent call last):
+2026-06-03T21:04:34.4565221+00:00 ContainerStream:   File "/app/api/api_routes.py", line 170, in fetch_chart_data
+2026-06-03T21:04:34.4565249+00:00 ContainerStream:     response = await chart_service.fetch_chart_data()
+2026-06-03T21:04:34.4565277+00:00 ContainerStream:                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-03T21:04:34.4565306+00:00 ContainerStream:   File "/app/services/chart_service.py", line 84, in fetch_chart_data
+2026-06-03T21:04:34.4565333+00:00 ContainerStream:     raise HTTPException(
+2026-06-03T21:04:34.4565361+00:00 ContainerStream: fastapi.exceptions.HTTPException: 500: An error occurred while fetching chart data.
+2026-06-03T21:04:34.4580942+00:00 ContainerStream: INFO:     169.254.130.1:61393 - "GET /api/fetchChartData HTTP/1.1" 500 Internal Server Error
+2026-06-03T21:04:34.9202791+00:00 ContainerStream: INFO:     169.254.130.1:61393 - "POST /api/chat HTTP/1.1" 400 Bad Request
+2026-06-03T21:04:35.3566749+00:00 ContainerStream: INFO:     169.254.130.1:61393 - "OPTIONS /health HTTP/1.1" 405 Method Not Allowed
+2026-06-03T21:04:35.7889867+00:00 ContainerStream: INFO:     169.254.130.1:61393 - "GET /health HTTP/1.1" 200 OK
+2026-06-03T21:05:11.0746722+00:00 ContainerStream: INFO:auth.auth_utils:x-ms-client-principal header not present; defaulting to callcenter role for development.
+2026-06-03T21:05:11.0749049+00:00 ContainerStream: INFO:azure.identity.aio._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity with client_id: 6d9e9bfa-604d-4ad9-a61a-bb4dd4cb5c70
+2026-06-03T21:05:11.0813992+00:00 ContainerStream: WARNING:azure.identity.aio._internal.get_token_mixin:AppServiceCredential.get_token failed: (None) No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-03T21:05:11.0814264+00:00 ContainerStream: Code: None
+2026-06-03T21:05:11.0814311+00:00 ContainerStream: Message: No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-03T21:05:11.0814349+00:00 ContainerStream: WARNING:azure.identity.aio._internal.decorators:ManagedIdentityCredential.get_token failed: (None) No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-03T21:05:11.0814379+00:00 ContainerStream: Code: None
+2026-06-03T21:05:11.0814409+00:00 ContainerStream: Message: No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-03T21:05:11.0835739+00:00 ContainerStream: INFO:azure.identity.aio._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity
+2026-06-03T21:05:11.4724037+00:00 ContainerStream: ERROR:root:Failed with Azure Credential: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-03T21:05:11.4757851+00:00 ContainerStream: ERROR:services.chart_service:Error in fetch_filter_data_for_roles: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-03T21:05:11.4758121+00:00 ContainerStream: Traceback (most recent call last):
+2026-06-03T21:05:11.4758161+00:00 ContainerStream:   File "/app/services/chart_service.py", line 39, in fetch_filter_data_for_roles
+2026-06-03T21:05:11.4758190+00:00 ContainerStream:     await adjust_processed_data_dates()
+2026-06-03T21:05:11.4758222+00:00 ContainerStream:   File "/app/common/database/sqldb_service.py", line 97, in adjust_processed_data_dates
+2026-06-03T21:05:11.4758249+00:00 ContainerStream:     conn = await get_db_connection()
+2026-06-03T21:05:11.4758276+00:00 ContainerStream:            ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-03T21:05:11.4758331+00:00 ContainerStream:   File "/app/common/database/sqldb_service.py", line 76, in get_db_connection
+2026-06-03T21:05:11.4758360+00:00 ContainerStream:     raise last_exc
+2026-06-03T21:05:11.4758390+00:00 ContainerStream:   File "/app/common/database/sqldb_service.py", line 61, in get_db_connection
+2026-06-03T21:05:11.4758418+00:00 ContainerStream:     conn = pyodbc.connect(
+2026-06-03T21:05:11.4758446+00:00 ContainerStream:            ^^^^^^^^^^^^^^^
+2026-06-03T21:05:11.4758488+00:00 ContainerStream: pyodbc.ProgrammingError: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-03T21:05:11.4758519+00:00 ContainerStream: ERROR:api.api_routes:Error in fetch_filter_data: 500: An error occurred while fetching role-filtered filter data.
+2026-06-03T21:05:11.4758548+00:00 ContainerStream: Traceback (most recent call last):
+2026-06-03T21:05:11.4758578+00:00 ContainerStream:   File "/app/services/chart_service.py", line 39, in fetch_filter_data_for_roles
+2026-06-03T21:05:11.4758608+00:00 ContainerStream:     await adjust_processed_data_dates()
+2026-06-03T21:05:11.4758652+00:00 ContainerStream:   File "/app/common/database/sqldb_service.py", line 97, in adjust_processed_data_dates
+2026-06-03T21:05:11.4758682+00:00 ContainerStream:     conn = await get_db_connection()
+2026-06-03T21:05:11.4758710+00:00 ContainerStream:            ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-03T21:05:11.4758742+00:00 ContainerStream:   File "/app/common/database/sqldb_service.py", line 76, in get_db_connection
+2026-06-03T21:05:11.4758767+00:00 ContainerStream:     raise last_exc
+2026-06-03T21:05:11.4758794+00:00 ContainerStream:   File "/app/common/database/sqldb_service.py", line 61, in get_db_connection
+2026-06-03T21:05:11.4758826+00:00 ContainerStream:     conn = pyodbc.connect(
+2026-06-03T21:05:11.4758848+00:00 ContainerStream: INFO:     169.254.130.1:52539 - "GET /api/fetchFilterData HTTP/1.1" 500 Internal Server Error
+2026-06-03T21:05:11.4758853+00:00 ContainerStream:            ^^^^^^^^^^^^^^^
+2026-06-03T21:05:11.4758893+00:00 ContainerStream: pyodbc.ProgrammingError: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-03T21:05:11.4758917+00:00 ContainerStream: 
+2026-06-03T21:05:11.4758963+00:00 ContainerStream: During handling of the above exception, another exception occurred:
+2026-06-03T21:05:11.4758995+00:00 ContainerStream: 
+2026-06-03T21:05:11.4759026+00:00 ContainerStream: Traceback (most recent call last):
+2026-06-03T21:05:11.4759060+00:00 ContainerStream:   File "/app/api/api_routes.py", line 230, in fetch_filter_data
+2026-06-03T21:05:11.4759094+00:00 ContainerStream:     response = await chart_service.fetch_filter_data_for_roles(roles)
+2026-06-03T21:05:11.4759141+00:00 ContainerStream:                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-03T21:05:11.4759175+00:00 ContainerStream:   File "/app/services/chart_service.py", line 71, in fetch_filter_data_for_roles
+2026-06-03T21:05:11.4759208+00:00 ContainerStream:     raise HTTPException(
+2026-06-03T21:05:11.4759252+00:00 ContainerStream: fastapi.exceptions.HTTPException: 500: An error occurred while fetching role-filtered filter data.
+2026-06-03T21:05:12.2597780+00:00 ContainerStream: INFO:     169.254.130.1:52539 - "POST /api/chat HTTP/1.1" 400 Bad Request
+2026-06-03T21:06:33.6388142+00:00 ContainerStatus: State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-06-03T21:06:34.2880669+00:00 ContainerStatus: State: Starting, Action: StartingMsiContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-06-03T21:06:37.3506344+00:00 ContainerStatus: State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-06-03T21:06:37.3507654+00:00 ContainerStatus: Container start method called.
+2026-06-03T21:06:37.3508110+00:00 ContainerStatus: State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image acrcallcenter100.azurecr.io/api-app:latest for api-financeirax01., DetailsLevel: INFO
+2026-06-03T21:06:37.3509306+00:00 ContainerStatus: Establishing network.
+2026-06-03T21:06:37.3510605+00:00 ContainerStatus: Pulling image: acrcallcenter100.azurecr.io/api-app:latest.
+2026-06-03T21:06:37.4842989+00:00 ContainerStatus: Container is starting.
+2026-06-03T21:06:37.4843853+00:00 ContainerStatus: State: Starting, Action: MountingVolumes, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Mounting volumes for api-financeirax01., DetailsLevel: INFO
+2026-06-03T21:06:37.4845089+00:00 ContainerStatus: Establishing user namespace if not established already.
+2026-06-03T21:06:37.4846216+00:00 ContainerStatus: Establishing network if not established already.
+2026-06-03T21:06:37.4847516+00:00 ContainerStatus: Mounting volumes.
+2026-06-03T21:06:37.4861392+00:00 ContainerStatus: Nested mountpoint volatile/logs
+2026-06-03T21:06:37.4918931+00:00 ContainerStatus: Nested mountpoint 
+2026-06-03T21:06:37.5023512+00:00 ContainerStatus: State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Finished pulling container image and mounting volumes for api-financeirax01. Allocatinng the rest of the container resources to finish container creation., DetailsLevel: INFO
+2026-06-03T21:06:37.5024841+00:00 ContainerStatus: Creating container.
+2026-06-03T21:06:37.5026046+00:00 ContainerStatus: Creating pipes for streaming container io.
+2026-06-03T21:06:37.5027189+00:00 ContainerStatus: Creating stdout named pipe at /podr/container/pipe/1e0b1c2097f3_api-financeirax01/stdout_4665dbb8b2b74be1b15c355d51caea42.
+2026-06-03T21:06:37.5029271+00:00 ContainerStatus: Successfully created stdout named pipe at: /podr/container/pipe/1e0b1c2097f3_api-financeirax01/stdout_4665dbb8b2b74be1b15c355d51caea42.
+2026-06-03T21:06:37.5030423+00:00 ContainerStatus: Opening named pipe /podr/container/pipe/1e0b1c2097f3_api-financeirax01/stdout_4665dbb8b2b74be1b15c355d51caea42 for reading in non-blocking mode.
+2026-06-03T21:06:37.5031702+00:00 ContainerStatus: Successfully opened named pipe: /podr/container/pipe/1e0b1c2097f3_api-financeirax01/stdout_4665dbb8b2b74be1b15c355d51caea42.
+2026-06-03T21:06:37.5032866+00:00 ContainerStatus: Successfully removed non-blocking flag from /podr/container/pipe/1e0b1c2097f3_api-financeirax01/stdout_4665dbb8b2b74be1b15c355d51caea42.
+2026-06-03T21:06:37.5131685+00:00 ContainerStatus: Creating stderr named pipe at /podr/container/pipe/1e0b1c2097f3_api-financeirax01/stderr_b689ae4653f94219adf29845a6c07421.
+2026-06-03T21:06:37.5134031+00:00 ContainerStatus: Successfully created stderr named pipe at: /podr/container/pipe/1e0b1c2097f3_api-financeirax01/stderr_b689ae4653f94219adf29845a6c07421.
+2026-06-03T21:06:37.5136286+00:00 ContainerStatus: Opening named pipe /podr/container/pipe/1e0b1c2097f3_api-financeirax01/stderr_b689ae4653f94219adf29845a6c07421 for reading in non-blocking mode.
+2026-06-03T21:06:37.5137756+00:00 ContainerStatus: Successfully opened named pipe: /podr/container/pipe/1e0b1c2097f3_api-financeirax01/stderr_b689ae4653f94219adf29845a6c07421.
+2026-06-03T21:06:37.5138826+00:00 ContainerStatus: Successfully removed non-blocking flag from /podr/container/pipe/1e0b1c2097f3_api-financeirax01/stderr_b689ae4653f94219adf29845a6c07421.
+2026-06-03T21:06:37.5171592+00:00 ContainerStatus: Overriding PORT environment variable with port exposed by container image.
+2026-06-03T21:06:37.5465897+00:00 ContainerStatus: Container image exposes ports: ContainerExposedPort { Port = 80, Protocol = TCP }. Sanitized list of ports is: 80. Resolved main port to 80.
+2026-06-03T21:06:37.5467806+00:00 ContainerStatus: Setting value of PORT variable to 80
+2026-06-03T21:06:37.5476865+00:00 ContainerStatus: Creating container with image: acrcallcenter100.azurecr.io/api-app:latest from registry: acrcallcenter100.azurecr.io and fully qualified image name: acrcallcenter100.azurecr.io/api-app:latest
+2026-06-03T21:06:37.7890651+00:00 ContainerStatus: Starting container: 1e0b1c2097f3_api-financeirax01.
+2026-06-03T21:06:37.8091977+00:00 ContainerStatus: Starting watchers and probes.
+2026-06-03T21:06:37.8106778+00:00 ContainerStatus: Starting metrics collection.
+2026-06-03T21:06:37.8109022+00:00 ContainerStatus: Container is running.
+2026-06-03T21:06:37.8120709+00:00 ContainerStatus: State: Starting, Action: CreatingContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container api-financeirax01 successfully created and is running., DetailsLevel: INFO
+2026-06-03T21:06:37.8336744+00:00 ContainerStatus: Container start method finished after 482 ms.
+2026-06-03T21:06:37.8341464+00:00 ContainerStatus: State: Starting, Action: InitiatingSiteWarmUpProbe, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Container api-financeirax01 successfully created and is running., DetailsLevel: INFO
+2026-06-03T21:06:37.8341808+00:00 ContainerStatus: State: Starting, Action: WaitingForSiteWarmUpProbeSuccess, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pinging warmup path to ensure container is ready to receive requests., DetailsLevel: INFO
+2026-06-03T21:06:40.7488103+00:00 ContainerStream: INFO:     169.254.130.1:15191 - "GET /health HTTP/1.1" 200 OK
+2026-06-03T21:06:43.1662347+00:00 ContainerStream: WARNING:root:No Application Insights Instrumentation Key found. Skipping configuration
+2026-06-03T21:06:43.3179786+00:00 ContainerStream: WARNING:root:No Application Insights Instrumentation Key found. Skipping configuration
+2026-06-03T21:06:43.3917409+00:00 ContainerStream: INFO:     Started server process [1]
+2026-06-03T21:06:43.3932585+00:00 ContainerStream: INFO:     Waiting for application startup.
+2026-06-03T21:06:43.4015760+00:00 ContainerStream: INFO:azure.identity.aio._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity with client_id: e445e544-9d78-419d-8597-1c5ac4c7e073
+2026-06-03T21:06:44.9785545+00:00 ContainerStream: INFO:azure.identity._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity with client_id: e445e544-9d78-419d-8597-1c5ac4c7e073
+2026-06-03T21:06:45.0986616+00:00 ContainerStream: INFO:azure.identity._internal.msal_managed_identity_client:AppServiceCredential.get_token_info succeeded
+2026-06-03T21:06:45.0991849+00:00 ContainerStream: INFO:azure.identity._internal.decorators:ManagedIdentityCredential.get_token_info succeeded
+2026-06-03T21:06:46.2201711+00:00 ContainerStream: INFO:azure.identity._internal.msal_managed_identity_client:AppServiceCredential.get_token_info succeeded
+2026-06-03T21:06:46.2203099+00:00 ContainerStream: INFO:azure.identity._internal.decorators:ManagedIdentityCredential.get_token_info succeeded
+2026-06-03T21:06:46.7283515+00:00 ContainerStream: INFO:azure.identity._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity with client_id: e445e544-9d78-419d-8597-1c5ac4c7e073
+2026-06-03T21:06:46.7482456+00:00 ContainerStream: INFO:azure.identity._internal.msal_managed_identity_client:AppServiceCredential.get_token_info succeeded
+2026-06-03T21:06:46.7499125+00:00 ContainerStream: INFO:azure.identity._internal.decorators:ManagedIdentityCredential.get_token_info succeeded
+2026-06-03T21:06:47.1376907+00:00 ContainerStream: INFO:azure.identity._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity with client_id: e445e544-9d78-419d-8597-1c5ac4c7e073
+2026-06-03T21:06:47.1573301+00:00 ContainerStream: INFO:azure.identity._internal.msal_managed_identity_client:AppServiceCredential.get_token_info succeeded
+2026-06-03T21:06:47.1573793+00:00 ContainerStream: INFO:azure.identity._internal.decorators:ManagedIdentityCredential.get_token_info succeeded
+2026-06-03T21:06:47.9756523+00:00 ContainerStream: INFO:     Application startup complete.
+2026-06-03T21:06:47.9761162+00:00 ContainerStream: INFO:     Uvicorn running on http://0.0.0.0:80 (Press CTRL+C to quit)
+2026-06-03T21:06:48.8535235+00:00 ContainerStream: INFO:     169.254.130.1:11807 - "GET /robots933456.txt HTTP/1.1" 404 Not Found
+2026-06-03T21:06:48.8555364+00:00 ContainerStatus: Site startup probe succeeded after 11.0207761 seconds.
+2026-06-03T21:06:48.9320638+00:00 ContainerStatus: State: Starting, Action: WarmUpProbeSucceeded, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site startup probe succeeded after 11.0207761 seconds., DetailsLevel: INFO
+2026-06-03T21:06:49.1189159+00:00 ContainerStatus: Site started.
+2026-06-03T21:06:49.1191568+00:00 ContainerStatus: State: Started, Action: None, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 06/03/2026 21:06:49 (UTC), DetailsLevel: INFO

@@ -22,6 +22,29 @@ def _group_records(df, group_columns, value_columns):
     return grouped_records
 
 
+def _build_topic_filter(where_clause, table_context='processed_data'):
+    """
+    Builds topic filter clause for different table schemas.
+    
+    Args:
+        where_clause: The base where clause (with 'mined_topic' references)
+        table_context: Either 'processed_data' (uses 'mined_topic') or 'key_phrases' (uses 'topic')
+    
+    Returns:
+        Modified where_clause with correct column names for the target table
+    
+    Ref: Issue #41 - Ensure topic filter applies consistently across all dashboard frames
+    """
+    if not where_clause:
+        return where_clause
+    
+    if table_context == 'key_phrases':
+        # processed_data_key_phrases table uses 'topic' column instead of 'mined_topic'
+        return where_clause.replace('mined_topic', 'topic')
+    
+    return where_clause  # processed_data uses 'mined_topic' by default
+
+
 async def get_db_connection():
     """Get a connection to the SQL database"""
     config = Config()
@@ -304,7 +327,10 @@ async def fetch_chart_data(chart_filters: ChartFilters = ''):
         else:
             result2 = []
 
-        where_clause = where_clause.replace('mined_topic', 'topic')
+        # Build where clause for key_phrases table (uses 'topic' column instead of 'mined_topic')
+        # Ref: Issue #41 - Ensure topic filter applies consistently to Key Phrases frame
+        key_phrases_where_clause = _build_topic_filter(where_clause, table_context='key_phrases')
+        
         sql_stmt = f'''select top 15 key_phrase as text,
             'KEY_PHRASES' as id, 'Key Phrases' as chart_name, 'wordcloud' as chart_type,
             call_frequency as size, lower(average_sentiment) as average_sentiment from
@@ -315,7 +341,7 @@ async def fetch_chart_data(chart_filters: ChartFilters = ''):
                 COUNT(*) AS call_frequency from
                 (
                     select key_phrase, sentiment from [dbo].[processed_data_key_phrases]
-                    {where_clause}
+                    {key_phrases_where_clause}
                 ) t
                 GROUP BY key_phrase, sentiment
                 ORDER BY ROW_NUMBER() OVER (PARTITION BY key_phrase ORDER BY COUNT(*) DESC)

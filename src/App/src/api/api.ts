@@ -122,6 +122,16 @@ const tokenize = (value: string) =>
     .map((x) => x.trim())
     .filter((x) => !!x && !["and", "de", "da", "do", "the", "of"].includes(x));
 
+const tokenLooselyMatches = (left: string, right: string) => {
+  if (left === right) {
+    return true;
+  }
+  if (left.length < 4 || right.length < 4) {
+    return false;
+  }
+  return left.startsWith(right) || right.startsWith(left);
+};
+
 // Billing Issues is a restricted topic — never expose it in client-side fallbacks
 // since we cannot check user roles without a server call.
 const RESTRICTED_TOPIC_FALLBACK = "Billing Issues";
@@ -300,7 +310,41 @@ const buildFallbackFilteredCharts = (bodyData: any) => {
   const wordCloudRows = Array.isArray(wordCloudChartValues)
     ? [...wordCloudChartValues]
     : [];
+  const wordCloudMatchesSelection = (phraseText: string) => {
+    if (selectedTopics.size === 0) {
+      return true;
+    }
+
+    const normalizedPhrase = normalizeToken(phraseText);
+    if (
+      selectedTopics.has(normalizedPhrase) ||
+      selectedTopics.has(slugify(normalizedPhrase))
+    ) {
+      return true;
+    }
+
+    const phraseTokens = new Set(tokenize(phraseText));
+    if (phraseTokens.size === 0) {
+      return false;
+    }
+
+    const phraseTokenArray = Array.from(phraseTokens);
+    return selectedTopicTokenSets.some(
+      (tokens) =>
+        tokens.length > 0 &&
+        tokens.some((topicToken) =>
+          phraseTokenArray.some((phraseToken) =>
+            tokenLooselyMatches(topicToken, phraseToken)
+          )
+        )
+    );
+  };
+
   const filteredWordCloudRows = wordCloudRows.filter((row: any) => {
+    const topicMatch = wordCloudMatchesSelection(String(row?.text || ""));
+    if (!topicMatch) {
+      return false;
+    }
     if (includesAllSentiments) {
       return true;
     }

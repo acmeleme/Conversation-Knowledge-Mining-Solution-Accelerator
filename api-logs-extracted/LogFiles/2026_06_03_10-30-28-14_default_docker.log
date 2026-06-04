@@ -1,0 +1,300 @@
+2026-06-03T21:03:44.5843502Z WARNING:root:No Application Insights Instrumentation Key found. Skipping configuration
+2026-06-03T21:03:44.6840698Z WARNING:root:No Application Insights Instrumentation Key found. Skipping configuration
+2026-06-03T21:03:44.7266387Z INFO:     Started server process [1]
+2026-06-03T21:03:44.7267433Z INFO:     Waiting for application startup.
+2026-06-03T21:03:44.7364705Z INFO:azure.identity.aio._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity with client_id: e445e544-9d78-419d-8597-1c5ac4c7e073
+2026-06-03T21:03:46.8298792Z INFO:azure.identity._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity with client_id: e445e544-9d78-419d-8597-1c5ac4c7e073
+2026-06-03T21:03:46.8590399Z INFO:azure.identity._internal.msal_managed_identity_client:AppServiceCredential.get_token_info succeeded
+2026-06-03T21:03:46.8597932Z INFO:azure.identity._internal.decorators:ManagedIdentityCredential.get_token_info succeeded
+2026-06-03T21:04:05.8953933Z INFO:azure.identity._internal.msal_managed_identity_client:AppServiceCredential.get_token_info succeeded
+2026-06-03T21:04:05.8954709Z INFO:azure.identity._internal.decorators:ManagedIdentityCredential.get_token_info succeeded
+2026-06-03T21:04:06.4357589Z INFO:azure.identity._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity with client_id: e445e544-9d78-419d-8597-1c5ac4c7e073
+2026-06-03T21:04:06.4530091Z INFO:azure.identity._internal.msal_managed_identity_client:AppServiceCredential.get_token_info succeeded
+2026-06-03T21:04:06.4530550Z INFO:azure.identity._internal.decorators:ManagedIdentityCredential.get_token_info succeeded
+2026-06-03T21:04:06.9865856Z INFO:azure.identity._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity with client_id: e445e544-9d78-419d-8597-1c5ac4c7e073
+2026-06-03T21:04:07.0078635Z INFO:azure.identity._internal.msal_managed_identity_client:AppServiceCredential.get_token_info succeeded
+2026-06-03T21:04:07.0082104Z INFO:azure.identity._internal.decorators:ManagedIdentityCredential.get_token_info succeeded
+2026-06-03T21:04:07.4732876Z INFO:     Application startup complete.
+2026-06-03T21:04:07.4746739Z INFO:     Uvicorn running on http://0.0.0.0:80 (Press CTRL+C to quit)
+2026-06-03T21:04:08.3600136Z INFO:     169.254.130.1:43529 - "GET /robots933456.txt HTTP/1.1" 404 Not Found
+2026-06-03T21:04:08.6378078Z INFO:     169.254.130.1:33179 - "GET / HTTP/1.1" 404 Not Found
+2026-06-03T21:04:08.6384461Z INFO:     169.254.130.1:33177 - "GET /health HTTP/1.1" 200 OK
+2026-06-03T21:04:08.6516197Z INFO:     169.254.130.1:33177 - "GET / HTTP/1.1" 404 Not Found
+2026-06-03T21:04:31.7778323Z INFO:     169.254.130.1:61393 - "GET /health HTTP/1.1" 200 OK
+2026-06-03T21:04:32.2991445Z INFO:     169.254.130.1:61393 - "GET /health HTTP/1.1" 200 OK
+2026-06-03T21:04:32.7466476Z INFO:auth.auth_utils:x-ms-client-principal header not present; defaulting to callcenter role for development.
+2026-06-03T21:04:32.7481773Z INFO:azure.identity.aio._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity with client_id: 6d9e9bfa-604d-4ad9-a61a-bb4dd4cb5c70
+2026-06-03T21:04:32.7677819Z WARNING:azure.identity.aio._internal.get_token_mixin:AppServiceCredential.get_token failed: (None) No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-03T21:04:32.7678226Z Code: None
+2026-06-03T21:04:32.7678272Z Message: No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-03T21:04:32.7678659Z WARNING:azure.identity.aio._internal.decorators:ManagedIdentityCredential.get_token failed: (None) No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-03T21:04:32.7678691Z Code: None
+2026-06-03T21:04:32.7678747Z Message: No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-03T21:04:32.7691115Z INFO:azure.identity.aio._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity
+2026-06-03T21:04:33.5648609Z ERROR:root:Failed with Azure Credential: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-03T21:04:33.5694583Z ERROR:services.chart_service:Error in fetch_filter_data_for_roles: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-03T21:04:33.5695024Z Traceback (most recent call last):
+2026-06-03T21:04:33.5695072Z   File "/app/services/chart_service.py", line 39, in fetch_filter_data_for_roles
+2026-06-03T21:04:33.5695103Z     await adjust_processed_data_dates()
+2026-06-03T21:04:33.5695135Z   File "/app/common/database/sqldb_service.py", line 97, in adjust_processed_data_dates
+2026-06-03T21:04:33.5695191Z     conn = await get_db_connection()
+2026-06-03T21:04:33.5695221Z            ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-03T21:04:33.5695252Z   File "/app/common/database/sqldb_service.py", line 76, in get_db_connection
+2026-06-03T21:04:33.5695280Z     raise last_exc
+2026-06-03T21:04:33.5695607Z   File "/app/common/database/sqldb_service.py", line 61, in get_db_connection
+2026-06-03T21:04:33.5695641Z     conn = pyodbc.connect(
+2026-06-03T21:04:33.5695671Z            ^^^^^^^^^^^^^^^
+2026-06-03T21:04:33.5695878Z pyodbc.ProgrammingError: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-03T21:04:33.5755424Z ERROR:api.api_routes:Error in fetch_filter_data: 500: An error occurred while fetching role-filtered filter data.
+2026-06-03T21:04:33.5756339Z Traceback (most recent call last):
+2026-06-03T21:04:33.5756391Z   File "/app/services/chart_service.py", line 39, in fetch_filter_data_for_roles
+2026-06-03T21:04:33.5756425Z     await adjust_processed_data_dates()
+2026-06-03T21:04:33.5756460Z   File "/app/common/database/sqldb_service.py", line 97, in adjust_processed_data_dates
+2026-06-03T21:04:33.5756490Z     conn = await get_db_connection()
+2026-06-03T21:04:33.5756517Z            ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-03T21:04:33.5756549Z   File "/app/common/database/sqldb_service.py", line 76, in get_db_connection
+2026-06-03T21:04:33.5756577Z     raise last_exc
+2026-06-03T21:04:33.5756608Z   File "/app/common/database/sqldb_service.py", line 61, in get_db_connection
+2026-06-03T21:04:33.5756637Z     conn = pyodbc.connect(
+2026-06-03T21:04:33.5756665Z            ^^^^^^^^^^^^^^^
+2026-06-03T21:04:33.5756721Z pyodbc.ProgrammingError: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-03T21:04:33.5756747Z 
+2026-06-03T21:04:33.5756778Z During handling of the above exception, another exception occurred:
+2026-06-03T21:04:33.5756803Z 
+2026-06-03T21:04:33.5756831Z Traceback (most recent call last):
+2026-06-03T21:04:33.5756872Z   File "/app/api/api_routes.py", line 230, in fetch_filter_data
+2026-06-03T21:04:33.5756903Z     response = await chart_service.fetch_filter_data_for_roles(roles)
+2026-06-03T21:04:33.5756931Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-03T21:04:33.5756962Z   File "/app/services/chart_service.py", line 71, in fetch_filter_data_for_roles
+2026-06-03T21:04:33.5757007Z     raise HTTPException(
+2026-06-03T21:04:33.5757040Z fastapi.exceptions.HTTPException: 500: An error occurred while fetching role-filtered filter data.
+2026-06-03T21:04:33.5781629Z INFO:     169.254.130.1:61393 - "GET /api/fetchFilterData HTTP/1.1" 500 Internal Server Error
+2026-06-03T21:04:34.0623460Z INFO:api.api_routes:Request from user: anonymous (route=/fetchChartData)
+2026-06-03T21:04:34.0623874Z INFO:azure.identity.aio._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity with client_id: 6d9e9bfa-604d-4ad9-a61a-bb4dd4cb5c70
+2026-06-03T21:04:34.0729254Z WARNING:azure.identity.aio._internal.get_token_mixin:AppServiceCredential.get_token failed: (None) No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-03T21:04:34.0729569Z Code: None
+2026-06-03T21:04:34.0729614Z Message: No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-03T21:04:34.0736582Z WARNING:azure.identity.aio._internal.decorators:ManagedIdentityCredential.get_token failed: (None) No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-03T21:04:34.0736704Z Code: None
+2026-06-03T21:04:34.0736746Z Message: No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-03T21:04:34.0737675Z INFO:azure.identity.aio._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity
+2026-06-03T21:04:34.4539900Z ERROR:root:Failed with Azure Credential: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-03T21:04:34.4554472Z ERROR:services.chart_service:Error in fetch_chart_data: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-03T21:04:34.4554928Z Traceback (most recent call last):
+2026-06-03T21:04:34.4554967Z   File "/app/services/chart_service.py", line 81, in fetch_chart_data
+2026-06-03T21:04:34.4554994Z     return await fetch_chart_data()
+2026-06-03T21:04:34.4555020Z            ^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-03T21:04:34.4555048Z   File "/app/common/database/sqldb_service.py", line 190, in fetch_chart_data
+2026-06-03T21:04:34.4555073Z     conn = await get_db_connection()
+2026-06-03T21:04:34.4555168Z            ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-03T21:04:34.4555200Z   File "/app/common/database/sqldb_service.py", line 76, in get_db_connection
+2026-06-03T21:04:34.4555227Z     raise last_exc
+2026-06-03T21:04:34.4555255Z   File "/app/common/database/sqldb_service.py", line 61, in get_db_connection
+2026-06-03T21:04:34.4555281Z     conn = pyodbc.connect(
+2026-06-03T21:04:34.4555307Z            ^^^^^^^^^^^^^^^
+2026-06-03T21:04:34.4555346Z pyodbc.ProgrammingError: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-03T21:04:34.4564499Z ERROR:api.api_routes:Error in fetch_chart_data: 500: An error occurred while fetching chart data.
+2026-06-03T21:04:34.4564623Z Traceback (most recent call last):
+2026-06-03T21:04:34.4564663Z   File "/app/services/chart_service.py", line 81, in fetch_chart_data
+2026-06-03T21:04:34.4564721Z     return await fetch_chart_data()
+2026-06-03T21:04:34.4564757Z            ^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-03T21:04:34.4564791Z   File "/app/common/database/sqldb_service.py", line 190, in fetch_chart_data
+2026-06-03T21:04:34.4564830Z     conn = await get_db_connection()
+2026-06-03T21:04:34.4564859Z            ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-03T21:04:34.4564894Z   File "/app/common/database/sqldb_service.py", line 76, in get_db_connection
+2026-06-03T21:04:34.4564924Z     raise last_exc
+2026-06-03T21:04:34.4564958Z   File "/app/common/database/sqldb_service.py", line 61, in get_db_connection
+2026-06-03T21:04:34.4564987Z     conn = pyodbc.connect(
+2026-06-03T21:04:34.4565014Z            ^^^^^^^^^^^^^^^
+2026-06-03T21:04:34.4565075Z pyodbc.ProgrammingError: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-03T21:04:34.4565107Z 
+2026-06-03T21:04:34.4565138Z During handling of the above exception, another exception occurred:
+2026-06-03T21:04:34.4565166Z 
+2026-06-03T21:04:34.4565193Z Traceback (most recent call last):
+2026-06-03T21:04:34.4565221Z   File "/app/api/api_routes.py", line 170, in fetch_chart_data
+2026-06-03T21:04:34.4565249Z     response = await chart_service.fetch_chart_data()
+2026-06-03T21:04:34.4565277Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-03T21:04:34.4565306Z   File "/app/services/chart_service.py", line 84, in fetch_chart_data
+2026-06-03T21:04:34.4565333Z     raise HTTPException(
+2026-06-03T21:04:34.4565361Z fastapi.exceptions.HTTPException: 500: An error occurred while fetching chart data.
+2026-06-03T21:04:34.4580942Z INFO:     169.254.130.1:61393 - "GET /api/fetchChartData HTTP/1.1" 500 Internal Server Error
+2026-06-03T21:04:34.9202791Z INFO:     169.254.130.1:61393 - "POST /api/chat HTTP/1.1" 400 Bad Request
+2026-06-03T21:04:35.3566749Z INFO:     169.254.130.1:61393 - "OPTIONS /health HTTP/1.1" 405 Method Not Allowed
+2026-06-03T21:04:35.7889867Z INFO:     169.254.130.1:61393 - "GET /health HTTP/1.1" 200 OK
+2026-06-03T21:05:11.0746722Z INFO:auth.auth_utils:x-ms-client-principal header not present; defaulting to callcenter role for development.
+2026-06-03T21:05:11.0749049Z INFO:azure.identity.aio._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity with client_id: 6d9e9bfa-604d-4ad9-a61a-bb4dd4cb5c70
+2026-06-03T21:05:11.0813992Z WARNING:azure.identity.aio._internal.get_token_mixin:AppServiceCredential.get_token failed: (None) No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-03T21:05:11.0814264Z Code: None
+2026-06-03T21:05:11.0814311Z Message: No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-03T21:05:11.0814349Z WARNING:azure.identity.aio._internal.decorators:ManagedIdentityCredential.get_token failed: (None) No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-03T21:05:11.0814379Z Code: None
+2026-06-03T21:05:11.0814409Z Message: No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-03T21:05:11.0835739Z INFO:azure.identity.aio._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity
+2026-06-03T21:05:11.4724037Z ERROR:root:Failed with Azure Credential: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-03T21:05:11.4757851Z ERROR:services.chart_service:Error in fetch_filter_data_for_roles: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-03T21:05:11.4758121Z Traceback (most recent call last):
+2026-06-03T21:05:11.4758161Z   File "/app/services/chart_service.py", line 39, in fetch_filter_data_for_roles
+2026-06-03T21:05:11.4758190Z     await adjust_processed_data_dates()
+2026-06-03T21:05:11.4758222Z   File "/app/common/database/sqldb_service.py", line 97, in adjust_processed_data_dates
+2026-06-03T21:05:11.4758249Z     conn = await get_db_connection()
+2026-06-03T21:05:11.4758276Z            ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-03T21:05:11.4758331Z   File "/app/common/database/sqldb_service.py", line 76, in get_db_connection
+2026-06-03T21:05:11.4758360Z     raise last_exc
+2026-06-03T21:05:11.4758390Z   File "/app/common/database/sqldb_service.py", line 61, in get_db_connection
+2026-06-03T21:05:11.4758418Z     conn = pyodbc.connect(
+2026-06-03T21:05:11.4758446Z            ^^^^^^^^^^^^^^^
+2026-06-03T21:05:11.4758488Z pyodbc.ProgrammingError: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-03T21:05:11.4758519Z ERROR:api.api_routes:Error in fetch_filter_data: 500: An error occurred while fetching role-filtered filter data.
+2026-06-03T21:05:11.4758548Z Traceback (most recent call last):
+2026-06-03T21:05:11.4758578Z   File "/app/services/chart_service.py", line 39, in fetch_filter_data_for_roles
+2026-06-03T21:05:11.4758608Z     await adjust_processed_data_dates()
+2026-06-03T21:05:11.4758652Z   File "/app/common/database/sqldb_service.py", line 97, in adjust_processed_data_dates
+2026-06-03T21:05:11.4758682Z     conn = await get_db_connection()
+2026-06-03T21:05:11.4758710Z            ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-03T21:05:11.4758742Z   File "/app/common/database/sqldb_service.py", line 76, in get_db_connection
+2026-06-03T21:05:11.4758767Z     raise last_exc
+2026-06-03T21:05:11.4758794Z   File "/app/common/database/sqldb_service.py", line 61, in get_db_connection
+2026-06-03T21:05:11.4758826Z     conn = pyodbc.connect(
+2026-06-03T21:05:11.4758853Z            ^^^^^^^^^^^^^^^
+2026-06-03T21:05:11.4758848Z INFO:     169.254.130.1:52539 - "GET /api/fetchFilterData HTTP/1.1" 500 Internal Server Error
+2026-06-03T21:05:11.4758893Z pyodbc.ProgrammingError: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-03T21:05:11.4758917Z 
+2026-06-03T21:05:11.4758963Z During handling of the above exception, another exception occurred:
+2026-06-03T21:05:11.4758995Z 
+2026-06-03T21:05:11.4759026Z Traceback (most recent call last):
+2026-06-03T21:05:11.4759060Z   File "/app/api/api_routes.py", line 230, in fetch_filter_data
+2026-06-03T21:05:11.4759094Z     response = await chart_service.fetch_filter_data_for_roles(roles)
+2026-06-03T21:05:11.4759141Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-03T21:05:11.4759175Z   File "/app/services/chart_service.py", line 71, in fetch_filter_data_for_roles
+2026-06-03T21:05:11.4759208Z     raise HTTPException(
+2026-06-03T21:05:11.4759252Z fastapi.exceptions.HTTPException: 500: An error occurred while fetching role-filtered filter data.
+2026-06-03T21:05:12.2597780Z INFO:     169.254.130.1:52539 - "POST /api/chat HTTP/1.1" 400 Bad Request
+2026-06-03T21:06:40.7488103Z INFO:     169.254.130.1:15191 - "GET /health HTTP/1.1" 200 OK
+2026-06-03T21:06:43.1662347Z WARNING:root:No Application Insights Instrumentation Key found. Skipping configuration
+2026-06-03T21:06:43.3179786Z WARNING:root:No Application Insights Instrumentation Key found. Skipping configuration
+2026-06-03T21:06:43.3917409Z INFO:     Started server process [1]
+2026-06-03T21:06:43.3932585Z INFO:     Waiting for application startup.
+2026-06-03T21:06:43.4015760Z INFO:azure.identity.aio._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity with client_id: e445e544-9d78-419d-8597-1c5ac4c7e073
+2026-06-03T21:06:44.9785545Z INFO:azure.identity._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity with client_id: e445e544-9d78-419d-8597-1c5ac4c7e073
+2026-06-03T21:06:45.0986616Z INFO:azure.identity._internal.msal_managed_identity_client:AppServiceCredential.get_token_info succeeded
+2026-06-03T21:06:45.0991849Z INFO:azure.identity._internal.decorators:ManagedIdentityCredential.get_token_info succeeded
+2026-06-03T21:06:46.2201711Z INFO:azure.identity._internal.msal_managed_identity_client:AppServiceCredential.get_token_info succeeded
+2026-06-03T21:06:46.2203099Z INFO:azure.identity._internal.decorators:ManagedIdentityCredential.get_token_info succeeded
+2026-06-03T21:06:46.7283515Z INFO:azure.identity._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity with client_id: e445e544-9d78-419d-8597-1c5ac4c7e073
+2026-06-03T21:06:46.7482456Z INFO:azure.identity._internal.msal_managed_identity_client:AppServiceCredential.get_token_info succeeded
+2026-06-03T21:06:46.7499125Z INFO:azure.identity._internal.decorators:ManagedIdentityCredential.get_token_info succeeded
+2026-06-03T21:06:47.1376907Z INFO:azure.identity._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity with client_id: e445e544-9d78-419d-8597-1c5ac4c7e073
+2026-06-03T21:06:47.1573301Z INFO:azure.identity._internal.msal_managed_identity_client:AppServiceCredential.get_token_info succeeded
+2026-06-03T21:06:47.1573793Z INFO:azure.identity._internal.decorators:ManagedIdentityCredential.get_token_info succeeded
+2026-06-03T21:06:47.9756523Z INFO:     Application startup complete.
+2026-06-03T21:06:47.9761162Z INFO:     Uvicorn running on http://0.0.0.0:80 (Press CTRL+C to quit)
+2026-06-03T21:06:48.8535235Z INFO:     169.254.130.1:11807 - "GET /robots933456.txt HTTP/1.1" 404 Not Found
+2026-06-03T21:06:51.8214262Z [Previous Container] ERROR:services.foundry_memory_service:Azure AI Projects memory SDK surface is unavailable; Foundry memory integration is disabled.
+2026-06-03T21:06:51.8268626Z [Previous Container] WARNING:auth.auth_utils:Unable to decode x-ms-client-principal header: 'utf-8' codec can't decode byte 0xab in position 2: invalid start byte
+2026-06-03T21:06:51.8274435Z [Previous Container] WARNING:auth.auth_utils:Unable to decode x-ms-client-principal header: 'utf-8' codec can't decode byte 0xab in position 2: invalid start byte
+2026-06-03T21:06:51.8278288Z [Previous Container] INFO:     169.254.130.1:46649 - "GET /api/debug-state HTTP/1.1" 200 OK
+2026-06-03T21:07:00.0966083Z INFO:auth.auth_utils:x-ms-client-principal header not present; defaulting to callcenter role for development.
+2026-06-03T21:07:00.0973405Z INFO:azure.identity.aio._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity with client_id: 6d9e9bfa-604d-4ad9-a61a-bb4dd4cb5c70
+2026-06-03T21:07:00.1098812Z WARNING:azure.identity.aio._internal.get_token_mixin:AppServiceCredential.get_token failed: (None) No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-03T21:07:00.1099211Z Code: None
+2026-06-03T21:07:00.1099259Z Message: No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-03T21:07:00.1112864Z WARNING:azure.identity.aio._internal.decorators:ManagedIdentityCredential.get_token failed: (None) No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-03T21:07:00.1112983Z Code: None
+2026-06-03T21:07:00.1113020Z Message: No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-03T21:07:00.1122449Z INFO:azure.identity.aio._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity
+2026-06-03T21:07:00.7185697Z ERROR:root:Failed with Azure Credential: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-03T21:07:00.7235625Z ERROR:services.chart_service:Error in fetch_filter_data_for_roles: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-03T21:07:00.7235784Z Traceback (most recent call last):
+2026-06-03T21:07:00.7235827Z   File "/app/services/chart_service.py", line 39, in fetch_filter_data_for_roles
+2026-06-03T21:07:00.7235858Z     await adjust_processed_data_dates()
+2026-06-03T21:07:00.7235889Z   File "/app/common/database/sqldb_service.py", line 97, in adjust_processed_data_dates
+2026-06-03T21:07:00.7235958Z     conn = await get_db_connection()
+2026-06-03T21:07:00.7235990Z            ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-03T21:07:00.7236024Z   File "/app/common/database/sqldb_service.py", line 76, in get_db_connection
+2026-06-03T21:07:00.7236056Z     raise last_exc
+2026-06-03T21:07:00.7236094Z   File "/app/common/database/sqldb_service.py", line 61, in get_db_connection
+2026-06-03T21:07:00.7236125Z     conn = pyodbc.connect(
+2026-06-03T21:07:00.7236153Z            ^^^^^^^^^^^^^^^
+2026-06-03T21:07:00.7236197Z pyodbc.ProgrammingError: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-03T21:07:00.7236230Z ERROR:api.api_routes:Error in fetch_filter_data: 500: An error occurred while fetching role-filtered filter data.
+2026-06-03T21:07:00.7236269Z Traceback (most recent call last):
+2026-06-03T21:07:00.7236298Z   File "/app/services/chart_service.py", line 39, in fetch_filter_data_for_roles
+2026-06-03T21:07:00.7236325Z     await adjust_processed_data_dates()
+2026-06-03T21:07:00.7236361Z   File "/app/common/database/sqldb_service.py", line 97, in adjust_processed_data_dates
+2026-06-03T21:07:00.7236392Z     conn = await get_db_connection()
+2026-06-03T21:07:00.7236420Z            ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-03T21:07:00.7236451Z   File "/app/common/database/sqldb_service.py", line 76, in get_db_connection
+2026-06-03T21:07:00.7236480Z     raise last_exc
+2026-06-03T21:07:00.7236508Z   File "/app/common/database/sqldb_service.py", line 61, in get_db_connection
+2026-06-03T21:07:00.7236540Z     conn = pyodbc.connect(
+2026-06-03T21:07:00.7236585Z            ^^^^^^^^^^^^^^^
+2026-06-03T21:07:00.7236627Z pyodbc.ProgrammingError: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-03T21:07:00.7236654Z 
+2026-06-03T21:07:00.7236686Z During handling of the above exception, another exception occurred:
+2026-06-03T21:07:00.7236716Z 
+2026-06-03T21:07:00.7236744Z Traceback (most recent call last):
+2026-06-03T21:07:00.7236775Z   File "/app/api/api_routes.py", line 230, in fetch_filter_data
+2026-06-03T21:07:00.7236806Z     response = await chart_service.fetch_filter_data_for_roles(roles)
+2026-06-03T21:07:00.7236838Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-03T21:07:00.7236886Z   File "/app/services/chart_service.py", line 71, in fetch_filter_data_for_roles
+2026-06-03T21:07:00.7236913Z     raise HTTPException(
+2026-06-03T21:07:00.7236941Z fastapi.exceptions.HTTPException: 500: An error occurred while fetching role-filtered filter data.
+2026-06-03T21:07:00.7243992Z INFO:     169.254.130.1:44861 - "GET /api/fetchFilterData HTTP/1.1" 500 Internal Server Error
+2026-06-03T21:07:08.7090981Z INFO:auth.auth_utils:x-ms-client-principal header not present; defaulting to callcenter role for development.
+2026-06-03T21:07:08.7133830Z INFO:azure.identity.aio._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity with client_id: 6d9e9bfa-604d-4ad9-a61a-bb4dd4cb5c70
+2026-06-03T21:07:08.7255485Z WARNING:azure.identity.aio._internal.get_token_mixin:AppServiceCredential.get_token failed: (None) No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-03T21:07:08.7256072Z Code: None
+2026-06-03T21:07:08.7256179Z Message: No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-03T21:07:08.7324041Z WARNING:azure.identity.aio._internal.decorators:ManagedIdentityCredential.get_token failed: (None) No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-03T21:07:08.7324274Z Code: None
+2026-06-03T21:07:08.7324315Z Message: No User Assigned or Delegated Managed Identity found for specified ClientId/ResourceId/PrincipalId.
+2026-06-03T21:07:08.7324352Z INFO:azure.identity.aio._credentials.managed_identity:ManagedIdentityCredential will use App Service managed identity
+2026-06-03T21:07:09.3692950Z ERROR:root:Failed with Azure Credential: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-03T21:07:09.3780209Z ERROR:services.chart_service:Error in fetch_filter_data_for_roles: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-03T21:07:09.3780883Z Traceback (most recent call last):
+2026-06-03T21:07:09.3780930Z   File "/app/services/chart_service.py", line 39, in fetch_filter_data_for_roles
+2026-06-03T21:07:09.3781964Z     await adjust_processed_data_dates()
+2026-06-03T21:07:09.3782033Z   File "/app/common/database/sqldb_service.py", line 97, in adjust_processed_data_dates
+2026-06-03T21:07:09.3782063Z     conn = await get_db_connection()
+2026-06-03T21:07:09.3782090Z            ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-03T21:07:09.3782121Z   File "/app/common/database/sqldb_service.py", line 76, in get_db_connection
+2026-06-03T21:07:09.3782149Z     raise last_exc
+2026-06-03T21:07:09.3782177Z   File "/app/common/database/sqldb_service.py", line 61, in get_db_connection
+2026-06-03T21:07:09.3782205Z     conn = pyodbc.connect(
+2026-06-03T21:07:09.3782231Z            ^^^^^^^^^^^^^^^
+2026-06-03T21:07:09.3782307Z pyodbc.ProgrammingError: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-03T21:07:09.3917585Z ERROR:api.api_routes:Error in fetch_filter_data: 500: An error occurred while fetching role-filtered filter data.
+2026-06-03T21:07:09.3917845Z Traceback (most recent call last):
+2026-06-03T21:07:09.3917887Z   File "/app/services/chart_service.py", line 39, in fetch_filter_data_for_roles
+2026-06-03T21:07:09.3917920Z     await adjust_processed_data_dates()
+2026-06-03T21:07:09.3917951Z   File "/app/common/database/sqldb_service.py", line 97, in adjust_processed_data_dates
+2026-06-03T21:07:09.3917979Z     conn = await get_db_connection()
+2026-06-03T21:07:09.3918006Z            ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-03T21:07:09.3918035Z   File "/app/common/database/sqldb_service.py", line 76, in get_db_connection
+2026-06-03T21:07:09.3918063Z     raise last_exc
+2026-06-03T21:07:09.3918121Z   File "/app/common/database/sqldb_service.py", line 61, in get_db_connection
+2026-06-03T21:07:09.3918151Z     conn = pyodbc.connect(
+2026-06-03T21:07:09.3918178Z            ^^^^^^^^^^^^^^^
+2026-06-03T21:07:09.3918221Z pyodbc.ProgrammingError: ('42000', '[42000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Reason: An instance-specific error occurred while establishing a connection to SQL Server. Connection was denied because Deny Public Network Access is set to Yes. For more information, see https://go.microsoft.com/fwlink/?linkid=2323206. (47073) (SQLDriverConnect)')
+2026-06-03T21:07:09.3918248Z 
+2026-06-03T21:07:09.3918277Z During handling of the above exception, another exception occurred:
+2026-06-03T21:07:09.3918301Z 
+2026-06-03T21:07:09.3918328Z Traceback (most recent call last):
+2026-06-03T21:07:09.3918359Z   File "/app/api/api_routes.py", line 230, in fetch_filter_data
+2026-06-03T21:07:09.3918386Z     response = await chart_service.fetch_filter_data_for_roles(roles)
+2026-06-03T21:07:09.3918426Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-03T21:07:09.3918455Z   File "/app/services/chart_service.py", line 71, in fetch_filter_data_for_roles
+2026-06-03T21:07:09.3918482Z     raise HTTPException(
+2026-06-03T21:07:09.3918513Z fastapi.exceptions.HTTPException: 500: An error occurred while fetching role-filtered filter data.
+2026-06-03T21:07:09.3944726Z INFO:     169.254.130.1:36543 - "GET /api/fetchFilterData HTTP/1.1" 500 Internal Server Error
+2026-06-03T21:07:09.6909664Z [Previous Container] INFO:     Shutting down
+2026-06-03T21:07:09.7983912Z [Previous Container] INFO:     Waiting for application shutdown.
+2026-06-03T21:07:12.5332437Z [Previous Container] INFO:     Application shutdown complete.
+2026-06-03T21:07:12.5332881Z [Previous Container] INFO:     Finished server process [1]
+2026-06-03T21:07:13.6551669Z [Previous Container] ERROR:asyncio:Unclosed client session
+2026-06-03T21:07:13.6561762Z [Previous Container] client_session: <aiohttp.client.ClientSession object at 0x749cdd997910>
+2026-06-03T21:07:13.6797042Z [Previous Container] ERROR:asyncio:Unclosed connector
+2026-06-03T21:07:13.6797877Z [Previous Container] connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x749cdc46c360>, 3222.969680057)])']
+2026-06-03T21:07:13.6797992Z [Previous Container] connector: <aiohttp.connector.TCPConnector object at 0x749cdd712e90>
+2026-06-03T21:07:13.6808097Z [Previous Container] ERROR:asyncio:Unclosed client session
+2026-06-03T21:07:13.6808222Z [Previous Container] client_session: <aiohttp.client.ClientSession object at 0x749cdd4f5f90>

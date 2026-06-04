@@ -1,0 +1,125 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.13, pytest-8.4.2, pluggy-1.6.0 -- C:\Users\rodrigoleme\OneDrive - Microsoft\Documents\AnoFiscal2026\demos\Conversation-Knowledge-Mining-Solution-Accelerator\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+metadata: {'Python': '3.13.13', 'Platform': 'Windows-11-10.0.26200-SP0', 'Packages': {'pytest': '8.4.2', 'pluggy': '1.6.0'}, 'Plugins': {'anyio': '4.13.0', 'asyncio': '1.2.0', 'base-url': '2.1.0', 'check': '2.8.0', 'cov': '7.0.0', 'html': '4.2.0', 'metadata': '3.1.1', 'playwright': '0.8.0', 'reporter': '0.5.3', 'reporter-html1': '0.9.5'}, 'Base URL': ''}
+rootdir: C:\Users\rodrigoleme\OneDrive - Microsoft\Documents\AnoFiscal2026\demos\Conversation-Knowledge-Mining-Solution-Accelerator\tests\e2e-test
+configfile: pytest.ini
+plugins: anyio-4.13.0, asyncio-1.2.0, base-url-2.1.0, check-2.8.0, cov-7.0.0, html-4.2.0, metadata-3.1.1, playwright-0.8.0, reporter-0.5.3, reporter-html1-0.9.5
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 6 items
+
+tests/test_entra_auth_e2e.py::test_entra_auth_success_criteria[01. C1: App loads with Entra ID auth - no demo role selector visible] 
+-------------------------------- live log call --------------------------------
+INFO     tests.test_entra_auth_e2e:test_entra_auth_e2e.py:188 Running test step: C1: App loads with Entra ID auth - no demo role selector visible
+INFO     tests.test_entra_auth_e2e:test_entra_auth_e2e.py:196 Execution Time for 'C1: App loads with Entra ID auth - no demo role selector visible': 15.04s
+
+C1: App loads with Entra ID auth - no demo role selector visible FAILED  [ 16%]
+tests/test_entra_auth_e2e.py::test_entra_auth_success_criteria[02. C2: No 'Demo' label or text visible anywhere in the UI] 
+-------------------------------- live log call --------------------------------
+INFO     tests.test_entra_auth_e2e:test_entra_auth_e2e.py:188 Running test step: C2: No 'Demo' label or text visible anywhere in the UI
+INFO     tests.test_entra_auth_e2e:test_entra_auth_e2e.py:196 Execution Time for 'C2: No 'Demo' label or text visible anywhere in the UI': 15.23s
+
+C2: No 'Demo' label or text visible anywhere in the UI FAILED            [ 33%]
+tests/test_entra_auth_e2e.py::test_entra_auth_success_criteria[03. C3: Avatar click shows Entra ID user profile in popover] 
+-------------------------------- live log call --------------------------------
+INFO     tests.test_entra_auth_e2e:test_entra_auth_e2e.py:188 Running test step: C3: Avatar click shows Entra ID user profile in popover
+INFO     tests.test_entra_auth_e2e:test_entra_auth_e2e.py:196 Execution Time for 'C3: Avatar click shows Entra ID user profile in popover': 15.09s
+
+C3: Avatar click shows Entra ID user profile in popover FAILED           [ 50%]
+tests/test_entra_auth_e2e.py::test_entra_auth_success_criteria[04. C3b: Profile popover contains non-empty user name (not 'Dev Local' label)] 
+-------------------------------- live log call --------------------------------
+INFO     tests.test_entra_auth_e2e:test_entra_auth_e2e.py:188 Running test step: C3b: Profile popover contains non-empty user name (not 'Dev Local' label)
+INFO     tests.test_entra_auth_e2e:test_entra_auth_e2e.py:196 Execution Time for 'C3b: Profile popover contains non-empty user name (not 'Dev Local' label)': 15.22s
+
+C3b: Profile popover contains non-empty user name (not 'Dev Local' label) FAILED [ 66%]
+tests/test_entra_auth_e2e.py::test_entra_auth_success_criteria[05. C4: No 'Visitante' card on login screen - only Financeiro + Operador exist] 
+-------------------------------- live log call --------------------------------
+INFO     tests.test_entra_auth_e2e:test_entra_auth_e2e.py:188 Running test step: C4: No 'Visitante' card on login screen - only Financeiro + Operador exist
+INFO     tests.test_entra_auth_e2e:test_entra_auth_e2e.py:196 Execution Time for 'C4: No 'Visitante' card on login screen - only Financeiro + Operador exist': 15.24s
+
+C4: No 'Visitante' card on login screen - only Financeiro + Operador exist FAILED [ 83%]
+tests/test_entra_auth_e2e.py::test_entra_auth_success_criteria[06. C5: Access denied screen shows '\U0001f6ab Acesso Negado' and 'Sair' button (negative path)] 
+-------------------------------- live log call --------------------------------
+INFO     tests.test_entra_auth_e2e:test_entra_auth_e2e.py:188 Running test step: C5: Access denied screen shows '\U0001f6ab Acesso Negado' and 'Sair' button (negative path)\nINFO     tests.test_entra_auth_e2e:test_entra_auth_e2e.py:196 Execution Time for 'C5: Access denied screen shows '\U0001f6ab Acesso Negado' and 'Sair' button (negative path)': 15.12s\n
+C5: Access denied screen shows '\U0001f6ab Acesso Negado' and 'Sair' button (negative path) FAILED [100%]
+
+================================== FAILURES ===================================
+_ test_entra_auth_success_criteria[01. C1: App loads with Entra ID auth - no demo role selector visible] _
+tests\test_entra_auth_e2e.py:192: in test_entra_auth_success_criteria
+    auth.wait_for_app_loaded(timeout=15000)
+pages\authPage.py:47: in wait_for_app_loaded
+    raise AssertionError("Main application did not load within the expected timeout.")
+E   AssertionError: Main application did not load within the expected timeout.
+------------------------------ Captured log call ------------------------------
+Running test step: C1: App loads with Entra ID auth - no demo role selector visible
+Execution Time for 'C1: App loads with Entra ID auth - no demo role selector visible': 15.04s
+------------------------------ Captured log call ------------------------------
+INFO     tests.test_entra_auth_e2e:test_entra_auth_e2e.py:188 Running test step: C1: App loads with Entra ID auth - no demo role selector visible
+INFO     tests.test_entra_auth_e2e:test_entra_auth_e2e.py:196 Execution Time for 'C1: App loads with Entra ID auth - no demo role selector visible': 15.04s
+_ test_entra_auth_success_criteria[02. C2: No 'Demo' label or text visible anywhere in the UI] _
+tests\test_entra_auth_e2e.py:192: in test_entra_auth_success_criteria
+    auth.wait_for_app_loaded(timeout=15000)
+pages\authPage.py:47: in wait_for_app_loaded
+    raise AssertionError("Main application did not load within the expected timeout.")
+E   AssertionError: Main application did not load within the expected timeout.
+------------------------------ Captured log call ------------------------------
+Running test step: C2: No 'Demo' label or text visible anywhere in the UI
+Execution Time for 'C2: No 'Demo' label or text visible anywhere in the UI': 15.23s
+------------------------------ Captured log call ------------------------------
+INFO     tests.test_entra_auth_e2e:test_entra_auth_e2e.py:188 Running test step: C2: No 'Demo' label or text visible anywhere in the UI
+INFO     tests.test_entra_auth_e2e:test_entra_auth_e2e.py:196 Execution Time for 'C2: No 'Demo' label or text visible anywhere in the UI': 15.23s
+_ test_entra_auth_success_criteria[03. C3: Avatar click shows Entra ID user profile in popover] _
+tests\test_entra_auth_e2e.py:192: in test_entra_auth_success_criteria
+    auth.wait_for_app_loaded(timeout=15000)
+pages\authPage.py:47: in wait_for_app_loaded
+    raise AssertionError("Main application did not load within the expected timeout.")
+E   AssertionError: Main application did not load within the expected timeout.
+------------------------------ Captured log call ------------------------------
+Running test step: C3: Avatar click shows Entra ID user profile in popover
+Execution Time for 'C3: Avatar click shows Entra ID user profile in popover': 15.09s
+------------------------------ Captured log call ------------------------------
+INFO     tests.test_entra_auth_e2e:test_entra_auth_e2e.py:188 Running test step: C3: Avatar click shows Entra ID user profile in popover
+INFO     tests.test_entra_auth_e2e:test_entra_auth_e2e.py:196 Execution Time for 'C3: Avatar click shows Entra ID user profile in popover': 15.09s
+_ test_entra_auth_success_criteria[04. C3b: Profile popover contains non-empty user name (not 'Dev Local' label)] _
+tests\test_entra_auth_e2e.py:192: in test_entra_auth_success_criteria
+    auth.wait_for_app_loaded(timeout=15000)
+pages\authPage.py:47: in wait_for_app_loaded
+    raise AssertionError("Main application did not load within the expected timeout.")
+E   AssertionError: Main application did not load within the expected timeout.
+------------------------------ Captured log call ------------------------------
+Running test step: C3b: Profile popover contains non-empty user name (not 'Dev Local' label)
+Execution Time for 'C3b: Profile popover contains non-empty user name (not 'Dev Local' label)': 15.22s
+------------------------------ Captured log call ------------------------------
+INFO     tests.test_entra_auth_e2e:test_entra_auth_e2e.py:188 Running test step: C3b: Profile popover contains non-empty user name (not 'Dev Local' label)
+INFO     tests.test_entra_auth_e2e:test_entra_auth_e2e.py:196 Execution Time for 'C3b: Profile popover contains non-empty user name (not 'Dev Local' label)': 15.22s
+_ test_entra_auth_success_criteria[05. C4: No 'Visitante' card on login screen - only Financeiro + Operador exist] _
+tests\test_entra_auth_e2e.py:192: in test_entra_auth_success_criteria
+    auth.wait_for_app_loaded(timeout=15000)
+pages\authPage.py:47: in wait_for_app_loaded
+    raise AssertionError("Main application did not load within the expected timeout.")
+E   AssertionError: Main application did not load within the expected timeout.
+------------------------------ Captured log call ------------------------------
+Running test step: C4: No 'Visitante' card on login screen - only Financeiro + Operador exist
+Execution Time for 'C4: No 'Visitante' card on login screen - only Financeiro + Operador exist': 15.24s
+------------------------------ Captured log call ------------------------------
+INFO     tests.test_entra_auth_e2e:test_entra_auth_e2e.py:188 Running test step: C4: No 'Visitante' card on login screen - only Financeiro + Operador exist
+INFO     tests.test_entra_auth_e2e:test_entra_auth_e2e.py:196 Execution Time for 'C4: No 'Visitante' card on login screen - only Financeiro + Operador exist': 15.24s
+_ test_entra_auth_success_criteria[06. C5: Access denied screen shows '\U0001f6ab Acesso Negado' and 'Sair' button (negative path)] _
+tests\test_entra_auth_e2e.py:192: in test_entra_auth_success_criteria
+    auth.wait_for_app_loaded(timeout=15000)
+pages\authPage.py:47: in wait_for_app_loaded
+    raise AssertionError("Main application did not load within the expected timeout.")
+E   AssertionError: Main application did not load within the expected timeout.
+------------------------------ Captured log call ------------------------------
+Running test step: C5: Access denied screen shows '\U0001f6ab Acesso Negado' and 'Sair' button (negative path)\nExecution Time for 'C5: Access denied screen shows '\U0001f6ab Acesso Negado' and 'Sair' button (negative path)': 15.12s
+------------------------------ Captured log call ------------------------------
+INFO     tests.test_entra_auth_e2e:test_entra_auth_e2e.py:188 Running test step: C5: Access denied screen shows '\U0001f6ab Acesso Negado' and 'Sair' button (negative path)\nINFO     tests.test_entra_auth_e2e:test_entra_auth_e2e.py:196 Execution Time for 'C5: Access denied screen shows '\U0001f6ab Acesso Negado' and 'Sair' button (negative path)': 15.12s
+=========================== short test summary info ===========================
+FAILED C1: App loads with Entra ID auth - no demo role selector visible - Ass...
+FAILED C2: No 'Demo' label or text visible anywhere in the UI - AssertionErro...
+FAILED C3: Avatar click shows Entra ID user profile in popover - AssertionErr...
+FAILED C3b: Profile popover contains non-empty user name (not 'Dev Local' label)
+FAILED C4: No 'Visitante' card on login screen - only Financeiro + Operador exist
+FAILED C5: Access denied screen shows '\U0001f6ab Acesso Negado' and 'Sair' button (negative path)
+======================== 6 failed in 159.87s (0:02:39) ========================
+Report file not found, skipping column rename.

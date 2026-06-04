@@ -1,0 +1,231 @@
+2026-06-03T15:12:49.3112284Z State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-06-03T15:12:50.8986743Z State: Starting, Action: StartingMsiContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-06-03T15:12:56.2541196Z State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-06-03T15:12:56.2547343Z Container start method called.
+2026-06-03T15:12:56.2548338Z State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503 for api-financeirax01., DetailsLevel: INFO
+2026-06-03T15:12:56.2549988Z Establishing network.
+2026-06-03T15:12:56.2551679Z Pulling image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503.
+2026-06-03T15:13:09.1753157Z Container pull image failed with reason: ImagePullFailure. Revert by terminate.
+2026-06-03T15:13:09.1794080Z Container is terminating. Grace period: 5 seconds.
+2026-06-03T15:13:09.1815618Z Container spec TerminationMessagePolicy  path 
+2026-06-03T15:13:09.1848480Z Container is terminated. Total time elapsed: 4 ms.
+2026-06-03T15:13:09.1850396Z Site container: api-financeirax01 terminated during site startup.
+2026-06-03T15:13:09.1866156Z State: Stopping, Action: CancellingStartup, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site container: api-financeirax01 terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-06-03T15:13:09.2004724Z State: Stopping, Action: CancellingStartup, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:13:09, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site container: api-financeirax01 terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-06-03T15:13:09.2060540Z Failed to start site. Revert by stopping site.
+2026-06-03T15:13:09.2129367Z State: Stopping, Action: StoppingSite, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:13:09, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site container: api-financeirax01 terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-06-03T15:13:09.2155955Z State: Stopping, Action: StoppingSiteContainers, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:13:09, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site container: api-financeirax01 terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-06-03T15:13:09.4456551Z Site container: api-financeirax01_managedIdentity terminated during site startup.
+2026-06-03T15:13:09.4472157Z State: Stopping, Action: StoppingSiteContainers, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:13:09, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site container: api-financeirax01 terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-06-03T15:13:09.4483471Z Site: api-financeirax01 stopped.
+2026-06-03T15:13:41.324Z INFO  - Pulling image: mcr.microsoft.com/appsvc/msitokenservice:stage3
+2026-06-03T15:13:41.581Z INFO  - stage3 Pulling from appsvc/msitokenservice
+2026-06-03T15:13:41.695Z INFO  - 5e5b36758685 Already exists
+2026-06-03T15:13:41.753Z INFO  - d12740de851f Already exists
+2026-06-03T15:13:41.820Z INFO  - ff86293c9e8b Pulling fs layer
+2026-06-03T15:13:41.821Z INFO  - 4f4fb700ef54 Pulling fs layer
+2026-06-03T15:13:41.822Z INFO  - 2cf9343f1fe1 Pulling fs layer
+2026-06-03T15:13:41.823Z INFO  - 61762e38b07d Pulling fs layer
+2026-06-03T15:13:42.469Z INFO  - 4f4fb700ef54 Downloading 32B / 32B
+2026-06-03T15:13:42.492Z INFO  - 4f4fb700ef54 Verifying Checksum
+2026-06-03T15:13:42.493Z INFO  - 4f4fb700ef54 Download complete
+2026-06-03T15:13:42.494Z INFO  - ff86293c9e8b Downloading 1MB / 6MB
+2026-06-03T15:13:42.495Z INFO  - ff86293c9e8b Verifying Checksum
+2026-06-03T15:13:42.497Z INFO  - ff86293c9e8b Download complete
+2026-06-03T15:13:42.497Z INFO  - 2cf9343f1fe1 Downloading 10MB / 21MB
+2026-06-03T15:13:42.500Z INFO  - 61762e38b07d Downloading 7MB / 21MB
+2026-06-03T15:13:42.500Z INFO  - 61762e38b07d Downloading 14MB / 21MB
+2026-06-03T15:13:42.502Z INFO  - 2cf9343f1fe1 Verifying Checksum
+2026-06-03T15:13:42.503Z INFO  - 2cf9343f1fe1 Download complete
+2026-06-03T15:13:42.504Z INFO  - 61762e38b07d Verifying Checksum
+2026-06-03T15:13:42.504Z INFO  - 61762e38b07d Download complete
+2026-06-03T15:13:42.505Z INFO  - ff86293c9e8b Extracting 3MB / 6MB
+2026-06-03T15:13:42.782Z INFO  - ff86293c9e8b Extracting 6MB / 6MB
+2026-06-03T15:13:43.266Z INFO  - ff86293c9e8b Pull complete
+2026-06-03T15:13:43.300Z INFO  - 4f4fb700ef54 Extracting 32B / 32B
+2026-06-03T15:13:43.350Z INFO  - 4f4fb700ef54 Extracting 32B / 32B
+2026-06-03T15:13:43.969Z INFO  - 4f4fb700ef54 Pull complete
+2026-06-03T15:13:43.970Z INFO  - 2cf9343f1fe1 Extracting 1MB / 21MB
+2026-06-03T15:13:44.051Z INFO  - 2cf9343f1fe1 Extracting 5MB / 21MB
+2026-06-03T15:13:44.970Z INFO  - 2cf9343f1fe1 Extracting 14MB / 21MB
+2026-06-03T15:13:45.378Z INFO  - 2cf9343f1fe1 Extracting 21MB / 21MB
+2026-06-03T15:13:47.498Z INFO  - 2cf9343f1fe1 Pull complete
+2026-06-03T15:13:47.903Z INFO  - 61762e38b07d Extracting 6MB / 21MB
+2026-06-03T15:13:48.541Z INFO  - 61762e38b07d Extracting 12MB / 21MB
+2026-06-03T15:13:48.714Z INFO  - 61762e38b07d Extracting 15MB / 21MB
+2026-06-03T15:13:48.716Z INFO  - 61762e38b07d Extracting 17MB / 21MB
+2026-06-03T15:13:48.767Z INFO  - 61762e38b07d Extracting 18MB / 21MB
+2026-06-03T15:13:48.867Z INFO  - 61762e38b07d Extracting 19MB / 21MB
+2026-06-03T15:13:48.994Z INFO  - 61762e38b07d Extracting 21MB / 21MB
+2026-06-03T15:13:50.060Z INFO  - 61762e38b07d Pull complete
+2026-06-03T15:13:51.965Z INFO  -  Digest: sha256:87e292c11a9f1b68dcbfe9785ceca58e44e366f163f7fbf2ad2fb1e6c13fde18
+2026-06-03T15:13:52.006Z INFO  -  Status: Downloaded newer image for mcr.microsoft.com/appsvc/msitokenservice:stage3
+2026-06-03T15:13:52.019Z INFO  - Pull Image successful, Time taken: 10 Seconds
+2026-06-03T15:13:53.753Z INFO  - Starting container for site
+2026-06-03T15:13:53.754Z INFO  - docker run -d --expose=8081 --name api-financeirax01_0_0d42ad77_msiProxy -e WEBSITE_ROLE_INSTANCE_ID=0 -e WEBSITE_HOSTNAME=api-financeirax01.azurewebsites.net -e WEBSITE_INSTANCE_ID=f5051211a44a514093082c47c05266ab4daf55511fa9890fc37cdd85385273b0 -e HTTP_LOGGING_ENABLED=1 mcr.microsoft.com/appsvc/msitokenservice:stage3 
+2026-06-03T15:14:05.466Z INFO  - Pulling image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503
+2026-06-03T15:14:05.514Z ERROR - DockerApiException: Docker API responded with status code=InternalServerError, response={"message":"Get \"https://ckmcc0522172320.azurecr.io/v2/\": dial tcp: lookup ckmcc0522172320.azurecr.io: no such host"}
+
+2026-06-03T15:14:05.515Z ERROR - Pulling docker image ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503 failed:
+2026-06-03T15:14:05.549Z ERROR - DockerApiException: Docker API responded with status code=InternalServerError, response={"message":"Get \"https://ckmcc0522172320.azurecr.io/v2/\": dial tcp: lookup ckmcc0522172320.azurecr.io: no such host"}
+
+2026-06-03T15:14:05.550Z WARN  - Image pull failed. Defaulting to local copy if present.
+2026-06-03T15:14:05.555Z ERROR - Image pull failed: Verify docker image configuration and credentials (if using private repository)
+2026-06-03T15:14:14.533Z INFO  - Stopping site api-financeirax01 because it failed during startup.
+2026-06-03T15:14:27.142Z INFO  - Pulling image: mcr.microsoft.com/appsvc/msitokenservice:stage3
+2026-06-03T15:14:27.344Z INFO  - stage3 Pulling from appsvc/msitokenservice
+2026-06-03T15:14:27.437Z INFO  -  Digest: sha256:87e292c11a9f1b68dcbfe9785ceca58e44e366f163f7fbf2ad2fb1e6c13fde18
+2026-06-03T15:14:27.439Z INFO  -  Status: Image is up to date for mcr.microsoft.com/appsvc/msitokenservice:stage3
+2026-06-03T15:14:27.450Z INFO  - Pull Image successful, Time taken: 0 Seconds
+2026-06-03T15:14:27.560Z INFO  - Starting container for site
+2026-06-03T15:14:27.561Z INFO  - docker run -d --expose=8081 --name api-financeirax01_0_22bec40d_msiProxy -e WEBSITE_ROLE_INSTANCE_ID=0 -e WEBSITE_HOSTNAME=api-financeirax01.azurewebsites.net -e WEBSITE_INSTANCE_ID=f5051211a44a514093082c47c05266ab4daf55511fa9890fc37cdd85385273b0 -e HTTP_LOGGING_ENABLED=1 mcr.microsoft.com/appsvc/msitokenservice:stage3 
+2026-06-03T15:14:35.449Z INFO  - Pulling image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503
+2026-06-03T15:14:35.534Z ERROR - DockerApiException: Docker API responded with status code=InternalServerError, response={"message":"Get \"https://ckmcc0522172320.azurecr.io/v2/\": dial tcp: lookup ckmcc0522172320.azurecr.io: no such host"}
+
+2026-06-03T15:14:35.536Z ERROR - Pulling docker image ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503 failed:
+2026-06-03T15:14:35.581Z ERROR - DockerApiException: Docker API responded with status code=InternalServerError, response={"message":"Get \"https://ckmcc0522172320.azurecr.io/v2/\": dial tcp: lookup ckmcc0522172320.azurecr.io: no such host"}
+
+2026-06-03T15:14:35.585Z WARN  - Image pull failed. Defaulting to local copy if present.
+2026-06-03T15:14:35.599Z ERROR - Image pull failed: Verify docker image configuration and credentials (if using private repository)
+2026-06-03T15:14:41.442Z INFO  - Stopping site api-financeirax01 because it failed during startup.
+2026-06-03T15:14:52.690Z INFO  - Pulling image: mcr.microsoft.com/appsvc/msitokenservice:stage3
+2026-06-03T15:14:52.846Z INFO  - stage3 Pulling from appsvc/msitokenservice
+2026-06-03T15:14:52.892Z INFO  -  Digest: sha256:87e292c11a9f1b68dcbfe9785ceca58e44e366f163f7fbf2ad2fb1e6c13fde18
+2026-06-03T15:14:52.892Z INFO  -  Status: Image is up to date for mcr.microsoft.com/appsvc/msitokenservice:stage3
+2026-06-03T15:14:52.904Z INFO  - Pull Image successful, Time taken: 0 Seconds
+2026-06-03T15:14:52.919Z INFO  - Starting container for site
+2026-06-03T15:14:52.920Z INFO  - docker run -d --expose=8081 --name api-financeirax01_0_2c13136e_msiProxy -e WEBSITE_ROLE_INSTANCE_ID=0 -e WEBSITE_HOSTNAME=api-financeirax01.azurewebsites.net -e WEBSITE_INSTANCE_ID=f5051211a44a514093082c47c05266ab4daf55511fa9890fc37cdd85385273b0 -e HTTP_LOGGING_ENABLED=1 mcr.microsoft.com/appsvc/msitokenservice:stage3 
+2026-06-03T15:14:57.394Z INFO  - Pulling image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503
+2026-06-03T15:14:57.427Z ERROR - DockerApiException: Docker API responded with status code=InternalServerError, response={"message":"Get \"https://ckmcc0522172320.azurecr.io/v2/\": dial tcp: lookup ckmcc0522172320.azurecr.io: no such host"}
+
+2026-06-03T15:14:57.428Z ERROR - Pulling docker image ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503 failed:
+2026-06-03T15:14:57.458Z ERROR - DockerApiException: Docker API responded with status code=InternalServerError, response={"message":"Get \"https://ckmcc0522172320.azurecr.io/v2/\": dial tcp: lookup ckmcc0522172320.azurecr.io: no such host"}
+
+2026-06-03T15:14:57.459Z WARN  - Image pull failed. Defaulting to local copy if present.
+2026-06-03T15:14:57.465Z ERROR - Image pull failed: Verify docker image configuration and credentials (if using private repository)
+2026-06-03T15:15:03.027Z INFO  - Stopping site api-financeirax01 because it failed during startup.
+2026-06-03T15:15:15.068Z INFO  - Pulling image: mcr.microsoft.com/appsvc/msitokenservice:stage3
+2026-06-03T15:15:16.063Z INFO  - stage3 Pulling from appsvc/msitokenservice
+2026-06-03T15:15:16.065Z INFO  -  Digest: sha256:87e292c11a9f1b68dcbfe9785ceca58e44e366f163f7fbf2ad2fb1e6c13fde18
+2026-06-03T15:15:16.066Z INFO  -  Status: Image is up to date for mcr.microsoft.com/appsvc/msitokenservice:stage3
+2026-06-03T15:15:16.069Z INFO  - Pull Image successful, Time taken: 0 Seconds
+2026-06-03T15:15:17.065Z INFO  - Starting container for site
+2026-06-03T15:15:17.066Z INFO  - docker run -d --expose=8081 --name api-financeirax01_0_c1ed7da9_msiProxy -e WEBSITE_ROLE_INSTANCE_ID=0 -e WEBSITE_HOSTNAME=api-financeirax01.azurewebsites.net -e WEBSITE_INSTANCE_ID=f5051211a44a514093082c47c05266ab4daf55511fa9890fc37cdd85385273b0 -e HTTP_LOGGING_ENABLED=1 mcr.microsoft.com/appsvc/msitokenservice:stage3 
+2026-06-03T15:15:20.643Z INFO  - Pulling image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503
+2026-06-03T15:15:20.684Z ERROR - DockerApiException: Docker API responded with status code=InternalServerError, response={"message":"Get \"https://ckmcc0522172320.azurecr.io/v2/\": dial tcp: lookup ckmcc0522172320.azurecr.io: no such host"}
+
+2026-06-03T15:15:20.685Z ERROR - Pulling docker image ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503 failed:
+2026-06-03T15:15:20.719Z ERROR - DockerApiException: Docker API responded with status code=InternalServerError, response={"message":"Get \"https://ckmcc0522172320.azurecr.io/v2/\": dial tcp: lookup ckmcc0522172320.azurecr.io: no such host"}
+
+2026-06-03T15:15:20.720Z WARN  - Image pull failed. Defaulting to local copy if present.
+2026-06-03T15:15:20.722Z ERROR - Image pull failed: Verify docker image configuration and credentials (if using private repository)
+2026-06-03T15:15:26.618Z INFO  - Stopping site api-financeirax01 because it failed during startup.
+2026-06-03T15:17:42.117Z INFO  - Pulling image: mcr.microsoft.com/appsvc/msitokenservice:stage3
+2026-06-03T15:17:42.879Z INFO  - stage3 Pulling from appsvc/msitokenservice
+2026-06-03T15:17:42.885Z INFO  -  Digest: sha256:87e292c11a9f1b68dcbfe9785ceca58e44e366f163f7fbf2ad2fb1e6c13fde18
+2026-06-03T15:17:42.886Z INFO  -  Status: Image is up to date for mcr.microsoft.com/appsvc/msitokenservice:stage3
+2026-06-03T15:17:42.889Z INFO  - Pull Image successful, Time taken: 0 Seconds
+2026-06-03T15:17:43.880Z INFO  - Starting container for site
+2026-06-03T15:17:43.881Z INFO  - docker run -d --expose=8081 --name api-financeirax01_0_35979b7d_msiProxy -e WEBSITE_ROLE_INSTANCE_ID=0 -e WEBSITE_HOSTNAME=api-financeirax01.azurewebsites.net -e WEBSITE_INSTANCE_ID=f5051211a44a514093082c47c05266ab4daf55511fa9890fc37cdd85385273b0 -e HTTP_LOGGING_ENABLED=1 mcr.microsoft.com/appsvc/msitokenservice:stage3 
+2026-06-03T15:17:47.269Z INFO  - Pulling image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503
+2026-06-03T15:17:47.301Z ERROR - DockerApiException: Docker API responded with status code=InternalServerError, response={"message":"Get \"https://ckmcc0522172320.azurecr.io/v2/\": dial tcp: lookup ckmcc0522172320.azurecr.io: no such host"}
+
+2026-06-03T15:17:47.301Z ERROR - Pulling docker image ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503 failed:
+2026-06-03T15:17:47.328Z ERROR - DockerApiException: Docker API responded with status code=InternalServerError, response={"message":"Get \"https://ckmcc0522172320.azurecr.io/v2/\": dial tcp: lookup ckmcc0522172320.azurecr.io: no such host"}
+
+2026-06-03T15:17:47.329Z WARN  - Image pull failed. Defaulting to local copy if present.
+2026-06-03T15:17:47.332Z ERROR - Image pull failed: Verify docker image configuration and credentials (if using private repository)
+2026-06-03T15:17:52.868Z INFO  - Stopping site api-financeirax01 because it failed during startup.
+2026-06-03T15:20:13.2215540Z State: Starting, Action: EstablishingSiteNetworks, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-06-03T15:20:13.8428569Z State: Starting, Action: StartingMsiContainer, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-06-03T15:20:17.9377367Z State: Starting, Action: StartingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: , DetailsLevel: INFO
+2026-06-03T15:20:17.9379082Z Container start method called.
+2026-06-03T15:20:17.9380868Z State: Starting, Action: PullingImage, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Pulling image ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503 for api-financeirax01., DetailsLevel: INFO
+2026-06-03T15:20:17.9381770Z Establishing network.
+2026-06-03T15:20:17.9382786Z Pulling image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503.
+2026-06-03T15:20:30.4476371Z Container pull image failed with reason: ImagePullFailure. Revert by terminate.
+2026-06-03T15:20:30.4487043Z Container is terminating. Grace period: 5 seconds.
+2026-06-03T15:20:30.4490749Z Container spec TerminationMessagePolicy  path 
+2026-06-03T15:20:30.4492286Z Container is terminated. Total time elapsed: 0 ms.
+2026-06-03T15:20:30.4494062Z Site container: api-financeirax01 terminated during site startup.
+2026-06-03T15:20:30.4496724Z State: Stopping, Action: CancellingStartup, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site container: api-financeirax01 terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-06-03T15:20:30.4515905Z State: Stopping, Action: CancellingStartup, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:30, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site container: api-financeirax01 terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-06-03T15:20:30.4563595Z Failed to start site. Revert by stopping site.
+2026-06-03T15:20:30.4565493Z State: Stopping, Action: StoppingSite, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:30, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site container: api-financeirax01 terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-06-03T15:20:30.4574122Z State: Stopping, Action: StoppingSiteContainers, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:30, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site container: api-financeirax01 terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-06-03T15:20:30.6152463Z Site container: api-financeirax01_managedIdentity terminated during site startup.
+2026-06-03T15:20:30.6153591Z State: Stopping, Action: StoppingSiteContainers, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:30, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site container: api-financeirax01 terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-06-03T15:20:30.6155258Z Site: api-financeirax01 stopped.
+2026-06-03T15:20:30.6226350Z State: Stopping, Action: UnmountingVolumes, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:30, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site container: api-financeirax01 terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-06-03T15:20:30.6792837Z State: Stopping, Action: StoppingSiteNetworks, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:30, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site container: api-financeirax01 terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-06-03T15:20:30.9009352Z State: Stopped, Action: None, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:30, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site stopped at 06/03/2026 15:20:30 (UTC), DetailsLevel: ERR
+2026-06-03T15:20:31.0420739Z State: Stopped, Action: None, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:30, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site stopped at 06/03/2026 15:20:30 (UTC), DetailsLevel: ERR
+2026-06-03T15:20:36.1052781Z State: Starting, Action: EstablishingSiteNetworks, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:30, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site stopped at 06/03/2026 15:20:30 (UTC), DetailsLevel: ERR
+2026-06-03T15:20:36.6266963Z State: Starting, Action: StartingMsiContainer, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:30, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site stopped at 06/03/2026 15:20:30 (UTC), DetailsLevel: ERR
+2026-06-03T15:20:39.3180021Z State: Starting, Action: StartingSiteContainers, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:30, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site stopped at 06/03/2026 15:20:30 (UTC), DetailsLevel: ERR
+2026-06-03T15:20:39.3181451Z Container start method called.
+2026-06-03T15:20:39.3182079Z State: Starting, Action: PullingImage, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:30, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Pulling image ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503 for api-financeirax01., DetailsLevel: INFO
+2026-06-03T15:20:39.3183391Z Establishing network.
+2026-06-03T15:20:39.3184830Z Pulling image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503.
+2026-06-03T15:20:52.0149050Z Container pull image failed with reason: ImagePullFailure. Revert by terminate.
+2026-06-03T15:20:52.0152451Z Container is terminating. Grace period: 5 seconds.
+2026-06-03T15:20:52.0154016Z Container spec TerminationMessagePolicy  path 
+2026-06-03T15:20:52.0155439Z Container is terminated. Total time elapsed: 0 ms.
+2026-06-03T15:20:52.0156749Z Site container: api-financeirax01 terminated during site startup.
+2026-06-03T15:20:52.0162076Z State: Stopping, Action: CancellingStartup, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:30, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site container: api-financeirax01 terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-06-03T15:20:52.0191367Z State: Stopping, Action: CancellingStartup, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:52, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site container: api-financeirax01 terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-06-03T15:20:52.0258841Z Failed to start site. Revert by stopping site.
+2026-06-03T15:20:52.0261186Z State: Stopping, Action: StoppingSite, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:52, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site container: api-financeirax01 terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-06-03T15:20:52.0264689Z State: Stopping, Action: StoppingSiteContainers, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:52, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site container: api-financeirax01 terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-06-03T15:20:52.5439350Z Site container: api-financeirax01_managedIdentity terminated during site startup.
+2026-06-03T15:20:52.5440311Z State: Stopping, Action: StoppingSiteContainers, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:52, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site container: api-financeirax01 terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-06-03T15:20:52.5441886Z Site: api-financeirax01 stopped.
+2026-06-03T15:20:52.5483050Z State: Stopping, Action: UnmountingVolumes, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:52, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site container: api-financeirax01 terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-06-03T15:20:52.6063297Z State: Stopping, Action: StoppingSiteNetworks, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:52, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site container: api-financeirax01 terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-06-03T15:20:52.8356067Z Site: api-financeirax01 will be blocked for 1 minutes till 06/03/2026 15:21:52
+2026-06-03T15:20:52.8363525Z State: Blocked, Action: StoppingSiteNetworks, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:52, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site: api-financeirax01 will be blocked for 1 minutes till 06/03/2026 15:21:52, DetailsLevel: WARN
+2026-06-03T15:20:52.8427854Z State: Stopped, Action: None, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:52, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site stopped at 06/03/2026 15:20:52 (UTC), DetailsLevel: WARN
+2026-06-03T15:20:52.9450081Z State: Stopped, Action: None, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:52, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site stopped at 06/03/2026 15:20:52 (UTC), DetailsLevel: WARN
+2026-06-03T15:20:58.0087021Z State: Blocked, Action: None, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:52, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 06/03/2026 15:21:52, DetailsLevel: WARN
+2026-06-03T15:20:58.0087343Z Start site prohibitted because the site is being blocked.
+2026-06-03T15:21:03.0586902Z State: Blocked, Action: None, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:52, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 06/03/2026 15:21:52, DetailsLevel: WARN
+2026-06-03T15:21:03.0587232Z Start site prohibitted because the site is being blocked.
+2026-06-03T15:21:08.1177101Z State: Blocked, Action: None, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:52, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 06/03/2026 15:21:52, DetailsLevel: WARN
+2026-06-03T15:21:08.1177464Z Start site prohibitted because the site is being blocked.
+2026-06-03T15:21:13.2363004Z State: Blocked, Action: None, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:52, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 06/03/2026 15:21:52, DetailsLevel: WARN
+2026-06-03T15:21:13.2363261Z Start site prohibitted because the site is being blocked.
+2026-06-03T15:21:18.3042122Z State: Blocked, Action: None, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:52, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 06/03/2026 15:21:52, DetailsLevel: WARN
+2026-06-03T15:21:18.3047350Z Start site prohibitted because the site is being blocked.
+2026-06-03T15:21:23.3619714Z State: Blocked, Action: None, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:52, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 06/03/2026 15:21:52, DetailsLevel: WARN
+2026-06-03T15:21:23.3620028Z Start site prohibitted because the site is being blocked.
+2026-06-03T15:21:28.4066241Z State: Blocked, Action: None, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:52, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 06/03/2026 15:21:52, DetailsLevel: WARN
+2026-06-03T15:21:28.4066518Z Start site prohibitted because the site is being blocked.
+2026-06-03T15:21:33.4598019Z State: Blocked, Action: None, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:52, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 06/03/2026 15:21:52, DetailsLevel: WARN
+2026-06-03T15:21:33.4599453Z Start site prohibitted because the site is being blocked.
+2026-06-03T15:21:38.5234182Z State: Blocked, Action: None, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:52, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 06/03/2026 15:21:52, DetailsLevel: WARN
+2026-06-03T15:21:38.5234511Z Start site prohibitted because the site is being blocked.
+2026-06-03T15:21:43.5768357Z State: Blocked, Action: None, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:52, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 06/03/2026 15:21:52, DetailsLevel: WARN
+2026-06-03T15:21:43.5769717Z Start site prohibitted because the site is being blocked.
+2026-06-03T15:21:48.6398525Z State: Blocked, Action: None, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:52, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 06/03/2026 15:21:52, DetailsLevel: WARN
+2026-06-03T15:21:48.6416697Z Start site prohibitted because the site is being blocked.
+2026-06-03T15:21:52.8361290Z Site: api-financeirax01 is unblocked.
+2026-06-03T15:21:53.7158424Z State: Starting, Action: EstablishingSiteNetworks, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:52, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 06/03/2026 15:21:52, DetailsLevel: WARN
+2026-06-03T15:21:54.1702479Z State: Starting, Action: StartingMsiContainer, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:52, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 06/03/2026 15:21:52, DetailsLevel: WARN
+2026-06-03T15:21:56.8346463Z State: Starting, Action: StartingSiteContainers, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:52, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site is blocked due to multiple, consecutive cold start failures. Site scheduled to be unblocked at 06/03/2026 15:21:52, DetailsLevel: WARN
+2026-06-03T15:21:56.8407132Z Container start method called.
+2026-06-03T15:21:56.8408323Z State: Starting, Action: PullingImage, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:52, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Pulling image ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503 for api-financeirax01., DetailsLevel: INFO
+2026-06-03T15:21:56.8409610Z Establishing network.
+2026-06-03T15:21:56.8411140Z Pulling image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503.
+2026-06-03T15:22:11.0966940Z Container pull image failed with reason: ImagePullFailure. Revert by terminate.
+2026-06-03T15:22:11.1028421Z Container is terminating. Grace period: 5 seconds.
+2026-06-03T15:22:11.1030215Z Container spec TerminationMessagePolicy  path 
+2026-06-03T15:22:11.1031581Z Container is terminated. Total time elapsed: 0 ms.
+2026-06-03T15:22:11.1115479Z Site container: api-financeirax01 terminated during site startup.
+2026-06-03T15:22:11.1164312Z State: Stopping, Action: CancellingStartup, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:20:52, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site container: api-financeirax01 terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-06-03T15:22:11.1356730Z State: Stopping, Action: CancellingStartup, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:22:11, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site container: api-financeirax01 terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-06-03T15:22:11.1567927Z Failed to start site. Revert by stopping site.
+2026-06-03T15:22:11.1570033Z State: Stopping, Action: StoppingSite, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:22:11, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site container: api-financeirax01 terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-06-03T15:22:11.1607079Z State: Stopping, Action: StoppingSiteContainers, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:22:11, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site container: api-financeirax01 terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-06-03T15:22:12.1174286Z Site container: api-financeirax01_managedIdentity terminated during site startup.
+2026-06-03T15:22:12.1316182Z State: Stopping, Action: StoppingSiteContainers, LastError: ImagePullFailure, LastErrorTimestamp: 06/03/2026 15:22:11, LastErrorDetails: Failed to pull image: ckmcc0522172320.azurecr.io/km-api:app-only-20260531170503. Cannot resolve registry address. If VNET is enbaled, check if there's a custom DNS in the VNET that's not resolving the regitry address. Also check if it's blocked by policy or firewall, Details: Site container: api-financeirax01 terminated during site startup. Cancelling site startup., DetailsLevel: ERR
+2026-06-03T15:22:12.1423635Z Site: api-financeirax01 stopped.

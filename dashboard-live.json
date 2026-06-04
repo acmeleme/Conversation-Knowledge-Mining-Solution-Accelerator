@@ -1,0 +1,2 @@
+WARNING: Preview version of extension is disabled by default for extension installation, enabled for modules without stable versions. 
+WARNING: Please run 'az config set extension.dynamic_install_allow_preview=true or false' to config it specifically. 

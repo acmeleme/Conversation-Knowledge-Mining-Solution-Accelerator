@@ -1,0 +1,9 @@
+2026-06-03T21:07:09.2537149Z State: Stopping, Action: StoppingSite, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 06/03/2026 21:04:08 (UTC), DetailsLevel: INFO
+2026-06-03T21:07:09.2544469Z State: Stopping, Action: StoppingSiteContainers, LastError: , LastErrorTimestamp: 01/01/0001 00:00:00, LastErrorDetails: , Details: Site started at 06/03/2026 21:04:08 (UTC), DetailsLevel: INFO
+2026-06-03T21:07:09.2547168Z Container is terminating. Grace period: 5 seconds.
+2026-06-03T21:07:09.4037660Z Stop and delete container. Retry count = 0
+2026-06-03T21:07:09.4039303Z Stopping container: b374186ec546_api-financeirax01.
+2026-06-03T21:07:14.5610765Z Deleting container: b374186ec546_api-financeirax01. Retry count = 0
+2026-06-03T21:07:15.0024842Z Container spec TerminationMessagePolicy  path 
+2026-06-03T21:07:15.0102007Z Container is terminated. Total time elapsed: 5739 ms.
+2026-06-03T21:07:15.7617502Z Site: api-financeirax01 stopped.
