@@ -33,6 +33,7 @@ from cachetools import TTLCache
 from auth.auth_utils import get_authenticated_user_details, get_tenantid
 from helpers.utils import format_stream_response
 from common.config.config import Config
+from common.logging.event_utils import track_metric_if_configured
 from services.foundry_memory_service import FoundryMemoryService
 
 # Constants
@@ -340,6 +341,22 @@ class ChatService:
                         yield json.dumps(format_stream_response(completion_chunk_obj, history_metadata, "")) + "\n\n"
 
                 full_response = "".join(full_response_parts).strip()
+
+                if full_response:
+                    user_id = (
+                        self.request.headers.get("X-User-Id")
+                        or get_authenticated_user_details(self.request.headers).get("user_principal_id")
+                        or "anonymous"
+                    )
+                    # Estimate token count: ~1 token per 4 characters (industry heuristic).
+                    # Semantic Kernel agent streaming does not expose usage.total_tokens directly.
+                    estimated_tokens = (len(query or "") + len(full_response)) // 4
+                    track_metric_if_configured(
+                        "CKM-TokenUsage",
+                        estimated_tokens,
+                        {"User ID": user_id},
+                    )
+
                 if self.memory_service and memory_scope and query and full_response:
                     asyncio.create_task(
                         self.memory_service.update_from_turn(memory_scope, query, full_response)
