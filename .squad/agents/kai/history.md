@@ -78,6 +78,23 @@ Provisioned Azure AI Content Safety (S0, centralus) and integrated APIM with Con
 
 12. **`configure-easy-auth.ps1` is now idempotent for Free-tier encryption key and token store.** Script generates 32-byte key on first run, preserves across re-runs. Sets `--token-store false` + `tokenStore.enabled = false`. Both together prevent F1 auth loop: stable nonce encryption + no filesystem session dependency.
 
+### APIM Dashboard Token Tiles Fix (2026-06-04)
+
+**Problem:** `dash-financeirax01-apim` tiles 4 & 6 (`LogsDashboardPart` KQL charts) showed "An incomplete query has been provided to this part" and "No data for the given query".
+
+**Root Cause 1 — No data in App Insights:**
+- `configure_azure_monitor()` in `api_routes.py` is gated on `APPLICATIONINSIGHTS_CONNECTION_STRING` env var
+- Env var was **completely missing** from `app-financeirax01` App Service settings
+- OTel pipeline never initialized → `customMetrics` table empty (zero rows confirmed by KQL)
+- **Fix:** Set `APPLICATIONINSIGHTS_CONNECTION_STRING` via `az webapp config appsettings set`; restarted App Service
+
+**Root Cause 2 — "Incomplete query" portal error:**
+- Both `LogsDashboardPart` tiles had ALL inputs marked `isOptional: true` (including `ComponentId`, `Query`, `ControlType`)
+- Azure Portal interprets all-optional inputs as "tile not configured" → refuses to execute KQL
+- **Fix:** Changed `isOptional: false` on `ComponentId`, `Query`, `ControlType` in tiles 4 & 6 of `monitor-dashboard.bicep`; rebuilt JSON; deployed via `az deployment group create` → Succeeded
+
+**Open item:** OTel Counter name normalization — hyphens in `"CKM-TokenUsage"` may be stored as `"CKM_TokenUsage"`. If KQL `startswith "CKM-TokenUsage"` returns no results after data flows, update query in bicep tiles and redeploy.
+
 ## Cross-Agent Updates
 
 **2026-05-26:** Scribe consolidated decision entries including Kai's data ingestion recommendation. Data ingestion options (A: seed from sample; B: fix pipeline + full run) now formally recorded in `.squad/decisions.md`. Awaiting approval.
@@ -91,3 +108,45 @@ Phase 3 session finalized. Kai's Redis infrastructure, Alex's APIM policies, and
 - **Validation:** 15 unit tests + 2 failover scripts (validate-cache-hit-rate, test-failover)
 
 All cross-agent dependencies satisfied. Session status: **COMPLETE**.
+
+## Phase 5: Infrastructure Diagnosis – Image Pull Failure (2026-06-03)
+
+**Charter Request:** Compare current App Service container config (`app-financeirax01.azurewebsites.net`) with candidate Docker image (`ckmcc0522172320.azurecr.io/webapp-financeirax:fix-auth-proxy`) and recommend which image to deploy.
+
+**Context:** App Service image pull was failing from an unresolvable registry host. Task: determine if candidate is safe alternative or if deeper infrastructure issues prevent either image from being pulled.
+
+### Work Completed
+
+1. **Inspected App Service Configuration** (`app-financeirax01`, rg-callcenter-100)
+   - Current linuxFxVersion: `DOCKER|ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260531170503` (deployed 2026-05-31)
+   - Configured ACR: `ckmcc0522172320.azurecr.io`
+   - Username: `ckmcc0522172320`
+   - Password: **EMPTY** (critical)
+
+2. **Validated ACR Registry Connectivity**
+   - Query: `az acr list` in subscription `a2ec8402-d75b-419c-b71d-7558309c50dc` → Returns empty
+   - Query: `az acr show -n ckmcc0522172320` → Resource not found
+   - Query: `az acr check-health` on registry → "Could not connect to registry login server"
+   - **Result:** ACR `ckmcc0522172320` does NOT exist in current subscription. Registry is unreachable.
+
+3. **Root Cause Identified**
+   - ACR hostname `ckmcc0522172320.azurecr.io` is from a **different subscription** (not in `a2ec8402-d75b-419c-b71d-7558309c50dc`)
+   - Cross-subscription image pull requires service principal auth + valid password
+   - Current app settings have **empty password** → authentication will fail even if registry were reachable
+   - Both current image tag (`app-only-20260531170503`) and candidate tag (`fix-auth-proxy`) reference the same dead registry
+
+### Recommendation
+
+**Do NOT deploy candidate image.** Both current and candidate reference the same unreachable ACR. The candidate is not a safe alternative; it will fail with identical image pull errors.
+
+**Next Priority:** Determine correct ACR location (different subscription? or provision new registry in `a2ec8402-d75b-419c-b71d-7558309c50dc`). See decision document: `.squad/decisions/inbox/kai-image-recommendation.md`
+
+### Key Learnings
+
+27. **Cross-subscription ACR pull failures:** If App Service references ACR in different subscription, image pull fails silently. Common symptoms: (1) container stays at old version, (2) 502 Bad Gateway errors, (3) registry hostname appears in error logs but cannot resolve. Fix: (a) migrate image to ACR in target subscription, or (b) create service principal with cross-subscription ACR pull rights + store credentials in app settings.
+
+29. **`APPLICATIONINSIGHTS_CONNECTION_STRING` missing = silent no-op telemetry.** `configure_azure_monitor()` and `track_metric_if_configured()` both short-circuit if the env var is absent — no error, no warning in normal app logs. Always verify `customMetrics` has rows in App Insights before assuming OTel is working.
+
+30. **`LogsDashboardPart` tiles need `isOptional: false` on `ComponentId`, `Query`, `ControlType`.** Azure Portal treats all-optional tile inputs as "unconfigured" and shows "An incomplete query has been provided to this part". Mark these three inputs as required to force the portal to execute the KQL query. Other inputs (`TimeRange`, `PartTitle`, etc.) can remain optional.
+
+31. **OTel Counter name normalization: hyphens may become underscores.** Metric names with hyphens (e.g., `CKM-TokenUsage`) may be stored with underscores (`CKM_TokenUsage`) by the OTel SDK. Verify actual stored name in App Insights `customMetrics | summarize by name` and align KQL `startswith` filter accordingly.

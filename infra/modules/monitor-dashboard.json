@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.37.4.10188",
-      "templateHash": "17689711154420379952"
+      "templateHash": "166975218556843281"
     }
   },
   "parameters": {
@@ -311,7 +311,7 @@
                     },
                     {
                       "name": "ComponentId",
-                      "isOptional": true,
+                      "isOptional": false,
                       "value": "[variables('appInsightsComponentId')]"
                     },
                     {
@@ -321,7 +321,7 @@
                     },
                     {
                       "name": "Query",
-                      "isOptional": true,
+                      "isOptional": false,
                       "value": "customMetrics\n| where name startswith \"CKM-TokenUsage\"\n| summarize TotalTokens = sum(value), AvgTokens = avg(value) by bin(timestamp, 1h), name\n| order by timestamp desc"
                     },
                     {
@@ -336,7 +336,7 @@
                     },
                     {
                       "name": "ControlType",
-                      "isOptional": true,
+                      "isOptional": false,
                       "value": "AnalyticsChart"
                     },
                     {
@@ -447,7 +447,7 @@
                     },
                     {
                       "name": "ComponentId",
-                      "isOptional": true,
+                      "isOptional": false,
                       "value": "[variables('appInsightsComponentId')]"
                     },
                     {
@@ -457,7 +457,7 @@
                     },
                     {
                       "name": "Query",
-                      "isOptional": true,
+                      "isOptional": false,
                       "value": "customMetrics\n| where name startswith \"CKM-TokenUsage\"\n| extend userId = tostring(customDimensions[\"User ID\"])\n| summarize TotalTokens = sum(value) by userId\n| top 10 by TotalTokens desc\n| render barchart"
                     },
                     {
@@ -472,7 +472,7 @@
                     },
                     {
                       "name": "ControlType",
-                      "isOptional": true,
+                      "isOptional": false,
                       "value": "AnalyticsChart"
                     },
                     {

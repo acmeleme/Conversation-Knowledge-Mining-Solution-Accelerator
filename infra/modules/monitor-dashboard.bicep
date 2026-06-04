@@ -298,7 +298,7 @@ resource dashboard 'Microsoft.Portal/dashboards@2022-12-01-preview' = {
                 }
                 {
                   name: 'ComponentId'
-                  isOptional: true
+                  isOptional: false
                   value: appInsightsComponentId
                 }
                 {
@@ -308,7 +308,7 @@ resource dashboard 'Microsoft.Portal/dashboards@2022-12-01-preview' = {
                 }
                 {
                   name: 'Query'
-                  isOptional: true
+                  isOptional: false
                   value: 'customMetrics\n| where name startswith "CKM-TokenUsage"\n| summarize TotalTokens = sum(value), AvgTokens = avg(value) by bin(timestamp, 1h), name\n| order by timestamp desc'
                 }
                 {
@@ -323,7 +323,7 @@ resource dashboard 'Microsoft.Portal/dashboards@2022-12-01-preview' = {
                 }
                 {
                   name: 'ControlType'
-                  isOptional: true
+                  isOptional: false
                   value: 'AnalyticsChart'
                 }
                 {
@@ -436,7 +436,7 @@ resource dashboard 'Microsoft.Portal/dashboards@2022-12-01-preview' = {
                 }
                 {
                   name: 'ComponentId'
-                  isOptional: true
+                  isOptional: false
                   value: appInsightsComponentId
                 }
                 {
@@ -446,7 +446,7 @@ resource dashboard 'Microsoft.Portal/dashboards@2022-12-01-preview' = {
                 }
                 {
                   name: 'Query'
-                  isOptional: true
+                  isOptional: false
                   value: 'customMetrics\n| where name startswith "CKM-TokenUsage"\n| extend userId = tostring(customDimensions["User ID"])\n| summarize TotalTokens = sum(value) by userId\n| top 10 by TotalTokens desc\n| render barchart'
                 }
                 {
@@ -461,7 +461,7 @@ resource dashboard 'Microsoft.Portal/dashboards@2022-12-01-preview' = {
                 }
                 {
                   name: 'ControlType'
-                  isOptional: true
+                  isOptional: false
                   value: 'AnalyticsChart'
                 }
                 {
