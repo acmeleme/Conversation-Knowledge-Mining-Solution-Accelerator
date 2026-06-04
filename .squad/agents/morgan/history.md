@@ -48,3 +48,46 @@ All Phase 3 cross-team dependencies validated and documented:
 - **Delivery:** Validation scripts successfully verify cache hit rates >20% and failover latency <2s
 
 Session status: **COMPLETE**. Orchestration logs recorded. Scribe merge + commit pending.
+
+---
+
+## Dashboard Telemetry Validation (2026-05-31)
+
+**Trigger:** Kai's PR commit `6174afd` described as "fix" to Azure Monitor dashboard  
+**Status:** ❌ Root issue NOT fixed — telemetry table mismatch confirmed
+
+### What Was Audited
+
+Fully read all dashboard artifacts (`monitor-dashboard.bicep`, `monitor-dashboard.json`) and all app telemetry code (`event_utils.py`, `api_routes.py`, `chat_service.py`, `azure_openai_helper.py`). Grep-searched entire `src/api` for `CKM-Token`, `track_metric`, `customMetrics`.
+
+### Critical Findings
+
+**Finding 1 — P0:** Dashboard KQL queries `customMetrics | where name startswith "CKM-TokenUsage"`.  
+App exclusively uses `track_event()` from `azure.monitor.events.extension` → writes to `customEvents` table.  
+`customMetrics` is never written. Tiles 4 (Token Usage Over Time) and 6 (Top Users by Token Consumption) will **always render empty**.
+
+**Finding 2 — P1:** Tile 6 groups by `customDimensions["User ID"]` (space, title-case).  
+App emits `"user_id"` (underscore, lowercase) in event payloads. Even if table were correct, user breakdown would always be blank (KQL dimension keys are case-sensitive).
+
+**Finding 3 — INFO:** Commit `6174afd` only compiled Bicep → ARM JSON. No telemetry code changed. The compilation was necessary but not sufficient — the gap predates this commit.
+
+**Finding 4 — PASS:** `monitor-dashboard.json` is internally consistent with `monitor-dashboard.bicep`. No JSON/Bicep divergence risk.
+
+**Finding 5 — PASS:** APIM-native metric tiles (0–3, 5, 7) will render correctly; they do not depend on app telemetry.
+
+**Finding 6 — MEDIUM:** Zero tests validate the telemetry contract (metric name, dimension key, table type). Existing mocks suppress side effects but never assert on emission targets.
+
+### Recommended Remediation
+
+Kai must choose one path:
+- **Fix A (add `track_metric` / OTel counter):** Emit `CKM-TokenUsage*` with `{"User ID": user_id_header}` from `chat_service.py` or `api_routes.py` after each OpenAI response
+- **Fix B (update dashboard KQL):** Rewrite tiles 4 & 6 to query `customEvents` with `name == "ChatStreamSuccess"` — requires token counts to be added to that event's properties first
+- **Fix C (APIM `emit-metric` policy):** Alex adds APIM token counting via `emit-metric` policy — check if APIM can extract token counts from the OpenAI response header
+
+Morgan must add a `test_token_metric_emitted_to_correct_table` test once fix direction is confirmed.
+
+### Decision Filed
+
+`.squad/decisions/inbox/morgan-dashboard-verification.md` — full breakdown with code examples for all three fix options.
+
+**Next Action for Kai:** Read inbox file and choose Fix A, B, or C before Phase 5 dashboard work resumes.
