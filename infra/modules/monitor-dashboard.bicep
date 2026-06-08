@@ -280,61 +280,6 @@ resource dashboard 'Microsoft.Portal/dashboards@2022-12-01-preview' = {
               }
             }
           }
-          // ── Tile 4: App Insights — Token Usage over time ───────────
-          {
-            position: {
-              x: 0
-              y: 4
-              colSpan: 6
-              rowSpan: 4
-            }
-            metadata: {
-              type: 'Extension/Microsoft_OperationsManagementSuite_Workspace/PartType/LogsDashboardPart'
-              inputs: [
-                {
-                  name: 'resourceTypeMode'
-                  isOptional: true
-                  value: 'components'
-                }
-                {
-                  name: 'ComponentId'
-                  isOptional: false
-                  value: appInsightsComponentId
-                }
-                {
-                  name: 'TimeRange'
-                  isOptional: true
-                  value: 'P1D'
-                }
-                {
-                  name: 'Query'
-                  isOptional: false
-                  value: 'customMetrics\n| where name startswith "CKM-TokenUsage"\n| summarize TotalTokens = sum(value), AvgTokens = avg(value) by bin(timestamp, 1h), name\n| order by timestamp desc'
-                }
-                {
-                  name: 'PartTitle'
-                  isOptional: true
-                  value: 'Token Usage Over Time (App Insights)'
-                }
-                {
-                  name: 'PartSubTitle'
-                  isOptional: true
-                  value: appInsightsName
-                }
-                {
-                  name: 'ControlType'
-                  isOptional: false
-                  value: 'AnalyticsChart'
-                }
-                {
-                  name: 'SpecificChart'
-                  isOptional: true
-                  value: 'StackedColumn'
-                }
-              ]
-              settings: {}
-            }
-          }
           // ── Tile 5: APIM Success vs Failed ─────────────────────────
           {
             position: {
@@ -416,61 +361,6 @@ resource dashboard 'Microsoft.Portal/dashboards@2022-12-01-preview' = {
                   }
                 }
               }
-            }
-          }
-          // ── Tile 6: App Insights — Top Users by Token Usage ────────
-          {
-            position: {
-              x: 0
-              y: 8
-              colSpan: 6
-              rowSpan: 4
-            }
-            metadata: {
-              type: 'Extension/Microsoft_OperationsManagementSuite_Workspace/PartType/LogsDashboardPart'
-              inputs: [
-                {
-                  name: 'resourceTypeMode'
-                  isOptional: true
-                  value: 'components'
-                }
-                {
-                  name: 'ComponentId'
-                  isOptional: false
-                  value: appInsightsComponentId
-                }
-                {
-                  name: 'TimeRange'
-                  isOptional: true
-                  value: 'P1D'
-                }
-                {
-                  name: 'Query'
-                  isOptional: false
-                  value: 'customMetrics\n| where name startswith "CKM-TokenUsage"\n| extend userId = tostring(customDimensions["User ID"])\n| summarize TotalTokens = sum(value) by userId\n| top 10 by TotalTokens desc\n| render barchart'
-                }
-                {
-                  name: 'PartTitle'
-                  isOptional: true
-                  value: 'Top 10 Users by Token Consumption'
-                }
-                {
-                  name: 'PartSubTitle'
-                  isOptional: true
-                  value: 'Last 24h'
-                }
-                {
-                  name: 'ControlType'
-                  isOptional: false
-                  value: 'AnalyticsChart'
-                }
-                {
-                  name: 'SpecificChart'
-                  isOptional: true
-                  value: 'Bar'
-                }
-              ]
-              settings: {}
             }
           }
           // ── Tile 7: APIM Response Duration ─────────────────────────
