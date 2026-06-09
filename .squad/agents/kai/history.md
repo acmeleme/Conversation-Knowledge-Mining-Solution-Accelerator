@@ -157,7 +157,29 @@ All cross-agent dependencies satisfied. Session status: **COMPLETE**.
 
 34. **Scanner bot traffic looks like app activity in App Insights.** WordPress probes (`/xmlrpc.php`, `/wp-includes/`, `/wp-login.php`) will populate `requests` and `exceptions` tables with 404 + `OperationNotFound` errors. These are NOT real user sessions. Exclude scanner paths before drawing conclusions about app health or traffic volume.
 
-### CKM Dashboard Metrics Sync Validation (2026-06-04)
+
+### Dashboard Contract Drift Fix (2026-06-08)
+
+**Problem:** Live portal still showed "incomplete query" and "no metrics" on APIM dashboard. Contract drift existed across 6 artifact files: Bicep source, compiled ARM JSON, tile reference files, and live snapshot.
+
+**Root cause (multi-layer):**
+1. The prior fix was applied to `monitor-dashboard.json` (ARM) only; never back-ported to `monitor-dashboard.bicep` (canonical source).
+2. Tile 6 was completely **missing** from `monitor-dashboard.json` — dropped during manual editing.
+3. All tile reference files (`tile-4.json`, `tile-6.json`) and `dashboard-full-definition.json` still had `isOptional: true` on all critical inputs.
+4. Tile 6 KQL in Bicep had invalid dot-bracket syntax: `customDimensions.["User ID"]` → fixed to `customDimensions["User ID"]`.
+5. `dashboard.json` was corrupted (contained AZ CLI warning text, not JSON).
+
+**Fixes applied:**
+- `monitor-dashboard.bicep`: Tile 6 `ComponentId`, `Query`, `ControlType` → `isOptional: false`; removed 10 unnecessary optional stubs; fixed KQL dot syntax.
+- `monitor-dashboard.json`: Added complete Tile 6 definition (was missing entirely).
+- `tile-4.json`: `ComponentId`, `Query`, `ControlType` → `isOptional: false`; removed stub inputs.
+- `tile-6.json`: Same `isOptional` fixes; removed stub inputs; confirmed KQL is correct.
+- `dashboard-full-definition.json`: `isOptional: false` applied to both tiles 4 & 6 for `ComponentId`, `Query`, `ControlType`.
+- `dashboard.json`: Could not write (OneDrive file lock); file remains a broken stub — non-blocking for deployment.
+
+**Deployment:** `az deployment group create` with `infra/modules/monitor-dashboard.json` → `Succeeded`.
+
+**Key principle confirmed:** The canonical source of truth is `monitor-dashboard.bicep`. ANY fix applied directly to `monitor-dashboard.json` or portal must be immediately back-ported to Bicep. Otherwise Bicep↔JSON drift guarantees the issue returns on next infra re-deploy.
 
 **Charter:** 4-step live end-to-end validation — deployed version → metrics flow → dashboard KQL → tile render.
 
@@ -220,3 +242,30 @@ The current session validated whether metrics are NOW flowing end-to-end.
 5. Run: `customMetrics | summarize by name` to confirm stored metric name (hyphen vs underscore — see learning #31 above)
 6. If name is `CKM_TokenUsage`, update KQL in tiles 4 & 6 of `monitor-dashboard.bicep` and redeploy dashboard
 7. Verify dashboard tiles 4 & 6 render data
+
+
+---
+
+### Grafana Dashboard — AI Foundry Token Consumption per User (2026-06-09)
+
+**Task**: Add per-user token consumption section to Grafana dashboard Dashboard-financeirax01.
+
+**Key Learnings**:
+
+33. **Azure Managed Grafana is NOT ARM dashboard**. The ARM resource Microsoft.Dashboard/dashboards is just a portal proxy/metadata layer. GET on it returns empty properties (no serializedData). The ARM tag GrafanaDashboardId: 24039 does NOT match Grafana's internal integer ID. Always use the Grafana REST API: GET /api/search?type=dash-db to find the real dashboard, then work with Grafana's own API.
+
+34. **Grafana API auth scope for Azure Managed Grafana**: ce34e7e5-485f-4d76-964f-b3d2b16d1e4f. Get token with z account get-access-token --resource "ce34e7e5-485f-4d76-964f-b3d2b16d1e4f". Use Bearer auth on Grafana REST endpoints. Note: isGrafanaAdmin: false doesn't block dashboard saves if the user has canSave: true on the dashboard.
+
+35. **AI Foundry OTel token data is in AppTraces** (not metrics). Events gen_ai.run_step.message_creation / gen_ai.user.message carry gen_ai.usage.input_tokens and gen_ai.usage.output_tokens in the Properties bag. Use 	odynamic(Properties)["gen_ai.usage.input_tokens"] in KQL to extract.
+
+36. **No AAD user ID in AI Foundry telemetry**. UserId field is empty in AppTraces, AppRequests, and ApiManagementGatewayLogs. The best user proxy is gen_ai.thread.id — each user conversation creates a distinct persistent thread in AI Foundry Agents.
+
+37. **Grafana Azure Log Analytics panel query format**: Use queryType: "Azure Log Analytics", zureLogAnalytics.resources: ["/subscriptions//resourceGroups//providers/Microsoft.OperationalInsights/workspaces/<name>"]. Dashboard template variables (\, \) work in resource paths. Use \(TimeGenerated) macro for time range binding.
+
+38. **ADO work item creation blocked for external ADO orgs** (TF237111). If blocked, use GitHub Issues as fallback tracker — create with gh issue create or GitHub API. All odrigoleme* ADO orgs are deactivated due to inactivity.
+
+39. **PowerShell ConvertTo-Json -Depth 20 on large objects can hang indefinitely** when used with nested PowerShell objects from REST calls. Use Python for JSON manipulation of large dashboard payloads. z monitor log-analytics query --analytics-query "@file.kql" avoids shell-escaping issues with KQL that has double-quoted property accessors.
+
+**Dashboard updated**: ws-financeirax01 Grafana, dashboard uid=c61668191c417f, version 2. Panels added: Row (ID 15) + Table (ID 16) at y=102/103.
+
+**Validation**: Query returned 1 thread with 2525 total tokens (2231 input + 294 output, 2 calls) from AppTraces in law-financeirax01.
