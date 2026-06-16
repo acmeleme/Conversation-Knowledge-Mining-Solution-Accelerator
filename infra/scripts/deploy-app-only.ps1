@@ -7,11 +7,18 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
+$subscriptionId = $env:AZURE_SUBSCRIPTION_ID
+$tenantId = $env:AZURE_TENANT_ID
+
 if ([string]::IsNullOrWhiteSpace($ImageTag)) {
     $ImageTag = "app-only-$(Get-Date -Format yyyyMMddHHmmss)"
 }
 
 Write-Host "Deploying application only to resource group: $ResourceGroup"
+
+if (-not [string]::IsNullOrWhiteSpace($subscriptionId)) {
+    az account set --subscription $subscriptionId | Out-Null
+}
 
 if ([string]::IsNullOrWhiteSpace($env:APP_NAME)) {
     $appName = az webapp list --resource-group $ResourceGroup --query "[?starts_with(name, 'app-')].name | [0]" -o tsv
@@ -126,7 +133,16 @@ Write-Host "Updating App Service container configuration..."
 az webapp config container set --resource-group $ResourceGroup --name $appName --container-image-name $appImage --container-registry-url "https://$acrLoginServer" | Out-Null
 az webapp config container set --resource-group $ResourceGroup --name $apiName --container-image-name $apiImage --container-registry-url "https://$acrLoginServer" | Out-Null
 
-$authSettingsUrl = "https://management.azure.com/subscriptions/$(az account show --query id -o tsv)/resourceGroups/$ResourceGroup/providers/Microsoft.Web/sites/$appName/config/authsettingsV2?api-version=2022-03-01"
+$resolvedSubscriptionId = $subscriptionId
+if ([string]::IsNullOrWhiteSpace($resolvedSubscriptionId)) {
+    $resolvedSubscriptionId = az account show --query id -o tsv
+}
+
+if ([string]::IsNullOrWhiteSpace($tenantId)) {
+    $tenantId = az account show --query tenantId -o tsv
+}
+
+$authSettingsUrl = "https://management.azure.com/subscriptions/$resolvedSubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Web/sites/$appName/config/authsettingsV2?api-version=2022-03-01"
 $authSettings = az rest --method get --url $authSettingsUrl --output json | ConvertFrom-Json
 $clientId = $authSettings.properties.identityProviders.azureActiveDirectory.registration.clientId
 

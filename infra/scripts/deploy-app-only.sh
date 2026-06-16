@@ -8,8 +8,14 @@ fi
 
 RESOURCE_GROUP="$1"
 IMAGE_TAG="${IMAGE_TAG:-app-only-$(date +%Y%m%d%H%M%S)}"
+SUBSCRIPTION_ID="${AZURE_SUBSCRIPTION_ID:-}"
+TENANT_ID="${AZURE_TENANT_ID:-}"
 
 echo "Deploying application only to resource group: ${RESOURCE_GROUP}"
+
+if [ -n "$SUBSCRIPTION_ID" ]; then
+  az account set --subscription "$SUBSCRIPTION_ID" >/dev/null
+fi
 
 if [ -z "${APP_NAME:-}" ]; then
   APP_NAME="$(az webapp list --resource-group "$RESOURCE_GROUP" --query "[?starts_with(name, 'app-')].name | [0]" -o tsv)"
@@ -133,7 +139,9 @@ az webapp restart --resource-group "$RESOURCE_GROUP" --name "$API_NAME" >/dev/nu
 # React app can read it directly without needing the backend /api/me fallback.
 # Effect is immediate — existing sessions will be revalidated on next request.
 echo "Configuring Easy Auth email scope on ${APP_NAME}..."
-TENANT_ID="$(az account show --query tenantId -o tsv 2>/dev/null || true)"
+if [ -z "$TENANT_ID" ]; then
+  TENANT_ID="$(az account show --query tenantId -o tsv 2>/dev/null || true)"
+fi
 if [ -n "$TENANT_ID" ]; then
   az webapp auth microsoft update \
     --resource-group "$RESOURCE_GROUP" \
@@ -143,7 +151,10 @@ if [ -n "$TENANT_ID" ]; then
     --output none 2>/dev/null || \
     echo "WARN: Could not update Easy Auth scope (non-fatal — /api/me fallback is active)"
 
-  AUTH_V2_URL="https://management.azure.com/subscriptions/$(az account show --query id -o tsv)/resourceGroups/${RESOURCE_GROUP}/providers/Microsoft.Web/sites/${APP_NAME}/config/authsettingsV2?api-version=2022-03-01"
+  if [ -z "$SUBSCRIPTION_ID" ]; then
+    SUBSCRIPTION_ID="$(az account show --query id -o tsv 2>/dev/null || true)"
+  fi
+  AUTH_V2_URL="https://management.azure.com/subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${RESOURCE_GROUP}/providers/Microsoft.Web/sites/${APP_NAME}/config/authsettingsV2?api-version=2022-03-01"
   AUTH_V2_JSON="$(az rest --method GET --url "$AUTH_V2_URL" --output json)"
   AUTH_V2_PATCHED="$(AUTH_V2_JSON="$AUTH_V2_JSON" python -c 'import json, os; data = json.loads(os.environ["AUTH_V2_JSON"]); data.setdefault("properties", {}); data["properties"].setdefault("platform", {}); data["properties"]["platform"]["enabled"] = True; print(json.dumps(data))')"
   AUTH_V2_FILE="${RESOURCE_GROUP}-${APP_NAME}-authsettingsV2.json"
