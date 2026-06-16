@@ -30,7 +30,7 @@ if ([string]::IsNullOrWhiteSpace($appName) -or [string]::IsNullOrWhiteSpace($api
 
 $appFx = $null
 $apiFx = $null
-if ([string]::IsNullOrWhiteSpace($env:APP_REPO) -or [string]::IsNullOrWhiteSpace($env:API_REPO)) {
+if ([string]::IsNullOrWhiteSpace($env:APP_REPO) -or [string]::IsNullOrWhiteSpace($env:API_REPO) -or [string]::IsNullOrWhiteSpace($env:ACR_LOGIN_SERVER)) {
     $appFx = az webapp config container show --resource-group $ResourceGroup --name $appName --query "[?name=='DOCKER_CUSTOM_IMAGE_NAME'].value | [0]" -o tsv
     $apiFx = az webapp config container show --resource-group $ResourceGroup --name $apiName --query "[?name=='DOCKER_CUSTOM_IMAGE_NAME'].value | [0]" -o tsv
 }
@@ -51,7 +51,11 @@ if ($apiImageRef -match '/') {
     $apiRepo = $apiRepoWithTag.Split(':', 2)[0]
 }
 
-$acrLoginServer = az acr list --resource-group $ResourceGroup --query "[0].loginServer" -o tsv
+if ([string]::IsNullOrWhiteSpace($env:ACR_LOGIN_SERVER)) {
+    $acrLoginServer = az acr list --resource-group $ResourceGroup --query "[0].loginServer" -o tsv
+} else {
+    $acrLoginServer = $env:ACR_LOGIN_SERVER
+}
 if ([string]::IsNullOrWhiteSpace($acrLoginServer)) {
     $acrLoginServer = $env:AZURE_CONTAINER_REGISTRY_ENDPOINT
 }

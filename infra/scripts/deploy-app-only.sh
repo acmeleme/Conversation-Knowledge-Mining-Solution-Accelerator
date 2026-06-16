@@ -25,7 +25,7 @@ fi
 
 APP_FX=""
 API_FX=""
-if [ -z "${APP_REPO:-}" ] || [ -z "${API_REPO:-}" ]; then
+if [ -z "${APP_REPO:-}" ] || [ -z "${API_REPO:-}" ] || [ -z "${ACR_LOGIN_SERVER:-}" ]; then
   APP_FX="$(az webapp config container show --resource-group "$RESOURCE_GROUP" --name "$APP_NAME" --query "[?name=='DOCKER_CUSTOM_IMAGE_NAME'].value | [0]" -o tsv 2>/dev/null || true)"
   API_FX="$(az webapp config container show --resource-group "$RESOURCE_GROUP" --name "$API_NAME" --query "[?name=='DOCKER_CUSTOM_IMAGE_NAME'].value | [0]" -o tsv 2>/dev/null || true)"
 fi
@@ -44,7 +44,9 @@ if [[ "$API_IMAGE_REF" == *"/"* ]]; then
   API_REPO="${API_REPO_WITH_TAG%%:*}"
 fi
 
-ACR_LOGIN_SERVER="$(az acr list --resource-group "$RESOURCE_GROUP" --query "[0].loginServer" -o tsv)"
+if [ -z "${ACR_LOGIN_SERVER:-}" ]; then
+  ACR_LOGIN_SERVER="$(az acr list --resource-group "$RESOURCE_GROUP" --query "[0].loginServer" -o tsv)"
+fi
 if [ -z "$ACR_LOGIN_SERVER" ]; then
   if [ -n "${AZURE_CONTAINER_REGISTRY_ENDPOINT:-}" ]; then
     ACR_LOGIN_SERVER="$AZURE_CONTAINER_REGISTRY_ENDPOINT"

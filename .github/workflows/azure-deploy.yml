@@ -32,6 +32,18 @@ on:
         description: 'API App Service name'
         required: false
         type: string
+      acr_login_server:
+        description: 'ACR login server'
+        required: false
+        type: string
+      app_repo:
+        description: 'Frontend image repository'
+        required: false
+        type: string
+      api_repo:
+        description: 'API image repository'
+        required: false
+        type: string
   push:
     branches:
       - main
@@ -45,6 +57,9 @@ env:
   RESOURCE_GROUP: ${{ github.event.inputs.resource_group || 'rg-callcenter-100' }}
   APP_NAME: ${{ github.event.inputs.app_name || '' }}
   API_NAME: ${{ github.event.inputs.api_name || '' }}
+  ACR_LOGIN_SERVER: ${{ github.event.inputs.acr_login_server || '' }}
+  APP_REPO: ${{ github.event.inputs.app_repo || '' }}
+  API_REPO: ${{ github.event.inputs.api_repo || '' }}
   LOCATION: 'eastus2'
   DEPLOYMENT_MODE: ${{ github.event.inputs.deployment_mode || 'application-only' }}
 
