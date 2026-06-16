@@ -24,6 +24,10 @@ on:
         description: 'Azure Resource Group'
         required: true
         type: string
+      subscription_id:
+        description: 'Azure Subscription ID'
+        required: false
+        type: string
       app_name:
         description: 'Frontend App Service name'
         required: false
@@ -53,7 +57,7 @@ on:
       - '.github/workflows/azure-deploy.yml'
 
 env:
-  AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  AZURE_SUBSCRIPTION_ID: ${{ github.event.inputs.subscription_id || secrets.AZURE_SUBSCRIPTION_ID }}
   RESOURCE_GROUP: ${{ github.event.inputs.resource_group || 'rg-callcenter-100' }}
   APP_NAME: ${{ github.event.inputs.app_name || '' }}
   API_NAME: ${{ github.event.inputs.api_name || '' }}
@@ -103,7 +107,7 @@ jobs:
       with:
         client-id: ${{ secrets.AZURE_CLIENT_ID }}
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        subscription-id: ${{ github.event.inputs.subscription_id || secrets.AZURE_SUBSCRIPTION_ID }}
     
     - name: Deploy Infrastructure and Application
       run: |
@@ -120,7 +124,7 @@ jobs:
         chmod +x infra/scripts/deploy-app-only.sh
         bash infra/scripts/deploy-app-only.sh "${{ env.RESOURCE_GROUP }}"
       env:
-        AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        AZURE_SUBSCRIPTION_ID: ${{ github.event.inputs.subscription_id || secrets.AZURE_SUBSCRIPTION_ID }}
 
   post-deployment-setup:
     name: Post-Deployment Data Setup
@@ -137,7 +141,7 @@ jobs:
       with:
         client-id: ${{ secrets.AZURE_CLIENT_ID }}
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        subscription-id: ${{ github.event.inputs.subscription_id || secrets.AZURE_SUBSCRIPTION_ID }}
     
     - name: Setup Python
       uses: actions/setup-python@v5
