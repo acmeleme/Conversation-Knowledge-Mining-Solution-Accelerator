@@ -11,22 +11,30 @@ IMAGE_TAG="${IMAGE_TAG:-app-only-$(date +%Y%m%d%H%M%S)}"
 
 echo "Deploying application only to resource group: ${RESOURCE_GROUP}"
 
-APP_NAME="$(az webapp list --resource-group "$RESOURCE_GROUP" --query "[?starts_with(name, 'app-')].name | [0]" -o tsv)"
-API_NAME="$(az webapp list --resource-group "$RESOURCE_GROUP" --query "[?starts_with(name, 'api-')].name | [0]" -o tsv)"
+if [ -z "${APP_NAME:-}" ]; then
+  APP_NAME="$(az webapp list --resource-group "$RESOURCE_GROUP" --query "[?starts_with(name, 'app-')].name | [0]" -o tsv)"
+fi
+if [ -z "${API_NAME:-}" ]; then
+  API_NAME="$(az webapp list --resource-group "$RESOURCE_GROUP" --query "[?starts_with(name, 'api-')].name | [0]" -o tsv)"
+fi
 
 if [ -z "$APP_NAME" ] || [ -z "$API_NAME" ]; then
   echo "ERROR: Could not discover app/api App Services in resource group '${RESOURCE_GROUP}'."
   exit 1
 fi
 
-APP_FX="$(az webapp config container show --resource-group "$RESOURCE_GROUP" --name "$APP_NAME" --query "[?name=='DOCKER_CUSTOM_IMAGE_NAME'].value | [0]" -o tsv 2>/dev/null || true)"
-API_FX="$(az webapp config container show --resource-group "$RESOURCE_GROUP" --name "$API_NAME" --query "[?name=='DOCKER_CUSTOM_IMAGE_NAME'].value | [0]" -o tsv 2>/dev/null || true)"
+APP_FX=""
+API_FX=""
+if [ -z "${APP_REPO:-}" ] || [ -z "${API_REPO:-}" ]; then
+  APP_FX="$(az webapp config container show --resource-group "$RESOURCE_GROUP" --name "$APP_NAME" --query "[?name=='DOCKER_CUSTOM_IMAGE_NAME'].value | [0]" -o tsv 2>/dev/null || true)"
+  API_FX="$(az webapp config container show --resource-group "$RESOURCE_GROUP" --name "$API_NAME" --query "[?name=='DOCKER_CUSTOM_IMAGE_NAME'].value | [0]" -o tsv 2>/dev/null || true)"
+fi
 
 APP_IMAGE_REF="${APP_FX#DOCKER|}"
 API_IMAGE_REF="${API_FX#DOCKER|}"
 
-APP_REPO=""
-API_REPO=""
+APP_REPO="${APP_REPO:-}"
+API_REPO="${API_REPO:-}"
 if [[ "$APP_IMAGE_REF" == *"/"* ]]; then
   APP_REPO_WITH_TAG="${APP_IMAGE_REF#*/}"
   APP_REPO="${APP_REPO_WITH_TAG%%:*}"
@@ -73,7 +81,6 @@ ACR_NAME="${ACR_LOGIN_SERVER%%.*}"
 if [ -z "$APP_REPO" ]; then
   APP_REPO="$APP_NAME"
 fi
-
 if [ -z "$API_REPO" ]; then
   API_REPO="$API_NAME"
 fi

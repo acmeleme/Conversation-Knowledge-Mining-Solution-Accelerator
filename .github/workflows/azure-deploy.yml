@@ -24,6 +24,14 @@ on:
         description: 'Azure Resource Group'
         required: true
         type: string
+      app_name:
+        description: 'Frontend App Service name'
+        required: false
+        type: string
+      api_name:
+        description: 'API App Service name'
+        required: false
+        type: string
   push:
     branches:
       - main
@@ -35,6 +43,8 @@ on:
 env:
   AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   RESOURCE_GROUP: ${{ github.event.inputs.resource_group || 'rg-callcenter-100' }}
+  APP_NAME: ${{ github.event.inputs.app_name || '' }}
+  API_NAME: ${{ github.event.inputs.api_name || '' }}
   LOCATION: 'eastus2'
   DEPLOYMENT_MODE: ${{ github.event.inputs.deployment_mode || 'application-only' }}
 

@@ -13,21 +13,33 @@ if ([string]::IsNullOrWhiteSpace($ImageTag)) {
 
 Write-Host "Deploying application only to resource group: $ResourceGroup"
 
-$appName = az webapp list --resource-group $ResourceGroup --query "[?starts_with(name, 'app-')].name | [0]" -o tsv
-$apiName = az webapp list --resource-group $ResourceGroup --query "[?starts_with(name, 'api-')].name | [0]" -o tsv
+if ([string]::IsNullOrWhiteSpace($env:APP_NAME)) {
+    $appName = az webapp list --resource-group $ResourceGroup --query "[?starts_with(name, 'app-')].name | [0]" -o tsv
+} else {
+    $appName = $env:APP_NAME
+}
+if ([string]::IsNullOrWhiteSpace($env:API_NAME)) {
+    $apiName = az webapp list --resource-group $ResourceGroup --query "[?starts_with(name, 'api-')].name | [0]" -o tsv
+} else {
+    $apiName = $env:API_NAME
+}
 
 if ([string]::IsNullOrWhiteSpace($appName) -or [string]::IsNullOrWhiteSpace($apiName)) {
     throw "Could not discover app/api App Services in resource group '$ResourceGroup'."
 }
 
-$appFx = az webapp config container show --resource-group $ResourceGroup --name $appName --query "[?name=='DOCKER_CUSTOM_IMAGE_NAME'].value | [0]" -o tsv
-$apiFx = az webapp config container show --resource-group $ResourceGroup --name $apiName --query "[?name=='DOCKER_CUSTOM_IMAGE_NAME'].value | [0]" -o tsv
+$appFx = $null
+$apiFx = $null
+if ([string]::IsNullOrWhiteSpace($env:APP_REPO) -or [string]::IsNullOrWhiteSpace($env:API_REPO)) {
+    $appFx = az webapp config container show --resource-group $ResourceGroup --name $appName --query "[?name=='DOCKER_CUSTOM_IMAGE_NAME'].value | [0]" -o tsv
+    $apiFx = az webapp config container show --resource-group $ResourceGroup --name $apiName --query "[?name=='DOCKER_CUSTOM_IMAGE_NAME'].value | [0]" -o tsv
+}
 
 $appImageRef = ($appFx -replace '^DOCKER\|', '')
 $apiImageRef = ($apiFx -replace '^DOCKER\|', '')
 
-$appRepo = $null
-$apiRepo = $null
+$appRepo = $env:APP_REPO
+$apiRepo = $env:API_REPO
 
 if ($appImageRef -match '/') {
     $appRepoWithTag = $appImageRef.Split('/', 2)[1]
