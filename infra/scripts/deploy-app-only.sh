@@ -133,6 +133,34 @@ if [ -n "$TENANT_ID" ]; then
     --login-parameters "scope=openid profile email" \
     --output none 2>/dev/null || \
     echo "WARN: Could not update Easy Auth scope (non-fatal — /api/me fallback is active)"
+
+  AUTH_V2_URL="https://management.azure.com/subscriptions/$(az account show --query id -o tsv)/resourceGroups/${RESOURCE_GROUP}/providers/Microsoft.Web/sites/${APP_NAME}/config/authsettingsV2?api-version=2022-03-01"
+  AUTH_V2_JSON="$(az rest --method GET --url "$AUTH_V2_URL" --output json)"
+  AUTH_V2_PATCHED="$(AUTH_V2_JSON="$AUTH_V2_JSON" python -c 'import json, os; data = json.loads(os.environ["AUTH_V2_JSON"]); data.setdefault("properties", {}); data["properties"].setdefault("platform", {}); data["properties"]["platform"]["enabled"] = True; print(json.dumps(data))')"
+  AUTH_V2_FILE="${RESOURCE_GROUP}-${APP_NAME}-authsettingsV2.json"
+  printf '%s' "$AUTH_V2_PATCHED" > "$AUTH_V2_FILE"
+  az rest --method PUT --url "$AUTH_V2_URL" --headers "Content-Type=application/json" --body @"$AUTH_V2_FILE" --output none >/dev/null
+  rm -f "$AUTH_V2_FILE"
+
+  CLIENT_ID=$(AUTH_V2_JSON="$AUTH_V2_JSON" python3 - <<'PY'
+import json
+import os
+
+data = json.loads(os.environ["AUTH_V2_JSON"])
+print(data["properties"]["identityProviders"]["azureActiveDirectory"]["registration"]["clientId"])
+PY
+  )
+
+  if [ -z "$CLIENT_ID" ]; then
+    echo "WARN: Could not resolve Easy Auth client ID; skipping app registration patch."
+  else
+    APP_REG_OBJECT_ID=$(az ad app show --id "$CLIENT_ID" --query id -o tsv)
+    IMP_GRANT_PATCH=$(cat <<'JSON'
+{"web":{"implicitGrantSettings":{"enableIdTokenIssuance":true,"enableAccessTokenIssuance":false}}}
+JSON
+)
+    az rest --method PATCH --url "https://graph.microsoft.com/v1.0/applications/${APP_REG_OBJECT_ID}" --headers "Content-Type=application/json" --body "$IMP_GRANT_PATCH" --output none >/dev/null
+  fi
 else
   echo "WARN: Could not determine tenant ID — skipping Easy Auth scope update"
 fi

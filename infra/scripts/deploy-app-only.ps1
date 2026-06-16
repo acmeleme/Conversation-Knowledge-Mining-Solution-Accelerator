@@ -110,6 +110,26 @@ Write-Host "Updating App Service container configuration..."
 az webapp config container set --resource-group $ResourceGroup --name $appName --container-image-name $appImage --container-registry-url "https://$acrLoginServer" | Out-Null
 az webapp config container set --resource-group $ResourceGroup --name $apiName --container-image-name $apiImage --container-registry-url "https://$acrLoginServer" | Out-Null
 
+$authSettingsUrl = "https://management.azure.com/subscriptions/$(az account show --query id -o tsv)/resourceGroups/$ResourceGroup/providers/Microsoft.Web/sites/$appName/config/authsettingsV2?api-version=2022-03-01"
+$authSettings = az rest --method get --url $authSettingsUrl --output json | ConvertFrom-Json
+$clientId = $authSettings.properties.identityProviders.azureActiveDirectory.registration.clientId
+
+if ([string]::IsNullOrWhiteSpace($clientId)) {
+    throw "Could not resolve the Easy Auth Azure AD client ID for '$appName'."
+}
+
+Write-Host "Enabling ID token issuance for app registration $clientId..."
+$appRegistration = az ad app show --id $clientId --output json | ConvertFrom-Json
+$implicitGrantPatch = @{
+    web = @{
+        implicitGrantSettings = @{
+            enableIdTokenIssuance     = $true
+            enableAccessTokenIssuance = $false
+        }
+    }
+} | ConvertTo-Json -Depth 5 -Compress
+az rest --method patch --url "https://graph.microsoft.com/v1.0/applications/$($appRegistration.id)" --headers "Content-Type=application/json" --body $implicitGrantPatch | Out-Null
+
 Write-Host "Restarting App Services..."
 az webapp restart --resource-group $ResourceGroup --name $appName | Out-Null
 az webapp restart --resource-group $ResourceGroup --name $apiName | Out-Null
