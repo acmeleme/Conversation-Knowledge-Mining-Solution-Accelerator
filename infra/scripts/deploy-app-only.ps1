@@ -147,7 +147,35 @@ $authSettings = az rest --method get --url $authSettingsUrl --output json | Conv
 $clientId = $authSettings.properties.identityProviders.azureActiveDirectory.registration.clientId
 
 if ([string]::IsNullOrWhiteSpace($clientId)) {
-    throw "Could not resolve the Easy Auth Azure AD client ID for '$appName'."
+    throw "Could not resolve the Easy Auth Azure AD client ID for '$appName'. Run configure-easy-auth.ps1 first."
+}
+
+# Ensure loginParameters in authsettingsV2 includes response_type=code id_token.
+# Easy Auth v2 uses hybrid flow; without this, id_token is absent from /.auth/me and Bearer auth breaks.
+# AADSTS700054 occurs if enableIdTokenIssuance is false on the App Registration regardless of loginParameters,
+# but keeping loginParameters aligned avoids id_token disappearing from /.auth/me user_claims.
+$aadLogin = $authSettings.properties.identityProviders.azureActiveDirectory.login
+$currentParams = if ($null -ne $aadLogin -and $null -ne $aadLogin.loginParameters) { @($aadLogin.loginParameters) } else { @() }
+$hasResponseType = @($currentParams | Where-Object { $_ -like 'response_type=*' }).Count -gt 0
+
+if (-not $hasResponseType) {
+    Write-Host "Adding response_type=code id_token to Easy Auth loginParameters for $appName..."
+    if ($null -eq $authSettings.properties.identityProviders.azureActiveDirectory.login) {
+        $authSettings.properties.identityProviders.azureActiveDirectory | Add-Member -NotePropertyName 'login' -NotePropertyValue ([PSCustomObject]@{}) -Force
+    }
+    $authSettings.properties.identityProviders.azureActiveDirectory.login | Add-Member `
+        -NotePropertyName 'loginParameters' `
+        -NotePropertyValue @('response_type=code id_token', 'scope=openid profile email offline_access') `
+        -Force
+    $authPatchJson = $authSettings | ConvertTo-Json -Depth 20 -Compress
+    $authPatchPath = Join-Path $PSScriptRoot ".auth-login-params-patch-$appName.json"
+    $authPatchJson | Set-Content -Path $authPatchPath -Encoding utf8 -NoNewline
+    try {
+        az rest --method PUT --url $authSettingsUrl --headers 'Content-Type=application/json' --body "@$authPatchPath" --output json | Out-Null
+    } finally {
+        Remove-Item -Path $authPatchPath -ErrorAction SilentlyContinue
+    }
+    Write-Host "loginParameters updated for $appName."
 }
 
 Write-Host "Enabling ID token issuance for app registration $clientId..."
@@ -160,7 +188,14 @@ $implicitGrantPatch = @{
         }
     }
 } | ConvertTo-Json -Depth 5 -Compress
-az rest --method patch --url "https://graph.microsoft.com/v1.0/applications/$($appRegistration.id)" --headers "Content-Type=application/json" --body $implicitGrantPatch | Out-Null
+$graphPatchResult = az rest --method patch --url "https://graph.microsoft.com/v1.0/applications/$($appRegistration.id)" --headers "Content-Type=application/json" --body $implicitGrantPatch 2>&1
+if ($LASTEXITCODE -ne 0) {
+    Write-Warning "Graph PATCH failed — enableIdTokenIssuance NOT set on App Registration $($appRegistration.id)."
+    Write-Warning "This WILL cause AADSTS700054 on every login."
+    Write-Warning "Fix: grant the principal 'Application.ReadWrite.OwnedBy' on MS Graph, then re-run this script OR configure-easy-auth.ps1."
+    throw "Graph PATCH for enableIdTokenIssuance failed. Details: $graphPatchResult"
+}
+Write-Host "ID token issuance enabled on App Registration $($appRegistration.id)."
 
 Write-Host "Restarting App Services..."
 az webapp restart --resource-group $ResourceGroup --name $appName | Out-Null

@@ -195,6 +195,10 @@ foreach ($appName in $AppNames) {
         $currentAuthConfig.properties.globalValidation = [PSCustomObject]@{}
     }
     $currentAuthConfig.properties.globalValidation.unauthenticatedClientAction = $unauthAction
+    if ($null -eq $currentAuthConfig.properties.platform) {
+        $currentAuthConfig.properties | Add-Member -NotePropertyName 'platform' -NotePropertyValue ([PSCustomObject]@{}) -Force
+    }
+    $currentAuthConfig.properties.platform.enabled = $true
 
     if ($appName -like 'api-*') {
         # Only /health is public; all other routes require a valid Bearer id_token.

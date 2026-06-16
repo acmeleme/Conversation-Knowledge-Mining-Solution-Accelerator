@@ -34,7 +34,7 @@ Cria ou reaproveita a App Registration `ckm-callcenter-app`, adiciona App Roles,
 Versão Bash para Linux/macOS com o mesmo fluxo funcional do script PowerShell.
 
 ### `configure-easy-auth.ps1`
-Localiza os App Services no resource group `rg-callcenter-100`, habilita App Service Authentication com Azure AD, configura Token Store e atualiza redirect URIs na App Registration.
+Localiza os App Services no resource group `rg-callcenter-100`, habilita App Service Authentication com Azure AD, garante `authsettingsV2.platform.enabled=true`, configura Token Store e atualiza redirect URIs na App Registration.
 
 ### `test-users-setup.md`
 Checklist operacional para validar criação de usuários, atribuição de roles e inspeção de claims JWT.
