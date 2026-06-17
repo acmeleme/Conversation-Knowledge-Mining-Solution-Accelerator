@@ -4,6 +4,7 @@ from typing import Any
 from fastapi import HTTPException, status
 
 from api.models.input_models import ChartFilters
+from auth.auth_utils import can_access_billing
 from auth.rbac import RESTRICTED_TOPIC, filter_topics_by_role
 from common.database.sqldb_service import adjust_processed_data_dates, fetch_chart_data, fetch_filters_data
 
@@ -53,7 +54,7 @@ class ChartService:
                 ]
                 allowed_topics = set(filter_topics_by_role(topic_names, roles))
 
-                has_billing_access = any(role.casefold() == "faturamento" for role in roles)
+                has_billing_access = can_access_billing(roles)
                 filtered_values = [
                     topic for topic in filter_values
                     if (topic.get("displayValue") or topic.get("key")) in allowed_topics

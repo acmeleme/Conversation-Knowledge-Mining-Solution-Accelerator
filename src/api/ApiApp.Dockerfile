@@ -3,6 +3,9 @@ FROM python:3.11-slim
 ARG APP_VERSION=dev
 ENV APP_VERSION=$APP_VERSION
 
+ARG BACKEND_IMAGE_TAG=dev
+ENV BACKEND_IMAGE_TAG=$BACKEND_IMAGE_TAG
+
 # Install system dependencies and Microsoft ODBC Driver 18 for SQL Server.
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
