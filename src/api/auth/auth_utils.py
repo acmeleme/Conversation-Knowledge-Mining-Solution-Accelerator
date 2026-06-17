@@ -97,6 +97,7 @@ ALLOWED_DEMO_ROLES = {OPERADOR_ROLE, FINANCEIRO_ROLE, BILLING_ROLE, DEFAULT_DEV_
 UPN_ROLE_MAP: dict[str, list[str]] = {
     "operador-callcenter@mngenvmcap197214.onmicrosoft.com": [OPERADOR_ROLE],
     "financeiro-faturamento@mngenvmcap197214.onmicrosoft.com": [FINANCEIRO_ROLE, BILLING_ROLE],
+    "operador-cartao@mngenvmcap299208.onmicrosoft.com": [FINANCEIRO_ROLE],
 }
 
 
