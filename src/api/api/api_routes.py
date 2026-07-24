@@ -14,7 +14,12 @@ from common.config.config import Config
 from api.models.input_models import ChartFilters
 from api.models.rbac_models import UserInfo
 from auth.auth_utils import get_authenticated_user_details, get_tenantid
-from auth.rbac import can_access_billing, get_current_user_roles
+from auth.rbac import (
+    RESTRICTED_TOPICS,
+    can_access_billing,
+    filter_topics_by_role,
+    get_current_user_roles,
+)
 from services.chat_service import ChatService
 from services.chart_service import ChartService
 from services.foundry_memory_service import FoundryMemoryService
@@ -92,15 +97,20 @@ def _contains_billing_keywords(query: str | None) -> bool:
 def _build_user_info(request: Request) -> UserInfo:
     user_details = get_authenticated_user_details(request.headers)
     roles = get_current_user_roles(request)
+    normalized_roles = {str(role).casefold() for role in roles}
     user_principal_id = user_details.get("user_principal_id")
     client_principal_b64 = user_details.get("client_principal_b64")
     tenant_id = get_tenantid(client_principal_b64) or None
     memory_scope = FoundryMemoryService.build_scope(user_principal_id, tenant_id) or None
+    allowed_topics = None
+    if normalized_roles.intersection({"operador-outros", "operador-cartao"}):
+        allowed_topics = filter_topics_by_role(RESTRICTED_TOPICS, roles)
     return UserInfo(
         user_name=user_details.get("user_name"),
         user_principal_id=user_principal_id,
         roles=roles,
         can_access_billing=can_access_billing(roles),
+        allowed_topics=allowed_topics,
         tenant_id=tenant_id,
         memory_scope=memory_scope,
     )
@@ -247,7 +257,7 @@ async def conversation(request: Request):
             )
             return JSONResponse(
                 content={
-                    "error": "Acesso negado. As informações sobre Cartão de Crédito (Fatura, Pagamento, Bloqueio e Contestação) requerem o perfil 'financeiro'. Entre em contato com o administrador para solicitar acesso."
+                    "error": "Acesso negado. As informações sobre Cartão de Crédito (Fatura, Pagamento, Bloqueio e Contestação) requerem o perfil 'operador-cartao'. Entre em contato com o administrador para solicitar acesso."
                 },
                 status_code=403,
             )

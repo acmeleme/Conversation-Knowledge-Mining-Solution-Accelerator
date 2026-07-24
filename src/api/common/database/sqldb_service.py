@@ -1,4 +1,5 @@
 from datetime import datetime
+import re
 import struct
 
 import pandas as pd
@@ -25,24 +26,86 @@ def _group_records(df, group_columns, value_columns):
 def _build_topic_filter(where_clause, table_context='processed_data'):
     """
     Builds topic filter clause for different table schemas.
-    
+
     Args:
         where_clause: The base where clause (with 'mined_topic' references)
         table_context: Either 'processed_data' (uses 'mined_topic') or 'key_phrases' (uses 'topic')
-    
+
     Returns:
         Modified where_clause with correct column names for the target table
-    
+
     Ref: Issue #41 - Ensure topic filter applies consistently across all dashboard frames
     """
     if not where_clause:
         return where_clause
-    
+
     if table_context == 'key_phrases':
         # processed_data_key_phrases table uses 'topic' column instead of 'mined_topic'
         return where_clause.replace('mined_topic', 'topic')
-    
+
     return where_clause  # processed_data uses 'mined_topic' by default
+
+
+def _escape_sql_literal(value: str) -> str:
+    return value.replace("'", "''")
+
+
+def _build_restricted_topics_clause(restricted_topics: list[str]) -> str:
+    return ", ".join(f"'{_escape_sql_literal(topic)}'" for topic in restricted_topics)
+
+
+def _apply_table_topic_restriction(
+    sql_query: str,
+    table_name: str,
+    topic_column: str,
+    restricted_topics: list[str],
+) -> str:
+    if not sql_query or not restricted_topics:
+        return sql_query
+
+    restricted_clause = _build_restricted_topics_clause(restricted_topics)
+    table_pattern = (
+        rf"(?P<prefix>\bFROM|\bJOIN)\s+"
+        rf"(?P<table>(?:\[dbo\]|\bdbo\b)\.\[?{re.escape(table_name)}\]?|\[?{re.escape(table_name)}\]?)"
+        rf"(?:\s+(?:AS\s+)?(?P<alias>\w+))?"
+    )
+
+    def replace(match: re.Match[str]) -> str:
+        prefix = match.group("prefix")
+        table_expr = match.group("table")
+        alias = match.group("alias") or table_name
+        return (
+            f"{prefix} (SELECT * FROM {table_expr} "
+            f"WHERE COALESCE({topic_column}, '') NOT IN ({restricted_clause})) AS {alias}"
+        )
+
+    return re.sub(table_pattern, replace, sql_query, flags=re.IGNORECASE)
+
+
+def apply_topic_restrictions_to_sql(
+    sql_query: str,
+    restricted_topics: list[str] | None = None,
+) -> str:
+    """Inject mandatory topic exclusions into supported SQL table sources."""
+    topics = [topic for topic in (restricted_topics or []) if isinstance(topic, str) and topic.strip()]
+    if not sql_query or not topics:
+        return sql_query
+
+    restricted_sql = sql_query
+    table_configs = [
+        ("km_processed_data", "topic"),
+        ("processed_data_key_phrases", "topic"),
+        ("processed_data", "mined_topic"),
+    ]
+    for table_name, topic_column in table_configs:
+        restricted_sql = _apply_table_topic_restriction(
+            restricted_sql,
+            table_name=table_name,
+            topic_column=topic_column,
+            restricted_topics=topics,
+        )
+
+    return restricted_sql
 
 
 async def get_db_connection():
@@ -330,7 +393,7 @@ async def fetch_chart_data(chart_filters: ChartFilters = ''):
         # Build where clause for key_phrases table (uses 'topic' column instead of 'mined_topic')
         # Ref: Issue #41 - Ensure topic filter applies consistently to Key Phrases frame
         key_phrases_where_clause = _build_topic_filter(where_clause, table_context='key_phrases')
-        
+
         sql_stmt = f'''select top 15 key_phrase as text,
             'KEY_PHRASES' as id, 'Key Phrases' as chart_name, 'wordcloud' as chart_type,
             call_frequency as size, lower(average_sentiment) as average_sentiment from
@@ -376,7 +439,7 @@ async def fetch_chart_data(chart_filters: ChartFilters = ''):
         conn.close()
 
 
-async def execute_sql_query(sql_query):
+async def execute_sql_query(sql_query, restricted_topics: list[str] | None = None):
     """
     Executes a given SQL query and returns the result as a concatenated string.
     """
@@ -384,7 +447,8 @@ async def execute_sql_query(sql_query):
     cursor = None
     try:
         cursor = conn.cursor()
-        cursor.execute(sql_query)
+        restricted_sql = apply_topic_restrictions_to_sql(sql_query, restricted_topics)
+        cursor.execute(restricted_sql)
         result = ''.join(str(row) for row in cursor.fetchall())
         return result
     except Exception as e:

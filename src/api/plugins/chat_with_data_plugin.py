@@ -16,6 +16,7 @@ from azure.ai.agents.models import (
     MessageRole,
     RunStepToolCallDetails)
 
+from auth.auth_utils import get_current_restricted_topics
 from common.database.sqldb_service import execute_sql_query
 from common.config.config import Config
 from agents.search_agent_factory import SearchAgentFactory
@@ -36,6 +37,18 @@ class ChatWithDataPlugin:
         self.azure_ai_search_index = config.azure_ai_search_index
         self.use_ai_project_client = config.use_ai_project_client
 
+    @staticmethod
+    def _build_restriction_prompt(restricted_topics: list[str]) -> str:
+        if not restricted_topics:
+            return ""
+
+        topics = "; ".join(restricted_topics)
+        return (
+            "\n\nMandatory data-access restriction: never query, summarize, aggregate, or return "
+            f"rows/documents whose topic matches any of these restricted topics: {topics}. "
+            "If data for the request exists only in restricted topics, return no data."
+        )
+
     @kernel_function(name="GetDatabaseMetrics",
                      description="Provides quantified results from the database.")
     async def get_database_metrics(
@@ -53,7 +66,8 @@ class ChatWithDataPlugin:
             str: SQL query result or an error message if failed.
         """
 
-        query = input
+        restricted_topics = get_current_restricted_topics()
+        query = input + self._build_restriction_prompt(restricted_topics)
         try:
             agent_info = await SQLAgentFactory.get_agent()
             agent = agent_info["agent"]
@@ -83,7 +97,7 @@ class ChatWithDataPlugin:
                     sql_query = msg.text_messages[-1].text.value
                     break
             sql_query = sql_query.replace("```sql", '').replace("```", '').strip()
-            answer = await execute_sql_query(sql_query)
+            answer = await execute_sql_query(sql_query, restricted_topics=restricted_topics)
             answer = answer[:20000] if len(answer) > 20000 else answer
 
             # Clean up

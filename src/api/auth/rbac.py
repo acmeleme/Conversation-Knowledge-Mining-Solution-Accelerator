@@ -7,7 +7,7 @@ from fastapi import Depends, HTTPException, Request, status
 
 from auth.auth_utils import DEFAULT_DEV_ROLE, can_access_billing, get_user_roles
 
-# Tópicos de Cartão de Crédito restritos ao role 'financeiro'
+# Tópicos de Cartão de Crédito restritos ao role 'operador-cartao'
 # Devem corresponder exatamente ao campo 'topic' na tabela processed_data do SQL.
 RESTRICTED_TOPIC = "Cartao de Credito — Fatura e Pagamento"  # compatibilidade legada
 RESTRICTED_TOPICS = [
@@ -45,7 +45,7 @@ def require_role(required_roles: list[str]) -> Callable[[list[str]], list[str]]:
 
 
 def filter_topics_by_role(topics: list[str], roles: list[str]) -> list[str]:
-    """Oculta os tópicos de Cartão de Crédito a menos que o usuário tenha o role 'financeiro'."""
+    """Oculta os tópicos de Cartão de Crédito a menos que o usuário tenha o role 'operador-cartao'."""
     if can_access_billing(roles):
         return topics
 

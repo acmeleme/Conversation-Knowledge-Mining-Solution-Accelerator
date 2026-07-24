@@ -260,11 +260,20 @@ def classify_query(query: str) -> Tuple[QueryScope, str]:
         "com base no resumo anterior", "plano de acao", "plano de acao", "next steps",
         "action plan", "areas envolvidas", "areas envolvidas e acao", "acao de cada area",
         "obrigado", "obrigada", "por favor", "pode explicar", "pode detalhar",
+        # Capability/help intents (must stay in-scope to avoid false refusals)
+        "quais perguntas pode responder", "quais perguntas voce pode responder",
+        "o que voce pode responder", "o que vc pode responder",
+        "como pode me ajudar", "como voce pode me ajudar", "como vc pode me ajudar",
+        "como pode ajudar", "como voce pode ajudar", "como vc pode ajudar",
+        "o que voce faz", "o que vc faz", "como funciona",
+        "what can you answer", "what can you do", "how can you help me",
     ]
     off_topic_hints = [
         "joke", "poem", "recipe", "travel", "movie", "music", "weather", "sports",
         "receita", "piada", "filme", "musica", "clima", "previsao do tempo",
         "esporte", "futebol", "viagem", "poema", "conto", "historia ficticia",
+        "bake", "cake", "chocolate", "cooking", "baker", "dessert", "pastry",
+        "machine learning", "deep learning", "neural network", "artificial intelligence",
     ]
     if any(phrase in query_norm for phrase in conversational_phrases) and not any(
         hint in query_norm for hint in off_topic_hints
