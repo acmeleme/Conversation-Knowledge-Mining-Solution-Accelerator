@@ -102,8 +102,8 @@ const Dashboard: React.FC<{ userRole: UserRole; userName: string; userEmail: str
     fetchApiVersion();
   }, []);
 
-  const frontendImageName = (frontendImageTag || "").trim() || "kmfrx01b002acr.azurecr.io/ckm-app:dev";
-  const backendImageName = (backendImageTag || "").trim() || `kmfrx01b002acr.azurecr.io/ckm-api:${apiVersion || "dev"}`;
+  const frontendImageName = (frontendImageTag || "").trim() || "loading...";
+  const backendImageName = (backendImageTag || "").trim() || "loading...";
 
   useEffect(() => {
     try {
@@ -347,12 +347,12 @@ const Dashboard: React.FC<{ userRole: UserRole; userName: string; userEmail: str
             size="small"
             style={{
               marginLeft: 12,
-                backgroundColor: userRole === "financeiro" ? "#dff6dd" : "#dce9f8",
-                color: userRole === "financeiro" ? "#107c10" : "#0078d4",
+                backgroundColor: userRole === "financeiro" ? "#dff6dd" : userRole === "operador-cartao" ? "#f3e5f5" : "#dce9f8",
+                color: userRole === "financeiro" ? "#107c10" : userRole === "operador-cartao" ? "#5c2d91" : "#0078d4",
               fontWeight: 600,
             }}
           >
-              {userRole === "financeiro" ? "💼 Financeiro" : "🎧 Operador"}
+              {roleLabel} — {userName || userEmail || "usuário"}
           </Tag>
         </div>
         <div className="header-right-section">

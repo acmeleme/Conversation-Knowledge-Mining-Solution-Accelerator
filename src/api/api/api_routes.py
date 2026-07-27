@@ -283,7 +283,9 @@ async def conversation(request: Request):
 async def get_version():
     """Returns the running image version tags for the frontend and API."""
     app_version = os.getenv("APP_VERSION", "dev")
-    backend_image_tag = os.getenv("BACKEND_IMAGE_TAG") or f"ckm-api:{app_version}"
+    # DOCKER_CUSTOM_IMAGE_NAME is injected by Azure App Service with the full image URI
+    docker_image = os.getenv("DOCKER_CUSTOM_IMAGE_NAME", "")
+    backend_image_tag = os.getenv("BACKEND_IMAGE_TAG") or docker_image or f"ckm-api:{app_version}"
     frontend_image_tag = os.getenv("FRONTEND_IMAGE_TAG", "ckm-app:dev")
     return {
         "api_version": app_version,
