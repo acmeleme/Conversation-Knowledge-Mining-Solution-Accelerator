@@ -36,6 +36,7 @@ import { ChatMessage, Conversation } from "./types/AppTypes";
 import { AppLogo } from "./components/Svg/Svg";
 import CustomSpinner from "./components/CustomSpinner/CustomSpinner";
 import CitationPanel from "./components/CitationPanel/CitationPanel";
+import { formatImageNameForDisplay } from "./utils/versionDisplay";
 const panels = {
   DASHBOARD: "DASHBOARD",
   CHAT: "CHAT",
@@ -91,8 +92,8 @@ const Dashboard: React.FC<{ userRole: UserRole; userName: string; userEmail: str
         if (resp.ok) {
           const data = await resp.json();
           setApiVersion(data.api_version || "");
-          setFrontendImageTag(data.frontend_image_tag || "");
-          setBackendImageTag(data.backend_image_tag || "");
+          setFrontendImageTag(data.frontend_image_name || data.frontend_image_tag || "");
+          setBackendImageTag(data.backend_image_name || data.backend_image_tag || "");
         }
       } catch {
         // silent
@@ -100,6 +101,9 @@ const Dashboard: React.FC<{ userRole: UserRole; userName: string; userEmail: str
     };
     fetchApiVersion();
   }, []);
+
+  const frontendImageName = (frontendImageTag || "").trim() || "kmfrx01b002acr.azurecr.io/ckm-app:dev";
+  const backendImageName = (backendImageTag || "").trim() || `kmfrx01b002acr.azurecr.io/ckm-api:${apiVersion || "dev"}`;
 
   useEffect(() => {
     try {
@@ -134,6 +138,8 @@ const Dashboard: React.FC<{ userRole: UserRole; userName: string; userEmail: str
   const roleLabel =
     userRole === "financeiro"
       ? "💼 Financeiro & Faturamento"
+      : userRole === "operador-cartao"
+      ? "💳 Operador de Cartão"
       : "🎧 Operador de Callcenter";
 
   const updateLayoutWidths = (newState: Record<string, boolean>) => {
@@ -350,10 +356,13 @@ const Dashboard: React.FC<{ userRole: UserRole; userName: string; userEmail: str
           </Tag>
         </div>
         <div className="header-right-section">
-          <Text size={100} style={{ color: "#aaa", fontSize: 11, alignSelf: "center", fontFamily: "monospace", marginRight: 4 }}>
-            {frontendImageTag ? `fe:${String(frontendImageTag).split(":")[1] || "dev"}` : `fe:${(process.env.REACT_APP_VERSION || "dev").slice(0, 7)}`}
-            {apiVersion ? ` · api:${String(apiVersion).slice(0, 7)}` : ""}
-            {backendImageTag ? ` · be:${String(backendImageTag).split(":")[1] || backendImageTag}` : ""}
+          <Text
+            size={100}
+            title={`frontend=${frontendImageName} | backend=${backendImageName}`}
+            style={{ color: "#aaa", fontSize: 11, alignSelf: "center", fontFamily: "monospace", marginRight: 4 }}
+          >
+            {`fe:${formatImageNameForDisplay(frontendImageName, "n/a")}`}
+            {` · be:${formatImageNameForDisplay(backendImageName, "n/a")}`}
           </Text>
           <Button
             appearance="subtle"
@@ -623,13 +632,28 @@ const App: React.FC = () => {
           identifier.includes("faturamento") ||
           claims.some((c: any) => c.typ === "roles" && c.val === "financeiro");
 
-        const name: string = isFaturamento ? "Financeiro" : "Operador";
-        let role: UserRole = isFaturamento ? "financeiro" : "operador";
+        const isOperadorCartao =
+          identifier.includes("operador-cartao") ||
+          identifier.includes("operador_cartao") ||
+          identifier.includes("cartao") ||
+          claims.some((c: any) => c.typ === "roles" && c.val === "operador-cartao");
+
+        let role: UserRole;
+        if (isFaturamento) {
+          role = "financeiro";
+        } else if (isOperadorCartao) {
+          role = "operador-cartao";
+        } else {
+          role = "operador";
+        }
+
+        // Usa o email/UPN real como nome de exibição (Bug Fix: mostrar usuário autenticado)
+        const displayName: string = email || rawName || (isFaturamento ? "Financeiro" : "Operador");
 
         // Sincroniza a role no localStorage para que api.ts injete o header x-demo-role
         setDemoRole(role);
 
-        setUserInfo({ name: name || email, email, role });
+        setUserInfo({ name: displayName, email, role });
         setLoading(false);
       } catch {
         const isLocal =

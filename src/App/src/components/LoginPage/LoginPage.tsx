@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./LoginPage.css";
 
-export type UserRole = "financeiro" | "operador";
+export type UserRole = "financeiro" | "operador" | "operador-cartao";
 
 interface RoleCard {
   role: UserRole;
@@ -34,6 +34,16 @@ const ROLES: RoleCard[] = [
     badgeColor: "#0078d4",
     topics: ["Seguro", "Empréstimos", "Crédito Especial", "Consórcio"],
     icon: "🎧",
+  },
+  {
+    role: "operador-cartao",
+    user: "operador-cartao@mngenvmcap299208.onmicrosoft.com",
+    label: "Operador de Cartão",
+    description: "Acesso a todos os tópicos incluindo Cartão de Crédito (Fatura, Bloqueio e Contestação).",
+    badge: "Acesso Cartão",
+    badgeColor: "#5c2d91",
+    topics: ["Seguro", "Empréstimos", "Crédito Especial", "Consórcio", "Cartão de Crédito"],
+    icon: "💳",
   },
 ];
 
