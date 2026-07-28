@@ -177,7 +177,7 @@ async def get_db_connection():
 
 async def adjust_processed_data_dates():
     """
-    Adjusts the dates in the processed_data, km_processed_data, and processed_data_key_phrases tables
+    Adjusts the dates in the km_processed_data and processed_data_key_phrases tables
     to align with the current date.
     """
     conn = await get_db_connection()
@@ -186,33 +186,42 @@ async def adjust_processed_data_dates():
         cursor = conn.cursor()
         # Adjust the dates to the current date
         today = datetime.today()
-        cursor.execute(
-            "SELECT MAX(CAST(StartTime AS DATETIME)) FROM [dbo].[processed_data]"
-        )
-        max_start_time = (cursor.fetchone())[0]
+        try:
+            cursor.execute(
+                "SELECT MAX(CAST(StartTime AS DATETIME)) FROM [dbo].[km_processed_data]"
+            )
+            max_start_time = (cursor.fetchone())[0]
+        except Exception as e:
+            logging.warning("Could not query km_processed_data for max StartTime: %s", e)
+            max_start_time = None
 
         if max_start_time:
             days_difference = (today - max_start_time).days - 1
             if days_difference != 0:
-                # Update processed_data table
-                cursor.execute(
-                    "UPDATE [dbo].[processed_data] SET StartTime = FORMAT(DATEADD(DAY, ?, StartTime), 'yyyy-MM-dd "
-                    "HH:mm:ss'), EndTime = FORMAT(DATEADD(DAY, ?, EndTime), 'yyyy-MM-dd HH:mm:ss')",
-                    (days_difference, days_difference)
-                )
                 # Update km_processed_data table
-                cursor.execute(
-                    "UPDATE [dbo].[km_processed_data] SET StartTime = FORMAT(DATEADD(DAY, ?, StartTime), 'yyyy-MM-dd "
-                    "HH:mm:ss'), EndTime = FORMAT(DATEADD(DAY, ?, EndTime), 'yyyy-MM-dd HH:mm:ss')",
-                    (days_difference, days_difference)
-                )
+                try:
+                    cursor.execute(
+                        "UPDATE [dbo].[km_processed_data] SET StartTime = FORMAT(DATEADD(DAY, ?, StartTime), 'yyyy-MM-dd "
+                        "HH:mm:ss'), EndTime = FORMAT(DATEADD(DAY, ?, EndTime), 'yyyy-MM-dd HH:mm:ss')",
+                        (days_difference, days_difference)
+                    )
+                except Exception as e:
+                    logging.warning("Could not update km_processed_data dates: %s", e)
                 # Update processed_data_key_phrases table
-                cursor.execute(
-                    "UPDATE [dbo].[processed_data_key_phrases] SET StartTime = FORMAT(DATEADD(DAY, ?, StartTime), "
-                    "'yyyy-MM-dd HH:mm:ss')", (days_difference,)
-                )
+                try:
+                    cursor.execute(
+                        "UPDATE [dbo].[processed_data_key_phrases] SET StartTime = FORMAT(DATEADD(DAY, ?, StartTime), "
+                        "'yyyy-MM-dd HH:mm:ss')", (days_difference,)
+                    )
+                except Exception as e:
+                    logging.warning("Could not update processed_data_key_phrases dates: %s", e)
                 # Commit the changes
-                conn.commit()
+                try:
+                    conn.commit()
+                except Exception as e:
+                    logging.warning("Could not commit date adjustments: %s", e)
+    except Exception as e:
+        logging.warning("adjust_processed_data_dates encountered an error and was skipped: %s", e)
     finally:
         if cursor:
             cursor.close()
@@ -227,15 +236,15 @@ async def fetch_filters_data():
     cursor = None
     try:
         cursor = conn.cursor()
-        sql_stmt = '''select 'Topic' as filter_name, mined_topic as displayValue, mined_topic as key1 from
-            (SELECT distinct mined_topic from processed_data) t
+        sql_stmt = '''select 'Topic' as filter_name, topic as displayValue, topic as key1 from
+            (SELECT distinct topic from km_processed_data) t
             union all
             select 'Sentiment' as filter_name, sentiment as displayValue, sentiment as key1 from
-            (SELECT distinct sentiment from processed_data
+            (SELECT distinct sentiment from km_processed_data
             union all select 'all' as sentiment) t
             union all
             select 'Satisfaction' as filter_name, satisfied as displayValue, satisfied as key1 from
-            (SELECT distinct satisfied from processed_data) t
+            (SELECT distinct satisfied from km_processed_data) t
             union all
             select 'DateRange' as filter_name, date_range as displayValue, date_range as key1 from
             (SELECT 'Last 7 days' as date_range
@@ -295,7 +304,7 @@ async def fetch_chart_data(chart_filters: ChartFilters = ''):
                             if where_clause:
                                 where_clause += " and "
                             if topics:
-                                where_clause += f" mined_topic  in ({topics})"
+                                where_clause += f" topic  in ({topics})"
                                 where_clause = where_clause.replace(', )', ')')
                         elif k == 'Sentiment':
                             for sentiment in v:
@@ -326,26 +335,26 @@ async def fetch_chart_data(chart_filters: ChartFilters = ''):
 
         sql_stmt = (
             f'''select 'TOTAL_CALLS' as id, 'Total Calls' as chart_name, 'card' as chart_type,
-                'Total Calls' as name, count(*) as value, '' as unit_of_measurement from [dbo].[processed_data] {where_clause}
+                'Total Calls' as name, count(*) as value, '' as unit_of_measurement from [dbo].[km_processed_data] {where_clause}
                 union all
                 select 'AVG_HANDLING_TIME' as id, 'Average Handling Time' as chart_name, 'card' as chart_type,
                 'Average Handling Time' as name,
-                AVG(DATEDIFF(MINUTE, StartTime, EndTime))  as value, 'mins' as unit_of_measurement from [dbo].[processed_data] {where_clause}
+                AVG(DATEDIFF(MINUTE, StartTime, EndTime))  as value, 'mins' as unit_of_measurement from [dbo].[km_processed_data] {where_clause}
                 union all
                 select 'SATISFIED' as id, 'Satisfied' as chart_name, 'card' as chart_type, 'Satisfied' as name,
-                round((CAST(SUM(CASE WHEN satisfied = 'yes' THEN 1 ELSE 0 END) AS FLOAT) / COUNT(*) * 100), 2) as value, '%' as unit_of_measurement from [dbo].[processed_data]
+                round((CAST(SUM(CASE WHEN satisfied = 'yes' THEN 1 ELSE 0 END) AS FLOAT) / COUNT(*) * 100), 2) as value, '%' as unit_of_measurement from [dbo].[km_processed_data]
                 {where_clause}
                 union all
                 select 'SENTIMENT' as id, 'Topics Overview' as chart_name, 'donutchart' as chart_type,
                 sentiment as name,
                 (count(sentiment) * 100 / sum(count(sentiment)) over ()) as value,
-                '' as unit_of_measurement from [dbo].[processed_data]  {where_clause}
+                '' as unit_of_measurement from [dbo].[km_processed_data]  {where_clause}
                 group by sentiment
                 union all
                 select 'AVG_HANDLING_TIME_BY_TOPIC' as id, 'Average Handling Time By Topic' as chart_name, 'bar' as chart_type,
-                mined_topic as name,
-                AVG(DATEDIFF(MINUTE, StartTime, EndTime)) as value, '' as unit_of_measurement from [dbo].[processed_data] {where_clause}
-                group by mined_topic
+                topic as name,
+                AVG(DATEDIFF(MINUTE, StartTime, EndTime)) as value, '' as unit_of_measurement from [dbo].[km_processed_data] {where_clause}
+                group by topic
                 ''')
 
         # charts pt1
@@ -364,13 +373,13 @@ async def fetch_chart_data(chart_filters: ChartFilters = ''):
             ['name', 'value', 'unit_of_measurement']
         )
         sql_stmt = f'''SELECT TOP 1 WITH TIES
-                        mined_topic as name, 'TOPICS' as id, 'Trending Topics' as chart_name, 'table' as chart_type,
+                        topic as name, 'TOPICS' as id, 'Trending Topics' as chart_name, 'table' as chart_type,
                         lower(sentiment) as average_sentiment,
-                        SUM(COUNT(*)) OVER (PARTITION BY mined_topic) AS call_frequency
-                    FROM [dbo].[processed_data]
+                        SUM(COUNT(*)) OVER (PARTITION BY topic) AS call_frequency
+                    FROM [dbo].[km_processed_data]
                     {where_clause}
-                    GROUP BY mined_topic, sentiment
-                    ORDER BY ROW_NUMBER() OVER (PARTITION BY mined_topic ORDER BY COUNT(*) DESC)
+                    GROUP BY topic, sentiment
+                    ORDER BY ROW_NUMBER() OVER (PARTITION BY topic ORDER BY COUNT(*) DESC)
                     '''
 
         cursor.execute(sql_stmt)
