@@ -7,7 +7,7 @@ import os
 import re
 from typing import Any
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse, StreamingResponse
 import requests
 from common.config.config import Config
@@ -427,3 +427,32 @@ async def fetch_azure_search_content_endpoint(request: Request):
             content={"error": "Internal server error"},
             status_code=500
         )
+
+
+@router.post("/admin/init-database")
+async def init_database(request: Request):
+    """
+    Admin endpoint to initialize the SQL database tables and load sample data.
+    Protected by optional X-Admin-Key header matching ADMIN_KEY environment variable.
+    """
+    admin_key = os.getenv("ADMIN_KEY")
+    if admin_key:
+        provided_key = request.headers.get("X-Admin-Key", "")
+        if provided_key != admin_key:
+            raise HTTPException(status_code=403, detail="Forbidden: invalid or missing X-Admin-Key header.")
+
+    try:
+        from common.database.db_migration import run_migration
+        from common.database.sqldb_service import get_db_connection
+
+        conn = await get_db_connection()
+        try:
+            result = run_migration(conn)
+        finally:
+            conn.close()
+
+        logger.info("Database init-database completed: %s", result)
+        return JSONResponse(content={"success": True, "message": result})
+    except Exception as e:
+        logger.exception("init_database failed")
+        raise HTTPException(status_code=500, detail=str(e))

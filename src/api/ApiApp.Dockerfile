@@ -35,6 +35,7 @@ RUN pip install --upgrade pip setuptools wheel \
     && pip install --no-cache-dir -r requirements.txt && rm -rf /root/.cache
 
 COPY ./ .
+COPY data/sample_processed_data.json /app/data/sample_processed_data.json
 
 EXPOSE 80
 
