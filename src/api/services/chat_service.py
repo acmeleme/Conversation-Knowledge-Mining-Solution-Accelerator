@@ -32,6 +32,7 @@ from azure.ai.agents.models import TruncationObject
 from cachetools import TTLCache
 
 from auth.auth_utils import (
+    can_access_billing,
     get_authenticated_user_details,
     get_roles_restricted_topics,
     get_tenantid,
@@ -256,6 +257,51 @@ class ChatService:
         return f"{memory_context}\n\nCurrent user question:\n{user_query}"
 
     @staticmethod
+    def _try_extract_chart_json(text: str):
+        """Extract Chart.js JSON from agent response text when present."""
+        if not text:
+            return None
+
+        candidates = [text]
+
+        try:
+            wrapper = json.loads(text)
+            if isinstance(wrapper, dict) and "answer" in wrapper:
+                answer = wrapper["answer"]
+                if isinstance(answer, (dict, str)):
+                    candidates.insert(0, answer)
+        except (json.JSONDecodeError, TypeError):
+            pass
+
+        code_block_pattern = r"```(?:json)?\s*\n?(.*?)\n?```"
+        for match in re.finditer(code_block_pattern, text, re.DOTALL):
+            candidates.append(match.group(1).strip())
+
+        first_brace = text.find("{")
+        last_brace = text.rfind("}")
+        if first_brace != -1 and last_brace > first_brace:
+            candidates.append(text[first_brace:last_brace + 1])
+
+        for candidate in candidates:
+            if isinstance(candidate, dict):
+                if "type" in candidate and "data" in candidate:
+                    return candidate
+                continue
+
+            if not isinstance(candidate, str):
+                continue
+
+            try:
+                parsed = json.loads(candidate.strip())
+            except (json.JSONDecodeError, TypeError):
+                continue
+
+            if isinstance(parsed, dict) and "type" in parsed and "data" in parsed:
+                return parsed
+
+        return None
+
+    @staticmethod
     def _normalize_text_for_match(text: str) -> str:
         return unicodedata.normalize("NFKD", text).encode("ASCII", "ignore").decode("ASCII").casefold()
 
@@ -265,6 +311,10 @@ class ChatService:
         response_text: str,
         roles: list[str],
     ) -> bool:
+        # Users with billing/card access may receive credit-card content.
+        if can_access_billing(roles):
+            return False
+
         if text_contains_restricted_topic(roles, response_text):
             return True
 
@@ -458,6 +508,38 @@ class ChatService:
                         restricted_topics,
                     )
                     full_response = self._restricted_content_message(session_language)
+
+                chart_json = ChatService._try_extract_chart_json(full_response)
+                if chart_json:
+                    logger.info(
+                        "Detected chart JSON in agent response, sending as structured chart object",
+                    )
+                    chart_response = {
+                        "id": str(uuid.uuid4()),
+                        "model": "azure-openai",
+                        "created": int(time.time()),
+                        "object": chart_json,
+                    }
+                    yield json.dumps(chart_response) + "\n\n"
+
+                    if full_response:
+                        user_id = (
+                            self.request.headers.get("X-User-Id")
+                            or get_authenticated_user_details(self.request.headers).get("user_principal_id")
+                            or "anonymous"
+                        )
+                        estimated_tokens = (len(query or "") + len(full_response)) // 4
+                        track_metric_if_configured(
+                            "CKM-TokenUsage",
+                            estimated_tokens,
+                            {"User ID": user_id},
+                        )
+
+                    if self.memory_service and memory_scope and query and full_response:
+                        asyncio.create_task(
+                            self.memory_service.update_from_turn(memory_scope, query, full_response)
+                        )
+                    return
 
                 if buffer_response and full_response:
                     yield self._build_stream_chunk(history_metadata, full_response)
