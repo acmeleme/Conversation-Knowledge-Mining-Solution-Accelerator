@@ -24,6 +24,38 @@ on:
         description: 'Azure Resource Group'
         required: true
         type: string
+      subscription_id:
+        description: 'Azure Subscription ID'
+        required: false
+        type: string
+      tenant_id:
+        description: 'Azure Tenant ID'
+        required: false
+        type: string
+      client_id:
+        description: 'Azure Client ID'
+        required: false
+        type: string
+      app_name:
+        description: 'Frontend App Service name'
+        required: false
+        type: string
+      api_name:
+        description: 'API App Service name'
+        required: false
+        type: string
+      acr_login_server:
+        description: 'ACR login server'
+        required: false
+        type: string
+      app_repo:
+        description: 'Frontend image repository'
+        required: false
+        type: string
+      api_repo:
+        description: 'API image repository'
+        required: false
+        type: string
   push:
     branches:
       - main
@@ -33,8 +65,15 @@ on:
       - '.github/workflows/azure-deploy.yml'
 
 env:
-  AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  AZURE_SUBSCRIPTION_ID: ${{ github.event.inputs.subscription_id || secrets.AZURE_SUBSCRIPTION_ID }}
+  AZURE_TENANT_ID: ${{ github.event.inputs.tenant_id || secrets.AZURE_TENANT_ID }}
+  AZURE_CLIENT_ID: ${{ github.event.inputs.client_id || secrets.AZURE_CLIENT_ID }}
   RESOURCE_GROUP: ${{ github.event.inputs.resource_group || 'rg-callcenter-100' }}
+  APP_NAME: ${{ github.event.inputs.app_name || '' }}
+  API_NAME: ${{ github.event.inputs.api_name || '' }}
+  ACR_LOGIN_SERVER: ${{ github.event.inputs.acr_login_server || '' }}
+  APP_REPO: ${{ github.event.inputs.app_repo || '' }}
+  API_REPO: ${{ github.event.inputs.api_repo || '' }}
   LOCATION: 'eastus2'
   DEPLOYMENT_MODE: ${{ github.event.inputs.deployment_mode || 'application-only' }}
 
@@ -76,9 +115,9 @@ jobs:
     - name: Azure Login (OIDC)
       uses: azure/login@v2
       with:
-        client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        client-id: ${{ github.event.inputs.client_id || secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ github.event.inputs.tenant_id || secrets.AZURE_TENANT_ID }}
+        allow-no-subscriptions: true
     
     - name: Deploy Infrastructure and Application
       run: |
@@ -95,7 +134,53 @@ jobs:
         chmod +x infra/scripts/deploy-app-only.sh
         bash infra/scripts/deploy-app-only.sh "${{ env.RESOURCE_GROUP }}"
       env:
-        AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        AZURE_SUBSCRIPTION_ID: ${{ github.event.inputs.subscription_id || secrets.AZURE_SUBSCRIPTION_ID }}
+        AZURE_TENANT_ID: ${{ github.event.inputs.tenant_id || secrets.AZURE_TENANT_ID }}
+        AZURE_CLIENT_ID: ${{ github.event.inputs.client_id || secrets.AZURE_CLIENT_ID }}
+
+    # NOTE: deploy-app-only.sh calls Microsoft Graph to set enableIdTokenIssuance=true on the App
+    # Registration. If this step fails, the CI principal ($AZURE_CLIENT_ID) requires the
+    # 'Application.ReadWrite.OwnedBy' API permission on Microsoft Graph (admin consent required).
+    # Without it, every login will return AADSTS700054 ("response_type id_token is not enabled").
+    # Fallback: run infra/scripts/configure-easy-auth.ps1 manually after deployment.
+    - name: Validate Easy Auth ID Token Issuance
+      run: |
+        APP_NAME="${APP_NAME:-$(az webapp list --resource-group "$RESOURCE_GROUP" --query "[?starts_with(name,'app-')].name|[0]" -o tsv)}"
+        SUB_ID="${AZURE_SUBSCRIPTION_ID:-$(az account show --query id -o tsv)}"
+        AUTH_V2_URL="https://management.azure.com/subscriptions/${SUB_ID}/resourceGroups/${RESOURCE_GROUP}/providers/Microsoft.Web/sites/${APP_NAME}/config/authsettingsV2?api-version=2022-03-01"
+        CLIENT_ID="$(az rest --method GET --url "$AUTH_V2_URL" --output json | python3 -c "
+        import json, sys
+        data = json.load(sys.stdin)
+        try:
+            print(data['properties']['identityProviders']['azureActiveDirectory']['registration']['clientId'] or '')
+        except (KeyError, TypeError):
+            print('')
+        ")"
+        if [ -z "$CLIENT_ID" ] || [ "$CLIENT_ID" = "None" ]; then
+          echo "⚠️  WARNING: Easy Auth client ID not found — configure-easy-auth.ps1 may not have been run."
+          echo "   Users will see AADSTS700054. Run configure-easy-auth.ps1 to fix."
+          exit 0
+        fi
+        ID_TOKEN_ENABLED="$(az ad app show --id "$CLIENT_ID" --output json | python3 -c "
+        import json, sys
+        data = json.load(sys.stdin)
+        try:
+            print(data['web']['implicitGrantSettings']['enableIdTokenIssuance'])
+        except (KeyError, TypeError):
+            print('False')
+        ")"
+        if [ "$ID_TOKEN_ENABLED" != "True" ]; then
+          echo "❌ FAIL: enableIdTokenIssuance is NOT true on App Registration $CLIENT_ID."
+          echo "   Every login will return AADSTS700054."
+          echo "   Fix: run infra/scripts/configure-easy-auth.ps1 or grant the CI principal"
+          echo "   'Application.ReadWrite.OwnedBy' on Microsoft Graph and re-run the workflow."
+          exit 1
+        fi
+        echo "✅ enableIdTokenIssuance=true confirmed on App Registration $CLIENT_ID."
+      env:
+        AZURE_SUBSCRIPTION_ID: ${{ github.event.inputs.subscription_id || secrets.AZURE_SUBSCRIPTION_ID }}
+        RESOURCE_GROUP: ${{ env.RESOURCE_GROUP }}
+        APP_NAME: ${{ env.APP_NAME }}
 
   post-deployment-setup:
     name: Post-Deployment Data Setup
@@ -110,9 +195,9 @@ jobs:
     - name: Azure Login (OIDC)
       uses: azure/login@v2
       with:
-        client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        client-id: ${{ github.event.inputs.client_id || secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ github.event.inputs.tenant_id || secrets.AZURE_TENANT_ID }}
+        allow-no-subscriptions: true
     
     - name: Setup Python
       uses: actions/setup-python@v5

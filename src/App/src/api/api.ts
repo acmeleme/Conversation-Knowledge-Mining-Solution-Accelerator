@@ -19,20 +19,45 @@ let _cachedIdToken: string | null = null;
 // Cached Easy Auth user_id (UPN/email) forwarded as X-User-Id for APIM governance.
 let _cachedUserId: string | null = null;
 
+const getAuthEndpoints = () => {
+  let remoteAuthEndpoint = "";
+  if (baseURL) {
+    try {
+      remoteAuthEndpoint = `${new URL(baseURL).origin}/.auth/me`;
+    } catch {
+      remoteAuthEndpoint = "";
+    }
+  }
+
+  return [
+    "/.auth/me",
+    remoteAuthEndpoint,
+  ].filter((endpoint, index, arr) => endpoint && arr.indexOf(endpoint) === index);
+};
+
 async function fetchFreshIdToken(): Promise<string | null> {
   try {
     // Refresh the Easy Auth session tokens (no-op if already fresh)
-    await fetch("/.auth/refresh");
-    const res = await fetch("/.auth/me");
-    if (!res.ok) return null;
-    const payload = await res.json();
-    // Prefer id_token; fall back to access_token if id_token absent
-    const token = payload?.[0]?.id_token ?? payload?.[0]?.access_token ?? null;
-    if (token) _cachedIdToken = token;
-    // Cache the user_id (UPN/email) for X-User-Id header propagation
-    const userId = payload?.[0]?.user_id ?? null;
-    if (userId) _cachedUserId = userId;
-    return token;
+    await fetch("/.auth/refresh", { credentials: "include" });
+
+    for (const endpoint of getAuthEndpoints()) {
+      const res = await fetch(endpoint, { credentials: "include" });
+      if (!res.ok) continue;
+
+      const payload = await res.json();
+      const authInfo = Array.isArray(payload) ? payload?.[0] : payload;
+
+      // Easy Auth validation in backend/APIM requires access_token when available.
+      const token = authInfo?.access_token ?? authInfo?.id_token ?? null;
+      if (token) _cachedIdToken = token;
+      // Cache the user_id (UPN/email) for X-User-Id header propagation
+      const userId = authInfo?.user_id ?? null;
+      if (userId) _cachedUserId = userId;
+
+      if (token) return token;
+    }
+
+    return null;
   } catch {
     return null;
   }
@@ -78,7 +103,11 @@ async function apiFetch(url: string, options: RequestInit = {}): Promise<Respons
   const demoRole = getDemoRole();
   if (demoRole) headers.set("x-demo-role", demoRole);
 
-  const response = await fetch(url, { ...options, headers });
+  const response = await fetch(url, {
+    ...options,
+    headers,
+    credentials: options.credentials ?? "include",
+  });
 
   // On 401, clear cached token and retry once with a refreshed token
   if (response.status === 401) {
@@ -91,7 +120,11 @@ async function apiFetch(url: string, options: RequestInit = {}): Promise<Respons
       // Re-attach the (possibly refreshed) user ID on retry
       if (_cachedUserId) retryHeaders.set("X-User-Id", _cachedUserId);
       if (demoRole) retryHeaders.set("x-demo-role", demoRole);
-      return fetch(url, { ...options, headers: retryHeaders });
+      return fetch(url, {
+        ...options,
+        headers: retryHeaders,
+        credentials: options.credentials ?? "include",
+      });
     }
   }
   return response;
@@ -522,15 +555,10 @@ export type UserInfo = {
 };
 
 export async function getUserInfo(): Promise<UserInfo[]> {
-  const authEndpoints = [
-    "/.auth/me",
-    baseURL ? `${baseURL}/.auth/me` : "",
-  ].filter((endpoint, index, arr) => endpoint && arr.indexOf(endpoint) === index);
-
   let response: Response | null = null;
-  for (const endpoint of authEndpoints) {
+  for (const endpoint of getAuthEndpoints()) {
     try {
-      const authResponse = await fetch(endpoint);
+      const authResponse = await fetch(endpoint, { credentials: "include" });
       if (authResponse.ok) {
         response = authResponse;
         break;

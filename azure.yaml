@@ -3,7 +3,7 @@
 #     template: azd-init@1.11.1
 environment:
   name: conversation-knowledge-mining
-  location: eastus
+  location: eastus2
 name: conversation-knowledge-mining
 
 requiredVersions:

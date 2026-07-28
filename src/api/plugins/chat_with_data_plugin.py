@@ -6,9 +6,12 @@ This module provides functions for:
 - Answering questions using call transcript data from Azure AI Search.
 """
 
+import logging
 import re
 from typing import Annotated, Dict, Any
 import ast
+
+logger = logging.getLogger(__name__)
 
 from semantic_kernel.functions.kernel_function_decorator import kernel_function
 from azure.ai.agents.models import (
@@ -16,6 +19,7 @@ from azure.ai.agents.models import (
     MessageRole,
     RunStepToolCallDetails)
 
+from auth.auth_utils import get_current_restricted_topics
 from common.database.sqldb_service import execute_sql_query
 from common.config.config import Config
 from agents.search_agent_factory import SearchAgentFactory
@@ -36,6 +40,18 @@ class ChatWithDataPlugin:
         self.azure_ai_search_index = config.azure_ai_search_index
         self.use_ai_project_client = config.use_ai_project_client
 
+    @staticmethod
+    def _build_restriction_prompt(restricted_topics: list[str]) -> str:
+        if not restricted_topics:
+            return ""
+
+        topics = "; ".join(restricted_topics)
+        return (
+            "\n\nMandatory data-access restriction: never query, summarize, aggregate, or return "
+            f"rows/documents whose topic matches any of these restricted topics: {topics}. "
+            "If data for the request exists only in restricted topics, return no data."
+        )
+
     @kernel_function(name="GetDatabaseMetrics",
                      description="Provides quantified results from the database.")
     async def get_database_metrics(
@@ -53,7 +69,8 @@ class ChatWithDataPlugin:
             str: SQL query result or an error message if failed.
         """
 
-        query = input
+        restricted_topics = get_current_restricted_topics()
+        query = input + self._build_restriction_prompt(restricted_topics)
         try:
             agent_info = await SQLAgentFactory.get_agent()
             agent = agent_info["agent"]
@@ -83,7 +100,7 @@ class ChatWithDataPlugin:
                     sql_query = msg.text_messages[-1].text.value
                     break
             sql_query = sql_query.replace("```sql", '').replace("```", '').strip()
-            answer = await execute_sql_query(sql_query)
+            answer = await execute_sql_query(sql_query, restricted_topics=restricted_topics)
             answer = answer[:20000] if len(answer) > 20000 else answer
 
             # Clean up
@@ -167,13 +184,14 @@ class ChatWithDataPlugin:
             return "Details could not be retrieved. Please try again later."
         return answer
 
-    @kernel_function(name="GenerateChartData", description="Generates Chart.js v4.4.4 compatible JSON data for data visualization requests using current and immediate previous context.")
+    @kernel_function(name="GenerateChartData", description="Generates Chart.js v4.4.4 compatible JSON data for data visualization requests. IMPORTANT: When calling this function, you MUST include the actual numerical data and context from the conversation (e.g., counts, categories, values) along with the chart request. Do NOT pass only the user's chart request text without data.")
     async def generate_chart_data(
             self,
-            input: Annotated[str, "The user's data visualization request along with relevant conversation history and context needed to generate appropriate chart data"],
+            input: Annotated[str, "The user's data visualization request INCLUDING all relevant numerical data, counts, categories, and values from the conversation context needed to generate the chart. Always include the actual data points, not just the request text."],
     ):
         query = input
         query = query.strip()
+        logger.info(f"GenerateChartData called with input length={len(query)}, first 200 chars: {query[:200]}")
         try:
             agent_info = await ChartAgentFactory.get_agent()
             agent = agent_info["agent"]
@@ -193,7 +211,7 @@ class ChatWithDataPlugin:
             )
 
             if run.status == "failed":
-                print(f"Run failed: {run.last_error}")
+                logger.error(f"Chart agent run failed: {run.last_error}")
                 return "Details could not be retrieved. Please try again later."
 
             chartdata = ""
@@ -202,9 +220,11 @@ class ChatWithDataPlugin:
                 if msg.role == MessageRole.AGENT and msg.text_messages:
                     chartdata = msg.text_messages[-1].text.value
                     break
+            logger.info(f"Chart agent returned data length={len(chartdata)}, first 200 chars: {chartdata[:200]}")
             # Clean up
             project_client.agents.threads.delete(thread_id=thread.id)
 
         except Exception:
+            logger.exception("Error in GenerateChartData")
             chartdata = 'Details could not be retrieved. Please try again later.'
         return chartdata

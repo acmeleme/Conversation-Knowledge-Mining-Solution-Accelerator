@@ -1,34 +1,36 @@
-// Azure Managed Redis — for APIM external cache (semantic caching)
-// SKU: Balanced_B0 (1 GB) — cost-effective for demo/dev workloads
-// Note: Azure Cache for Redis (Basic/Standard/Premium) is retiring — use Azure Managed Redis
-// Resource: Microsoft.Cache/redisEnterprise (cluster) + database/default
+// Azure Managed Redis (Enterprise) — for APIM external cache (semantic caching)
+// SKU: Enterprise Balanced_B0 (smallest tier)
+// Note: Classic Azure Cache for Redis is retired — using redisEnterprise
 // TLS enforced, port 10000, hostname: {name}.{region}.redis.azure.net
 param location string = resourceGroup().location
 param redisCacheName string
 
-resource redisCluster 'Microsoft.Cache/redisEnterprise@2024-10-01' = {
+resource redisEnterprise 'Microsoft.Cache/redisEnterprise@2024-10-01' = {
   name: redisCacheName
   location: location
   sku: {
     name: 'Balanced_B0'
-    capacity: 1
   }
   properties: {
-    publicNetworkAccess: 'Enabled'
+    minimumTlsVersion: '1.2'
   }
 }
 
 resource redisDatabase 'Microsoft.Cache/redisEnterprise/databases@2024-10-01' = {
   name: 'default'
-  parent: redisCluster
+  parent: redisEnterprise
   properties: {
+    clientProtocol: 'Encrypted'
+    clusteringPolicy: 'EnterpriseCluster'
     evictionPolicy: 'AllKeysLRU'
-    clusteringPolicy: 'OSSCluster'
     port: 10000
   }
 }
 
-output redisHostName string = redisCluster.properties.hostName
-output redisPort int = 10000
+output redisHostName string = '${redisEnterprise.properties.hostName}'
+output redisPort int = redisDatabase.properties.port
+output redisCacheName string = redisEnterprise.name
 #disable-next-line outputs-should-not-contain-secrets
 output redisPrimaryKey string = redisDatabase.listKeys().primaryKey
+#disable-next-line outputs-should-not-contain-secrets
+output redisConnectionString string = '${redisEnterprise.properties.hostName}:${redisDatabase.properties.port},password=${redisDatabase.listKeys().primaryKey},ssl=True,abortConnect=False'

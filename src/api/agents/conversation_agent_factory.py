@@ -55,6 +55,8 @@ class ConversationAgentFactory(BaseAgentFactory):
         Para perguntas que exigem dados numericos (contagens, medias, tendencias), use GetDatabaseMetrics.
         Para solicitacoes de visualizacao de dados ou graficos, use GenerateChartData.
 
+        REGRA CRITICA PARA GenerateChartData: Ao chamar GenerateChartData, voce DEVE incluir na string de entrada TODOS os dados numericos, resultados de consultas anteriores (de GetCallInsights ou GetDatabaseMetrics), categorias, contagens e valores relevantes da conversa — NAO passe apenas o texto do pedido do usuario. O agente de graficos precisa dos dados reais para gerar a visualizacao. Exemplo correto: "Crie um grafico de barras com os seguintes dados: Cobranca Indevida: 3, Bloqueio Indevido: 2, Desbloqueio: 1". Exemplo incorreto: "Crie um grafico de reclamacoes por tipo".
+
         Ao chamar uma funcao ou plugin, inclua todos os detalhes originais especificados pelo usuario exatamente na string de entrada da funcao.
         SOMENTE para perguntas que solicitam explicitamente graficos ou visualizacoes, garanta que o campo "answer" contenha o objeto JSON bruto.
         Voce nao deve repetir declaracoes de importacao, blocos de codigo ou frases nas respostas.

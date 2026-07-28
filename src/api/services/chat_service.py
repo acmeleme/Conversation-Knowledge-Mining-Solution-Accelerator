@@ -10,6 +10,7 @@ import json
 import logging
 import time
 import uuid
+import unicodedata
 from types import SimpleNamespace
 import asyncio
 import random
@@ -30,7 +31,16 @@ from azure.ai.agents.models import TruncationObject
 
 from cachetools import TTLCache
 
-from auth.auth_utils import get_authenticated_user_details, get_tenantid
+from auth.auth_utils import (
+    can_access_billing,
+    get_authenticated_user_details,
+    get_roles_restricted_topics,
+    get_tenantid,
+    get_user_roles,
+    reset_request_access_context,
+    set_request_access_context,
+    text_contains_restricted_topic,
+)
 from helpers.utils import format_stream_response
 from common.config.config import Config
 from common.logging.event_utils import track_metric_if_configured
@@ -43,6 +53,17 @@ HOST_INSTRUCTIONS = "Answer questions about call center operations"
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+RESTRICTED_RESPONSE_KEYWORDS = (
+    "cartao de credito",
+    "cartão de crédito",
+    "fatura do cartao",
+    "fatura do cartão",
+    "bloqueio e contestacao",
+    "bloqueio e contestação",
+    "contestacao",
+    "contestação",
+)
 
 
 class ExpCache(TTLCache):
@@ -166,6 +187,60 @@ class ChatService:
             return "No pude responder con los datos actuales. Puedes reformular la pregunta con mas detalles?"
         return "I could not answer with the current data. Please rephrase your question with more details."
 
+    @staticmethod
+    def _is_no_data_response(response_text: str) -> bool:
+        normalized = (response_text or "").lower()
+        signals = [
+            "nao encontrei dados suficientes",
+            "não encontrei dados suficientes",
+            "encontrei dados suficientes",
+            "nao encontrei dados disponiveis",
+            "não encontrei dados disponíveis",
+            "n\\u00e3o encontrei dados suficientes",
+            "no pude encontrar suficientes datos",
+            "i could not find enough data",
+            "not enough data",
+        ]
+        return any(signal in normalized for signal in signals)
+
+    @staticmethod
+    def _build_topic_aware_no_data_followup(query: str, language: str) -> str:
+        query_norm = (query or "").lower()
+
+        if language == "pt":
+            if "seguro" in query_norm:
+                return (
+                    "Para avançar agora, posso rodar uma análise ampliada de **Seguro** "
+                    "(incluindo Contratação/Cancelamento e Sinistros/Indenizações) e trazer: "
+                    "1) principais motivos de contato, 2) queixas mais frequentes e "
+                    "3) oportunidades de melhoria operacional."
+                )
+            if "cartao" in query_norm or "cartão" in query_norm:
+                return (
+                    "Para avançar agora, posso ampliar para todo o domínio de **Cartão de Crédito** "
+                    "e consolidar os insights por Fatura/Pagamento e Bloqueio/Contestação."
+                )
+            if "emprestimo" in query_norm or "empréstimo" in query_norm:
+                return (
+                    "Para avançar agora, posso ampliar para todo o domínio de **Empréstimos** "
+                    "e consolidar os insights por Simulação/Contratação e Renegociação/Inadimplência."
+                )
+            return (
+                "Se quiser, já faço uma análise mais ampla sem filtros do período atual e "
+                "te devolvo um resumo executivo com os principais insights disponíveis."
+            )
+
+        if language == "es":
+            return (
+                "Si quieres, puedo ejecutar ahora un análisis más amplio sin filtros de período "
+                "y devolverte un resumen ejecutivo con los principales hallazgos disponibles."
+            )
+
+        return (
+            "If you want, I can run a broader analysis now (without strict period filters) "
+            "and return an executive summary with the best available insights."
+        )
+
     def _get_memory_scope(self) -> str:
         if not self.memory_service:
             return ""
@@ -181,6 +256,110 @@ class ChatService:
             return user_query
         return f"{memory_context}\n\nCurrent user question:\n{user_query}"
 
+    @staticmethod
+    def _try_extract_chart_json(text: str):
+        """Extract Chart.js JSON from agent response text when present."""
+        if not text:
+            return None
+
+        candidates = [text]
+
+        try:
+            wrapper = json.loads(text)
+            if isinstance(wrapper, dict) and "answer" in wrapper:
+                answer = wrapper["answer"]
+                if isinstance(answer, (dict, str)):
+                    candidates.insert(0, answer)
+        except (json.JSONDecodeError, TypeError):
+            pass
+
+        code_block_pattern = r"```(?:json)?\s*\n?(.*?)\n?```"
+        for match in re.finditer(code_block_pattern, text, re.DOTALL):
+            candidates.append(match.group(1).strip())
+
+        first_brace = text.find("{")
+        last_brace = text.rfind("}")
+        if first_brace != -1 and last_brace > first_brace:
+            candidates.append(text[first_brace:last_brace + 1])
+
+        for candidate in candidates:
+            if isinstance(candidate, dict):
+                if "type" in candidate and "data" in candidate:
+                    return candidate
+                continue
+
+            if not isinstance(candidate, str):
+                continue
+
+            try:
+                parsed = json.loads(candidate.strip())
+            except (json.JSONDecodeError, TypeError):
+                continue
+
+            if isinstance(parsed, dict) and "type" in parsed and "data" in parsed:
+                return parsed
+
+        return None
+
+    @staticmethod
+    def _normalize_text_for_match(text: str) -> str:
+        return unicodedata.normalize("NFKD", text).encode("ASCII", "ignore").decode("ASCII").casefold()
+
+    @classmethod
+    def _contains_restricted_content(
+        cls,
+        response_text: str,
+        roles: list[str],
+    ) -> bool:
+        # Users with billing/card access may receive credit-card content.
+        if can_access_billing(roles):
+            return False
+
+        if text_contains_restricted_topic(roles, response_text):
+            return True
+
+        normalized_response = cls._normalize_text_for_match(response_text or "")
+        return any(keyword in normalized_response for keyword in RESTRICTED_RESPONSE_KEYWORDS)
+
+    @staticmethod
+    def _restricted_content_message(language: str) -> str:
+        if language == "es":
+            return (
+                "Acceso denegado. La información de Tarjeta de Crédito está restringida para su perfil."
+            )
+        if language == "en":
+            return "Access denied. Credit card information is restricted for your profile."
+        return (
+            "Acesso negado. As informações sobre Cartão de Crédito "
+            "(Fatura, Pagamento, Bloqueio e Contestação) requerem o perfil 'operador-cartao'."
+        )
+
+    @staticmethod
+    def _build_stream_chunk(
+        history_metadata: dict,
+        content: str,
+    ) -> str:
+        chat_completion_chunk = {
+            "id": str(uuid.uuid4()),
+            "model": "rag-model",
+            "created": int(time.time()),
+            "object": "extensions.chat.completion.chunk",
+            "choices": [
+                {
+                    "messages": [{"role": "assistant", "content": content}],
+                    "delta": {"role": "assistant", "content": content},
+                }
+            ],
+            "history_metadata": history_metadata,
+            "apim-request-id": "",
+        }
+
+        completion_chunk_obj = json.loads(
+            json.dumps(chat_completion_chunk),
+            object_hook=lambda d: SimpleNamespace(**d),
+        )
+        return json.dumps(format_stream_response(completion_chunk_obj, history_metadata, "")) + "\n\n"
+
     async def stream_openai_text(self, conversation_id: str, query: str, language: str = "en", guardrail_query: Optional[str] = None) -> StreamingResponse:
         """
         Get a streaming text response from OpenAI with enhanced guardrails.
@@ -188,14 +367,14 @@ class ChatService:
         # Guardrail Layer 1: Enhanced pre-query validation
         scope, reason = classify_query(guardrail_query if guardrail_query is not None else query)
         logger.debug(f"Query classification: {scope.value} - Reason: {reason}")
-        
+
         if scope != QueryScope.IN_SCOPE:
             message = get_guardrail_message(scope)
             if message:
                 logger.warning(f"Blocked query ({scope.value}): '{query[:100]}' - {reason}")
                 yield message
                 return
-        
+
         thread = None
         complete_response = ""
         try:
@@ -245,6 +424,13 @@ class ChatService:
                         corrupt_key = f"{conversation_id}_corrupt_{random.randint(1000, 9999)}"
                         ChatService.thread_cache[corrupt_key] = thread_id
                 yield self._fallback_no_data_message(language)
+            elif self._is_no_data_response(complete_response):
+                followup = self._build_topic_aware_no_data_followup(
+                    guardrail_query if guardrail_query is not None else query,
+                    language,
+                )
+                if followup:
+                    yield f"\n\n{followup}"
 
     async def stream_chat_request(self, request_body, conversation_id, query):
         """
@@ -288,6 +474,9 @@ class ChatService:
 
         async def generate():
             full_response_parts = []
+            roles = get_user_roles(self.request.headers)
+            restricted_topics = get_roles_restricted_topics(roles)
+            access_context_token = set_request_access_context(roles)
             try:
                 memory_context = ""
                 if self.memory_service and memory_scope and query:
@@ -295,6 +484,7 @@ class ChatService:
 
                 enforced_query = self._build_language_enforced_query(query or "", session_language)
                 enriched_query = self._build_memory_augmented_query(enforced_query, memory_context)
+                buffer_response = bool(restricted_topics)
                 async for chunk in self.stream_openai_text(
                     conversation_id,
                     enriched_query,
@@ -307,40 +497,52 @@ class ChatService:
                     chunk_text = str(chunk)
                     if chunk_text:
                         full_response_parts.append(chunk_text)
-                        chat_completion_chunk = {
-                            "id": "",
-                            "model": "",
-                            "created": 0,
-                            "object": "",
-                            "choices": [
-                                {
-                                    "messages": [],
-                                    "delta": {},
-                                }
-                            ],
-                            "history_metadata": history_metadata,
-                            "apim-request-id": "",
-                        }
-
-                        chat_completion_chunk["id"] = str(uuid.uuid4())
-                        chat_completion_chunk["model"] = "rag-model"
-                        chat_completion_chunk["created"] = int(time.time())
-                        chat_completion_chunk["object"] = "extensions.chat.completion.chunk"
-                        chat_completion_chunk["choices"][0]["messages"].append(
-                            {"role": "assistant", "content": chunk_text}
-                        )
-                        chat_completion_chunk["choices"][0]["delta"] = {
-                            "role": "assistant",
-                            "content": chunk_text,
-                        }
-
-                        completion_chunk_obj = json.loads(
-                            json.dumps(chat_completion_chunk),
-                            object_hook=lambda d: SimpleNamespace(**d),
-                        )
-                        yield json.dumps(format_stream_response(completion_chunk_obj, history_metadata, "")) + "\n\n"
+                        if not buffer_response:
+                            yield self._build_stream_chunk(history_metadata, chunk_text)
 
                 full_response = "".join(full_response_parts).strip()
+                if restricted_topics and self._contains_restricted_content(full_response, roles):
+                    logger.warning(
+                        "Filtered restricted agent response for roles %s. Restricted topics: %s",
+                        roles,
+                        restricted_topics,
+                    )
+                    full_response = self._restricted_content_message(session_language)
+
+                chart_json = ChatService._try_extract_chart_json(full_response)
+                if chart_json:
+                    logger.info(
+                        "Detected chart JSON in agent response, sending as structured chart object",
+                    )
+                    chart_response = {
+                        "id": str(uuid.uuid4()),
+                        "model": "azure-openai",
+                        "created": int(time.time()),
+                        "object": chart_json,
+                    }
+                    yield json.dumps(chart_response) + "\n\n"
+
+                    if full_response:
+                        user_id = (
+                            self.request.headers.get("X-User-Id")
+                            or get_authenticated_user_details(self.request.headers).get("user_principal_id")
+                            or "anonymous"
+                        )
+                        estimated_tokens = (len(query or "") + len(full_response)) // 4
+                        track_metric_if_configured(
+                            "CKM-TokenUsage",
+                            estimated_tokens,
+                            {"User ID": user_id},
+                        )
+
+                    if self.memory_service and memory_scope and query and full_response:
+                        asyncio.create_task(
+                            self.memory_service.update_from_turn(memory_scope, query, full_response)
+                        )
+                    return
+
+                if buffer_response and full_response:
+                    yield self._build_stream_chunk(history_metadata, full_response)
 
                 if full_response:
                     user_id = (
@@ -354,7 +556,7 @@ class ChatService:
                     track_metric_if_configured(
                         "CKM-TokenUsage",
                         estimated_tokens,
-                        {"User ID": user_id},
+                        {"User ID": user_id},  # must match dashboard KQL: customDimensions["User ID"]
                     )
 
                 if self.memory_service and memory_scope and query and full_response:
@@ -378,6 +580,8 @@ class ChatService:
             except Exception as e:
                 logger.error("Error in stream_chat_request: %s", e, exc_info=True)
                 yield json.dumps({"error": "An error occurred while processing the request."}) + "\n\n"
+            finally:
+                reset_request_access_context(access_context_token)
 
         return generate()
 

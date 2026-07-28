@@ -3,91 +3,55 @@
 ## Phase 3: Semantic Cache & Load Balancing (Issue #38)
 
 **Date:** 2025-07  
-**Status:** ✅ Complete — all 23 tests passing, committed `6edc07c`
+**Status:** ✅ Complete — all 23 tests passing, committed 6edc07c
 
 ### Work Delivered
-
-| Artifact | Purpose |
-|---|---|
-| `src/api/tests/test_phase3_cache_and_resilience.py` | 15 fully-mocked pytest tests |
-| `infra/scripts/validate-cache-hit-rate.sh/.ps1` | Live APIM cache hit rate validation (>20% threshold) |
-| `infra/scripts/test-failover.sh/.ps1` | Live failover tests (<2s latency, 429 handling) |
-| `docs/phase3-roi-report.md` | ROI report template for Issue #38 success criteria |
+- src/api/tests/test_phase3_cache_and_resilience.py — 15 fully-mocked pytest tests
+- infra/scripts/validate-cache-hit-rate.sh/.ps1 — Live APIM cache hit rate validation (>20% threshold)
+- infra/scripts/test-failover.sh/.ps1 — Live failover tests (<2s latency, 429 handling)
+- docs/phase3-roi-report.md — ROI report template for Issue #38 success criteria
 
 ### Key Decisions Made
+1. **Pure-mock test strategy:** Phase 3 tests follow the exact pattern from 	est_x_user_id_and_apim.py
+2. **Live validation scripts:** Cache hit rate and failover tests require running system
 
-1. **Pure-mock test strategy:** Phase 3 tests follow the exact pattern from `test_x_user_id_and_apim.py` — all Azure SDK modules mocked via `sys.modules` before app import. No live Azure calls in CI.
+## Recent Session (2026-06-16)
+- Team sync: validated auth, RBAC, and guardrails; noted duplicate /me route
 
-2. **ROI calculator as pure function:** `_calculate_cache_roi()` embedded in test file — no Azure dependency, testable in isolation. Inputs: `(total_requests, cache_hits, cost_per_call, redis_monthly_cost)`.
+## Session 2026-06-16 — AADSTS700054 Root Cause & Fix
 
-3. **Header contract verification:** Tests assert backend returns HTTP 200 when APIM injects `X-Cache-Status`, `X-APIM-Backend`, `X-APIM-Version`, `X-RateLimit-Remaining` — confirms backend does not reject APIM-injected headers.
+**Error reported:** `AADSTS700054: response_type 'id_token' is not enabled for the application.` — occurs after MFA code entry in Microsoft Authenticator.
 
-4. **Graceful rate-limit test:** Live failover scripts treat missing 429 as `_info` (not `_fail`) because APIM rate limit policies may be per-product vs per-subscription.
+### Root Cause
+Two bugs in `infra/scripts/deploy-app-only.sh` that caused `enableIdTokenIssuance` to either not be set or not be visible when it failed:
 
-### Test Results
+1. **Missing `response_type=code id_token` in `--login-parameters`** (line 150): The script called `az webapp auth microsoft update --login-parameters "scope=openid profile email"` — no `response_type=code id_token`. This stripped the hybrid flow parameter that `configure-easy-auth.ps1` had correctly set on the App Service authsettingsV2. Easy Auth v2 inherently uses hybrid flow, so `enableIdTokenIssuance=true` is always required on the App Registration.
 
+2. **Silent Graph PATCH failure** (line 182): `az rest --method PATCH ... --output none >/dev/null` redirected stdout but the error condition was not caught cleanly. If the CI OIDC service principal lacks `Application.ReadWrite.OwnedBy` on Microsoft Graph, the PATCH fails but the script may continue, leaving `enableIdTokenIssuance=false`.
+
+3. **Python `clientId` extraction** returned `"None"` (string) not empty when clientId was JSON null, bypassing the `if [ -z "$CLIENT_ID" ]` guard and causing `az ad app show --id "None"` to fail.
+
+### Changes Made
+- **`deploy-app-only.sh`**: Added `response_type=code id_token` + `offline_access` to loginParameters; replaced one-liner Python with explicit error-handled Python3 heredoc; Graph PATCH now fails loudly (`exit 1`) with actionable error message including the Graph permission requirement.
+- **`deploy-app-only.ps1`**: Added loginParameters enforcement (adds `response_type=code id_token` if missing); replaced silent `| Out-Null` Graph PATCH with `$LASTEXITCODE` check and `throw` on failure.
+- **`.github/workflows/azure-deploy.yml`**: Added "Validate Easy Auth ID Token Issuance" step after deploy that reads `enableIdTokenIssuance` from the App Registration and fails the job if it's false, documenting the root cause and fix action.
+
+### Learnings
+- Easy Auth v2 on App Service **always** uses hybrid flow (`response_type=code id_token`) internally. `enableIdTokenIssuance=true` on the App Registration is **mandatory** — not optional.
+- The OIDC service principal used in GitHub Actions needs **Microsoft Graph `Application.ReadWrite.OwnedBy`** (or `.All`) to PATCH App Registration properties. ARM Contributor alone is insufficient.
+- `az rest --method PATCH --url https://graph.microsoft.com/...` needs the CLI to acquire a Graph token separately from the ARM token — this is where Graph permission gaps cause failures that can be silent if `>/dev/null` is used.
+- `configure-easy-auth.ps1` is the authoritative, comprehensive setup script. Every deployment path (`deploy-app-only.sh/.ps1`, CI workflow) must mirror its App Registration patch or invoke it directly.
+- Python `print(None)` outputs the string `"None"`, not empty string — always guard with `if cid else ""` or use `sys.exit(1)` on missing keys.
+
+### Key File Paths
+- `infra/scripts/configure-easy-auth.ps1` — canonical Easy Auth setup; call after any deployment that changes App Service / App Registration
+- `infra/scripts/deploy-app-only.sh` — CI deployment script (Linux/GitHub Actions)
+- `infra/scripts/deploy-app-only.ps1` — local deployment script (Windows/PowerShell)
+- `.github/workflows/azure-deploy.yml` — GitHub Actions pipeline; now validates `enableIdTokenIssuance` post-deploy
+
+### Immediate Remediation
+Run manually to re-apply all settings including `enableIdTokenIssuance`:
+```powershell
+.\infra\scripts\configure-easy-auth.ps1 -ResourceGroup rg-callcenter-100
 ```
-23 passed in 54.34s
-  8 Phase 2 tests (test_x_user_id_and_apim.py) — no regressions
-  15 Phase 3 tests (test_phase3_cache_and_resilience.py) — all new, all green
-```
 
-### Patterns Established for Future Phases
-
-- Any new APIM header → add one `test_*_endpoint_accepts_*_header` test
-- Any new pure business logic → extract to standalone function, add 3–4 unit tests
-- Live validation scripts: always provide both `.sh` (bash) and `.ps1` (PowerShell 7+) variants
-
----
-
-## Phase 3 Integration Complete (2026-05-31)
-
-All Phase 3 cross-team dependencies validated and documented:
-- **Depends on kai:** Redis backend and APIM pool (openai-primary/openai-pool) ✅ Live
-- **Depends on alex:** APIM policies (chart-policy.xml + chat-policy.xml) with retry/cache headers ✅ Deployed
-- **Delivery:** Validation scripts successfully verify cache hit rates >20% and failover latency <2s
-
-Session status: **COMPLETE**. Orchestration logs recorded. Scribe merge + commit pending.
-
----
-
-## Dashboard Telemetry Validation (2026-05-31)
-
-**Trigger:** Kai's PR commit `6174afd` described as "fix" to Azure Monitor dashboard  
-**Status:** ❌ Root issue NOT fixed — telemetry table mismatch confirmed
-
-### What Was Audited
-
-Fully read all dashboard artifacts (`monitor-dashboard.bicep`, `monitor-dashboard.json`) and all app telemetry code (`event_utils.py`, `api_routes.py`, `chat_service.py`, `azure_openai_helper.py`). Grep-searched entire `src/api` for `CKM-Token`, `track_metric`, `customMetrics`.
-
-### Critical Findings
-
-**Finding 1 — P0:** Dashboard KQL queries `customMetrics | where name startswith "CKM-TokenUsage"`.  
-App exclusively uses `track_event()` from `azure.monitor.events.extension` → writes to `customEvents` table.  
-`customMetrics` is never written. Tiles 4 (Token Usage Over Time) and 6 (Top Users by Token Consumption) will **always render empty**.
-
-**Finding 2 — P1:** Tile 6 groups by `customDimensions["User ID"]` (space, title-case).  
-App emits `"user_id"` (underscore, lowercase) in event payloads. Even if table were correct, user breakdown would always be blank (KQL dimension keys are case-sensitive).
-
-**Finding 3 — INFO:** Commit `6174afd` only compiled Bicep → ARM JSON. No telemetry code changed. The compilation was necessary but not sufficient — the gap predates this commit.
-
-**Finding 4 — PASS:** `monitor-dashboard.json` is internally consistent with `monitor-dashboard.bicep`. No JSON/Bicep divergence risk.
-
-**Finding 5 — PASS:** APIM-native metric tiles (0–3, 5, 7) will render correctly; they do not depend on app telemetry.
-
-**Finding 6 — MEDIUM:** Zero tests validate the telemetry contract (metric name, dimension key, table type). Existing mocks suppress side effects but never assert on emission targets.
-
-### Recommended Remediation
-
-Kai must choose one path:
-- **Fix A (add `track_metric` / OTel counter):** Emit `CKM-TokenUsage*` with `{"User ID": user_id_header}` from `chat_service.py` or `api_routes.py` after each OpenAI response
-- **Fix B (update dashboard KQL):** Rewrite tiles 4 & 6 to query `customEvents` with `name == "ChatStreamSuccess"` — requires token counts to be added to that event's properties first
-- **Fix C (APIM `emit-metric` policy):** Alex adds APIM token counting via `emit-metric` policy — check if APIM can extract token counts from the OpenAI response header
-
-Morgan must add a `test_token_metric_emitted_to_correct_table` test once fix direction is confirmed.
-
-### Decision Filed
-
-`.squad/decisions/inbox/morgan-dashboard-verification.md` — full breakdown with code examples for all three fix options.
-
-**Next Action for Kai:** Read inbox file and choose Fix A, B, or C before Phase 5 dashboard work resumes.

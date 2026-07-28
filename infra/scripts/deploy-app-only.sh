@@ -8,25 +8,39 @@ fi
 
 RESOURCE_GROUP="$1"
 IMAGE_TAG="${IMAGE_TAG:-app-only-$(date +%Y%m%d%H%M%S)}"
+SUBSCRIPTION_ID="${AZURE_SUBSCRIPTION_ID:-}"
+TENANT_ID="${AZURE_TENANT_ID:-}"
 
 echo "Deploying application only to resource group: ${RESOURCE_GROUP}"
 
-APP_NAME="$(az webapp list --resource-group "$RESOURCE_GROUP" --query "[?starts_with(name, 'app-')].name | [0]" -o tsv)"
-API_NAME="$(az webapp list --resource-group "$RESOURCE_GROUP" --query "[?starts_with(name, 'api-')].name | [0]" -o tsv)"
+if [ -n "$SUBSCRIPTION_ID" ]; then
+  az account set --subscription "$SUBSCRIPTION_ID" >/dev/null
+fi
+
+if [ -z "${APP_NAME:-}" ]; then
+  APP_NAME="$(az webapp list --resource-group "$RESOURCE_GROUP" --query "[?starts_with(name, 'app-')].name | [0]" -o tsv)"
+fi
+if [ -z "${API_NAME:-}" ]; then
+  API_NAME="$(az webapp list --resource-group "$RESOURCE_GROUP" --query "[?starts_with(name, 'api-')].name | [0]" -o tsv)"
+fi
 
 if [ -z "$APP_NAME" ] || [ -z "$API_NAME" ]; then
   echo "ERROR: Could not discover app/api App Services in resource group '${RESOURCE_GROUP}'."
   exit 1
 fi
 
-APP_FX="$(az webapp config container show --resource-group "$RESOURCE_GROUP" --name "$APP_NAME" --query "[?name=='DOCKER_CUSTOM_IMAGE_NAME'].value | [0]" -o tsv 2>/dev/null || true)"
-API_FX="$(az webapp config container show --resource-group "$RESOURCE_GROUP" --name "$API_NAME" --query "[?name=='DOCKER_CUSTOM_IMAGE_NAME'].value | [0]" -o tsv 2>/dev/null || true)"
+APP_FX=""
+API_FX=""
+if [ -z "${APP_REPO:-}" ] || [ -z "${API_REPO:-}" ] || [ -z "${ACR_LOGIN_SERVER:-}" ]; then
+  APP_FX="$(az webapp config container show --resource-group "$RESOURCE_GROUP" --name "$APP_NAME" --query "[?name=='DOCKER_CUSTOM_IMAGE_NAME'].value | [0]" -o tsv 2>/dev/null || true)"
+  API_FX="$(az webapp config container show --resource-group "$RESOURCE_GROUP" --name "$API_NAME" --query "[?name=='DOCKER_CUSTOM_IMAGE_NAME'].value | [0]" -o tsv 2>/dev/null || true)"
+fi
 
 APP_IMAGE_REF="${APP_FX#DOCKER|}"
 API_IMAGE_REF="${API_FX#DOCKER|}"
 
-APP_REPO=""
-API_REPO=""
+APP_REPO="${APP_REPO:-}"
+API_REPO="${API_REPO:-}"
 if [[ "$APP_IMAGE_REF" == *"/"* ]]; then
   APP_REPO_WITH_TAG="${APP_IMAGE_REF#*/}"
   APP_REPO="${APP_REPO_WITH_TAG%%:*}"
@@ -36,7 +50,9 @@ if [[ "$API_IMAGE_REF" == *"/"* ]]; then
   API_REPO="${API_REPO_WITH_TAG%%:*}"
 fi
 
-ACR_LOGIN_SERVER="$(az acr list --resource-group "$RESOURCE_GROUP" --query "[0].loginServer" -o tsv)"
+if [ -z "${ACR_LOGIN_SERVER:-}" ]; then
+  ACR_LOGIN_SERVER="$(az acr list --resource-group "$RESOURCE_GROUP" --query "[0].loginServer" -o tsv)"
+fi
 if [ -z "$ACR_LOGIN_SERVER" ]; then
   if [ -n "${AZURE_CONTAINER_REGISTRY_ENDPOINT:-}" ]; then
     ACR_LOGIN_SERVER="$AZURE_CONTAINER_REGISTRY_ENDPOINT"
@@ -73,7 +89,6 @@ ACR_NAME="${ACR_LOGIN_SERVER%%.*}"
 if [ -z "$APP_REPO" ]; then
   APP_REPO="$APP_NAME"
 fi
-
 if [ -z "$API_REPO" ]; then
   API_REPO="$API_NAME"
 fi
@@ -119,22 +134,99 @@ echo "Restarting App Services..."
 az webapp restart --resource-group "$RESOURCE_GROUP" --name "$APP_NAME" >/dev/null
 az webapp restart --resource-group "$RESOURCE_GROUP" --name "$API_NAME" >/dev/null
 
-# Update Easy Auth on the frontend App Service to use AAD v2.0 tokens and request the
-# 'email' scope. This ensures the email claim appears in /.auth/me user_claims so the
-# React app can read it directly without needing the backend /api/me fallback.
-# Effect is immediate — existing sessions will be revalidated on next request.
-echo "Configuring Easy Auth email scope on ${APP_NAME}..."
-TENANT_ID="$(az account show --query tenantId -o tsv 2>/dev/null || true)"
+# Update Easy Auth on the frontend App Service:
+# 1. Ensure platform is enabled.
+# 2. Set loginParameters to request the hybrid flow (response_type=code id_token) so that
+#    id_token appears in /.auth/me and apiFetch() can use it as a Bearer token.
+#    Without response_type=code id_token, Easy Auth v2 falls back to code-only flow and
+#    id_token is absent from /.auth/me, breaking cross-domain Bearer auth.
+# 3. Enable ID token issuance on the App Registration (required for hybrid flow).
+#    Without enableIdTokenIssuance=true, AAD returns AADSTS700054 at login callback.
+echo "Configuring Easy Auth hybrid flow and ID token issuance on ${APP_NAME}..."
+if [ -z "$TENANT_ID" ]; then
+  TENANT_ID="$(az account show --query tenantId -o tsv 2>/dev/null || true)"
+fi
 if [ -n "$TENANT_ID" ]; then
+  # response_type=code id_token MUST be included; scope must include offline_access for refresh tokens.
+  # The --login-parameters flag takes space-separated key=value pairs.
   az webapp auth microsoft update \
     --resource-group "$RESOURCE_GROUP" \
     --name "$APP_NAME" \
     --issuer "https://login.microsoftonline.com/${TENANT_ID}/v2.0" \
-    --login-parameters "scope=openid profile email" \
+    --login-parameters "response_type=code id_token" "scope=openid profile email offline_access" \
     --output none 2>/dev/null || \
-    echo "WARN: Could not update Easy Auth scope (non-fatal — /api/me fallback is active)"
+    echo "WARN: Could not update Easy Auth login parameters via az webapp auth (non-fatal — will patch via REST)"
+
+  if [ -z "$SUBSCRIPTION_ID" ]; then
+    SUBSCRIPTION_ID="$(az account show --query id -o tsv 2>/dev/null || true)"
+  fi
+  AUTH_V2_URL="https://management.azure.com/subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${RESOURCE_GROUP}/providers/Microsoft.Web/sites/${APP_NAME}/config/authsettingsV2?api-version=2022-03-01"
+  # GET authsettingsV2 AFTER the auth update so the PUT below preserves the updated loginParameters.
+  AUTH_V2_JSON="$(az rest --method GET --url "$AUTH_V2_URL" --output json)"
+  # Patch: enable platform AND ensure loginParameters contains response_type=code id_token.
+  AUTH_V2_PATCHED="$(AUTH_V2_JSON="$AUTH_V2_JSON" python3 - <<'PY'
+import json, os, sys
+
+data = json.loads(os.environ["AUTH_V2_JSON"])
+props = data.setdefault("properties", {})
+props.setdefault("platform", {})["enabled"] = True
+
+aad = props.setdefault("identityProviders", {}).setdefault("azureActiveDirectory", {})
+login_cfg = aad.setdefault("login", {})
+params = login_cfg.get("loginParameters", [])
+if not any("response_type" in p for p in params):
+    params = ["response_type=code id_token", "scope=openid profile email offline_access"]
+    login_cfg["loginParameters"] = params
+
+print(json.dumps(data))
+PY
+)"
+  AUTH_V2_FILE="${RESOURCE_GROUP}-${APP_NAME}-authsettingsV2.json"
+  printf '%s' "$AUTH_V2_PATCHED" > "$AUTH_V2_FILE"
+  az rest --method PUT --url "$AUTH_V2_URL" --headers "Content-Type=application/json" --body @"$AUTH_V2_FILE" --output none >/dev/null
+  rm -f "$AUTH_V2_FILE"
+
+  CLIENT_ID=$(AUTH_V2_JSON="$AUTH_V2_JSON" python3 - <<'PY'
+import json, os, sys
+
+data = json.loads(os.environ["AUTH_V2_JSON"])
+try:
+    cid = data["properties"]["identityProviders"]["azureActiveDirectory"]["registration"]["clientId"]
+    print(cid if cid else "", end="")
+except (KeyError, TypeError):
+    print("", end="")
+PY
+)
+
+  if [ -z "$CLIENT_ID" ] || [ "$CLIENT_ID" = "None" ]; then
+    echo "WARN: Could not resolve Easy Auth client ID from authsettingsV2; skipping App Registration patch."
+    echo "      AADSTS700054 will occur on login until enableIdTokenIssuance is set manually or configure-easy-auth.ps1 is run."
+  else
+    APP_REG_OBJECT_ID="$(az ad app show --id "$CLIENT_ID" --query id -o tsv 2>/dev/null || true)"
+    if [ -z "$APP_REG_OBJECT_ID" ]; then
+      echo "WARN: Could not look up App Registration object ID for client $CLIENT_ID."
+      echo "      Verify the CI service principal has Directory.Read permissions."
+      echo "      AADSTS700054 will occur on login until enableIdTokenIssuance is set manually."
+    else
+      IMP_GRANT_PATCH='{"web":{"implicitGrantSettings":{"enableIdTokenIssuance":true,"enableAccessTokenIssuance":false}}}'
+      if az rest --method PATCH \
+            --url "https://graph.microsoft.com/v1.0/applications/${APP_REG_OBJECT_ID}" \
+            --headers "Content-Type=application/json" \
+            --body "$IMP_GRANT_PATCH" \
+            --output none 2>&1; then
+        echo "ID token issuance enabled on App Registration ${APP_REG_OBJECT_ID}."
+      else
+        echo "ERROR: Graph PATCH failed — enableIdTokenIssuance NOT set on App Registration ${APP_REG_OBJECT_ID}."
+        echo "       This WILL cause AADSTS700054 on every login."
+        echo "       Fix: grant the CI service principal 'Application.ReadWrite.OwnedBy' on MS Graph,"
+        echo "       then re-run deploy-app-only.sh OR run configure-easy-auth.ps1 manually."
+        exit 1
+      fi
+    fi
+  fi
 else
-  echo "WARN: Could not determine tenant ID — skipping Easy Auth scope update"
+  echo "WARN: Could not determine tenant ID — skipping Easy Auth hybrid flow configuration."
+  echo "      Set AZURE_TENANT_ID env var or pass tenant_id to avoid AADSTS700054."
 fi
 
 echo "Application-only deployment completed."

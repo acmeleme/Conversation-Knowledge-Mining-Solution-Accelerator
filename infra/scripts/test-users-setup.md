@@ -65,3 +65,6 @@
 - Se a role não aparecer no token, revalide a atribuição em **Enterprise applications**.
 - Se o login falhar, confirme os redirect URIs `https://<app>.azurewebsites.net/.auth/login/aad/callback` na App Registration.
 - Se houver cache de sessão, encerre a sessão e faça novo login após alterar roles.
+- Se o login funcionar mas o acesso ao Foundry for negado com "does not meet the criteria to access this resource", atribua a role **Foundry User** no **account scope** do Foundry `aif-frx01b002` (`/subscriptions/1a9da512-ff96-4210-8de3-81879a5569f5/resourceGroups/financeirax01_02-rg/providers/Microsoft.CognitiveServices/accounts/aif-frx01b002`) para:
+  - o usuário que está entrando
+  - a identidade gerenciada do projeto `proj-frx01b002`

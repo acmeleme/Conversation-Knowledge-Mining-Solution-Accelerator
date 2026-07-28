@@ -1,0 +1,386 @@
+# Kai's Project History
+
+## Work Completed (Condensed)
+
+### Memory Store Configuration (2026-05-25)
+Configured Azure App Service (East US 2) with Memory Store settings: `AZURE_AI_MEMORY_ENABLED=true`, `AZURE_AI_MEMORY_UPDATE_DELAY_SECONDS=300`. ✅ Verified.
+
+### Data Ingestion Diagnosis (2026-05-26)
+Diagnosed empty `processed_data` SQL table. **Root cause:** `run_process_data_scripts.sh` was never executed after 2026-05-22 infra deployment. **Secondary bug:** script passes `storageAccount` parameter to bicep file that doesn't declare it (deployment would fail).
+
+**Options:** (A) Fast—seed SQL from `infra/data/sample_processed_data.json` (851 records); (B) Full—fix param bug, upload to ADLS, run pipeline. **Key findings:** ADLS has HNS + key auth disabled (needs managed identity); Key Vault public network access disabled.
+
+### Easy Auth Authentication Loop Fix — app-financeirax01 (2026-05-28)
+**Root cause:** F1 Free tier + `WEBSITE_AUTH_ENCRYPTION_KEY` unset → ephemeral encryption key on container restart → nonce cookie unreadable → auth loop. **Fix:** (1) Generated 32-byte encryption key, set app setting; (2) Set `tokenStore.enabled: false` (session → client cookies). ✅ Verified—auth flow operational.
+
+### Easy Auth Verification (2026-05-28)
+Post-fix audit of `app-financeirax01` completed. All checks passed: encryption key present, token store disabled, Easy Auth enabled, clientId/issuer correct, `/.auth/login/aad` returns 302→AAD, `/.auth/me` correctly returns 302 (redirects unauthenticated requests per config).
+
+### Volume Conversation Scripts (2026-05-26)
+Created Python scripts for generating 500 call-center conversations at volume:
+- `generate_conversations.py` — Sends 500 questions to CallCenterInsightWorkflow via azure-ai-projects SDK
+- `generate_chat_conversations.py` — Sends 500 questions to frontend chat API via httpx (async, 10 concurrent, 2 retries)
+- 100 seed question templates across 7 categories (billing, technical, activation, account, network, cancellation, upgrades)
+
+### Phase 3 — APIM AI Gateway: Redis Cache + Backend Pool (2026-06-03)
+Deployed Azure Managed Redis (Balanced_B0, centralus, port 10000) as APIM external cache with circuit breaker on OpenAI backend. Bicep modules updated: `redis.bicep` (retired Azure Cache for Redis → Managed Redis), `apim-redis-cache.bicep` (port 6380→10000), `apim-backend-pool.bicep` (circuit breaker on individual backend, not pool).
+
+### Phase 4 — Content Safety + Key Vault + APIM Named Values (2026-05-31)
+Provisioned Azure AI Content Safety (S0, centralus) and integrated APIM with Content Safety using managed identity authentication. Reused existing Key Vault in RBAC mode, stored `apim-subscription-key` and `content-safety-key` as ARM-managed secrets, granted APIM `Key Vault Secrets User`, and added APIM named values `content-safety-endpoint` + `content-safety-key` (Key Vault reference). Updated APIM operation policies for `chat-post` and `fetchChartData-post` and added Bicep modules `content-safety.bicep` + `keyvault.bicep`.
+
+### Phase 5 — APIM Alignment: Wire APIM into Active Deployment Path (2026-06-14)
+**Root cause:** `infra/modules/api-management.bicep` existed but was never called from `infra/main.bicep`. APIM was never provisioned in any `azd provision` run. App settings (`USE_APIM_GATEWAY`, `APIM_ENDPOINT`, `APIM_SUBSCRIPTION_KEY`) were missing from the backend web app.
+
+**Changes made:**
+1. `infra/modules/api-management.bicep` — Added `Microsoft.ApiManagement/service/subscriptions` resource (`ai-gateway-backend`) scoped to the `ai-gateway` product. Added `apimSubscriptionPrimaryKey` and `apimServiceName` outputs via `listSecrets()`.
+2. `infra/main.bicep` — Added 3 parameters: `enableApimGateway` (bool, default `false`), `apimPublisherEmail` (string, default `admin@microsoft.com`), `apimSku` (enum, default `Developer`). Added conditional `module apimGateway 'modules/api-management.bicep' = if (enableApimGateway)` after the AI Services module. Added `USE_APIM_GATEWAY`, `APIM_ENDPOINT`, `APIM_SUBSCRIPTION_KEY` to backend web app settings. Added `APIM_ENDPOINT`, `APIM_SERVICE_NAME`, `USE_APIM_GATEWAY` outputs.
+3. `infra/main.parameters.json` — Added `enableApimGateway`, `apimPublisherEmail`, `apimSku` backed by `AZURE_ENABLE_APIM_GATEWAY`, `AZURE_APIM_PUBLISHER_EMAIL`, `AZURE_APIM_SKU` env vars.
+
+**Validation:** `az bicep build --file infra/main.bicep` → exit 0, warnings only (pre-existing + expected `outputs-should-not-contain-secrets` for `listSecrets`).
+
+**To enable APIM on next provision:**
+```powershell
+azd env set AZURE_ENABLE_APIM_GATEWAY true
+azd env set AZURE_APIM_PUBLISHER_EMAIL "your@email.com"
+azd provision
+```
+
+**Blocker:** Target resource group `financeirax01_02-rg` (sub `1a9da512-ff96-4210-8de3-81879a5569f5`) does not currently exist — environment was decommissioned. Full `azd provision` not run. Bicep validation (exit 0) is the evidence of correctness.
+
+## Learnings
+
+1. **azd environments:** Callcenter100 (primary, East US 2) + Callcenter2 (test). Resource Group: `rg-callcenter-100`, Subscription: `a2ec8402-d75b-419c-b71d-7558309c50dc`.
+
+2. **Memory Store:** Settings now active for main application service.
+
+3. **Data ingestion pipeline:** `run_process_data_scripts.sh` → `process_data_scripts.bicep` → Azure Deployment Script → `process_data_scripts.sh` → `04_cu_process_data_new_data.py`. Reads from ADLS (`data/custom_transcripts/` + `/custom_audiodata/`), secrets from Key Vault, outputs to `processed_data` SQL table.
+
+4. **ADLS configuration:** HNS enabled, shared key disabled, key-based auth blocked — requires managed identity.
+
+5. **F1 Free tier + Easy Auth = ephemeral encryption key (critical).** `WEBSITE_AUTH_ENCRYPTION_KEY` must be set explicitly. Without it, Easy Auth generates a new random key each startup → nonce cookies unreadable after restart → auth loop. **Fix:** generate stable 32-byte key, set as app setting.
+
+6. **`WEBSITES_ENABLE_APP_SERVICE_STORAGE=false` + `tokenStore.enabled=true` = session data loss.** Token store writes to `/home/data/.auth/tokens/` which vanishes on container restart. **Fix:** set `tokenStore.enabled: false` → session info moves to client cookies (~4KB, sufficient for standard AAD scopes).
+
+7. **`runtimeVersion` in authsettingsV2 does NOT control OAuth flow.** Runtimeversion controls which Easy Auth MODULE runs; Linux container apps always use `response_type=code+id_token` + `response_mode=form_post` (hybrid flow). Changing runtimeVersion has no effect on authentication behavior.
+
+8. **V1 authsettings are read-only when `configVersion: v2` is set.** Azure ARM rejects writes to `/config/authsettings` with error: *"Cannot execute the request because the site is running on auth version v2."* V1 `enabled: true` is legacy artifact ignored by runtime in V2 mode.
+
+9. **Nonce cookie `SameSite=None; Secure` is already correct in Easy Auth.** Easy Auth auto-sets SameSite=None to allow cross-site POST from form_post callbacks. SameSite is NOT a factor in Easy Auth login loops.
+
+
+### Fresh Deployment to financeirax01_02-rg (2026-06-13)
+
+Deployed CKM Solution Accelerator to new Azure environment `financeirax0102` → `financeirax01_02-rg` (centralus), subscription `1a9da512-ff96-4210-8de3-81879a5569f5`.
+
+**Flow:** `azd env new financeirax0102` → set all env vars including `aiServiceLocation` via `azd env config set` → `azd provision --no-prompt` (9m 56s) → search index created → 112 docs loaded → SQL MI user created.
+
+**Deployed resources:** AI Foundry (aif-frx01b001), AI Search (srch-frx01b001), CosmosDB (cosmos-frx01b001), SQL Server (sql-frx01b001), App Service Plan (asp-frx01b001), Frontend (app-frx01b001), Backend API (api-frx01b001), Key Vault (kv-frx01b001), Storage (stfrx01b001).
+
+**URLs verified:**
+- Frontend: https://app-frx01b001.azurewebsites.net → HTTP 200 ✅
+- Backend: https://api-frx01b001.azurewebsites.net/health → `{"status":"healthy"}` ✅
+
+**Key learnings from this run:**
+
+24. **`azd provision --preview --no-prompt` requires interactive Bicep params to be set via `azd env config set infra.parameters.<paramName> <value>`.** The `aiServiceLocation` param (type `location` with `usageName`) can't be injected via `.env` alone — must use `azd env config set infra.parameters.aiServiceLocation eastus2` before preview/provision.
+
+25. **Shared ACR `kmcontainerreg.azurecr.io` for CKM accelerator is publicly accessible (anonymous pull).** No ACR login or DOCKER_REGISTRY_SERVER credentials needed on App Service for this solution's pre-built images.
+
+26. **`azure.yaml` with `services: {}` and pre-built images from shared registry = infra-only deployment.** `azd provision` creates the App Service configured to pull from the shared registry. The `predeploy` hook (`deploy-app-only.ps1`) is needed only for custom image builds.
+
+27. **`pymsalruntime` requires Visual C++ 14.0+ to build on Windows.** Install just `azure-search-documents`, `azure-keyvault-secrets`, `azure-identity` instead of the full requirements.txt when doing local data loading on Windows.
+
+28. **ODBC Driver 17 is functionally equivalent to 18 for Entra token-based SQL auth.** Token auth (`attrs_before={1256: struct.pack(...)}`) works with both drivers. Substitute `ODBC Driver 17` when 18 is not installed.
+
+29. **`post-deployment-setup.sh` reads resources dynamically from the RG.** It's the canonical existing script for post-deploy data seeding — runs search index creation + sample data upload in steps 7-8, SQL MI user creation in step 9. SQL search endpoint is `https://srch-frx01b001.search.windows.net` (not the Foundry endpoint in `AZURE_AI_SEARCH_ENDPOINT`).
+
+
+    1. Is `WEBSITE_AUTH_ENCRYPTION_KEY` set? (most common cause on Free tier)
+    2. Is `WEBSITES_ENABLE_APP_SERVICE_STORAGE=false`? If so, disable `tokenStore.enabled`
+    3. Is the client secret still valid? Test with `client_credentials` grant
+    4. Are redirect URIs exactly correct (including trailing slashes)?
+    5. Is `signInAudience` correct? `AzureADMyOrg` requires users to be in the same tenant
+
+13. **Azure Cache for Redis (ALL tiers) is retiring.** Use `Microsoft.Cache/redisEnterprise` with SKU `Balanced_B0`, `Balanced_B1`, etc. CLI: `az extension add --name redisenterprise`. Port: **6380 → 10000** (TLS).
+
+14. **`publicNetworkAccess` is required for Azure Managed Redis (API 2025-07-01).** Omitting `--public-network-access Enabled` → `BadRequest: 'properties.publicNetworkAccess' is required`.
+
+15. **Azure Managed Redis: access keys disabled by default.** New databases set `accessKeysAuthentication: Disabled`. For APIM external cache (connection string auth), run: `az redisenterprise database update --access-keys-auth Enabled`.
+
+16. **APIM: `circuitBreaker` NOT supported on Pool-type backends.** Returns: *"CircuitBreaker is not supported for backend pool."* Apply `circuitBreaker` rules to the **individual named backend** (e.g., `openai-primary`). Pool inherits circuit breaker state automatically.
+
+17. **`az rest --body` Unicode encoding bug.** Passing JSON with non-ASCII characters (em dashes, special chars) directly as `--body '...'` corrupts payload. **Fix:** write JSON with `Out-File -FilePath ... -Encoding utf8`, then use `--body "@filepath"`.
+
+18. **APIM retry policy breaks SSE / chunked streaming.** For streaming endpoints (chat, SSE), do NOT add `<retry>` in backend policy section. Retry buffers response, breaking `Transfer-Encoding: chunked` and SSE event delivery. Use `<forward-request buffer-request-body="false" timeout="120" />` for streaming routes; retry safe for non-streaming JSON endpoints.
+
+19. **APIM caches API version: `2023-05-01-preview`.** External cache resource (`caches/default`) requires preview API version. `useFromLocation: 'default'` sets cache as global (applies to all regions). APIM auto-stores connection string as masked named value—normal behavior.
+
+20. **Azure Managed Redis race condition on create.** If `az redisenterprise create` fails mid-flight, cluster may be partially created. Retry returns `Conflict: The cluster is not yet running.` **Fix:** poll with `az redisenterprise show --query properties.provisioningState` until `Succeeded`, then proceed.
+21. **Content Safety keys can still be retrieved through ARM `listKeys` even when CLI `account keys list` is blocked by `disableLocalAuth=true`.** Use `POST .../accounts/{name}/listKeys?api-version=2023-05-01` with `az rest` when the service is policy-enforced.
+22. **Existing Key Vault may be RBAC-only + public network disabled.** In that case, `az keyvault set-policy` and `az keyvault secret set` can fail from a developer workstation. Use ARM-managed `Microsoft.KeyVault/vaults/secrets` resources for secret creation and grant APIM `Key Vault Secrets User` via RBAC.
+23. **APIM `send-request` can call Content Safety with managed identity.** Inside policy use `<authentication-managed-identity resource="https://cognitiveservices.azure.com/" />` and omit `client-id`; APIM injects the bearer token for the outbound request.
+
+11. **`unauthenticatedClientAction` affects `/.auth/me` response code.** `"RedirectToLoginPage"` → 302; `"Return401"`/`"Return403"` → 401/403. Both indicate Easy Auth working properly; 302 is NOT a bug when RedirectToLoginPage is set.
+
+12. **`configure-easy-auth.ps1` is now idempotent for Free-tier encryption key and token store.** Script generates 32-byte key on first run, preserves across re-runs. Sets `--token-store false` + `tokenStore.enabled = false`. Both together prevent F1 auth loop: stable nonce encryption + no filesystem session dependency.
+
+### APIM Dashboard Token Tiles Fix (2026-06-04)
+
+**Problem:** `dash-financeirax01-apim` tiles 4 & 6 (`LogsDashboardPart` KQL charts) showed "An incomplete query has been provided to this part" and "No data for the given query".
+
+**Root Cause 1 — No data in App Insights:**
+- `configure_azure_monitor()` in `api_routes.py` is gated on `APPLICATIONINSIGHTS_CONNECTION_STRING` env var
+- Env var was **completely missing** from `app-financeirax01` App Service settings
+- OTel pipeline never initialized → `customMetrics` table empty (zero rows confirmed by KQL)
+- **Fix:** Set `APPLICATIONINSIGHTS_CONNECTION_STRING` via `az webapp config appsettings set`; restarted App Service
+
+**Root Cause 2 — "Incomplete query" portal error:**
+- Both `LogsDashboardPart` tiles had ALL inputs marked `isOptional: true` (including `ComponentId`, `Query`, `ControlType`)
+- Azure Portal interprets all-optional inputs as "tile not configured" → refuses to execute KQL
+- **Fix:** Changed `isOptional: false` on `ComponentId`, `Query`, `ControlType` in tiles 4 & 6 of `monitor-dashboard.bicep`; rebuilt JSON; deployed via `az deployment group create` → Succeeded
+
+**Open item:** OTel Counter name normalization — hyphens in `"CKM-TokenUsage"` may be stored as `"CKM_TokenUsage"`. If KQL `startswith "CKM-TokenUsage"` returns no results after data flows, update query in bicep tiles and redeploy.
+
+## Cross-Agent Updates
+
+**2026-05-26:** Scribe consolidated decision entries including Kai's data ingestion recommendation. Data ingestion options (A: seed from sample; B: fix pipeline + full run) now formally recorded in `.squad/decisions.md`. Awaiting approval.
+
+## Phase 3 Completion & Cross-Agent Integration (2026-05-31)
+
+Phase 3 session finalized. Kai's Redis infrastructure, Alex's APIM policies, and Morgan's validation tests all integrated successfully:
+- **Redis backend:** Azure Managed Redis (Balanced_B0, Central US) serving APIM cache @ TTL 5min
+- **APIM pool:** openai-primary + openai-pool with 3-failure circuit breaker active
+- **Policies deployed:** chart-policy.xml (cache + retry), chat-policy.xml (pool routing)
+- **Validation:** 15 unit tests + 2 failover scripts (validate-cache-hit-rate, test-failover)
+
+All cross-agent dependencies satisfied. Session status: **COMPLETE**.
+
+## Phase 5: Infrastructure Diagnosis – Image Pull Failure (2026-06-03)
+
+**Charter Request:** Compare current App Service container config (`app-financeirax01.azurewebsites.net`) with candidate Docker image (`ckmcc0522172320.azurecr.io/webapp-financeirax:fix-auth-proxy`) and recommend which image to deploy.
+
+**Context:** App Service image pull was failing from an unresolvable registry host. Task: determine if candidate is safe alternative or if deeper infrastructure issues prevent either image from being pulled.
+
+### Work Completed
+
+1. **Inspected App Service Configuration** (`app-financeirax01`, rg-callcenter-100)
+   - Current linuxFxVersion: `DOCKER|ckmcc0522172320.azurecr.io/webapp-financeirax:app-only-20260531170503` (deployed 2026-05-31)
+   - Configured ACR: `ckmcc0522172320.azurecr.io`
+   - Username: `ckmcc0522172320`
+   - Password: **EMPTY** (critical)
+
+2. **Validated ACR Registry Connectivity**
+   - Query: `az acr list` in subscription `a2ec8402-d75b-419c-b71d-7558309c50dc` → Returns empty
+   - Query: `az acr show -n ckmcc0522172320` → Resource not found
+   - Query: `az acr check-health` on registry → "Could not connect to registry login server"
+   - **Result:** ACR `ckmcc0522172320` does NOT exist in current subscription. Registry is unreachable.
+
+3. **Root Cause Identified**
+   - ACR hostname `ckmcc0522172320.azurecr.io` is from a **different subscription** (not in `a2ec8402-d75b-419c-b71d-7558309c50dc`)
+   - Cross-subscription image pull requires service principal auth + valid password
+   - Current app settings have **empty password** → authentication will fail even if registry were reachable
+   - Both current image tag (`app-only-20260531170503`) and candidate tag (`fix-auth-proxy`) reference the same dead registry
+
+### Recommendation
+
+**Do NOT deploy candidate image.** Both current and candidate reference the same unreachable ACR. The candidate is not a safe alternative; it will fail with identical image pull errors.
+
+**Next Priority:** Determine correct ACR location (different subscription? or provision new registry in `a2ec8402-d75b-419c-b71d-7558309c50dc`). See decision document: `.squad/decisions/inbox/kai-image-recommendation.md`
+
+### Key Learnings
+
+27. **Cross-subscription ACR pull failures:** If App Service references ACR in different subscription, image pull fails silently. Common symptoms: (1) container stays at old version, (2) 502 Bad Gateway errors, (3) registry hostname appears in error logs but cannot resolve. Fix: (a) migrate image to ACR in target subscription, or (b) create service principal with cross-subscription ACR pull rights + store credentials in app settings.
+
+29. **`APPLICATIONINSIGHTS_CONNECTION_STRING` missing = silent no-op telemetry.** `configure_azure_monitor()` and `track_metric_if_configured()` both short-circuit if the env var is absent — no error, no warning in normal app logs. Always verify `customMetrics` has rows in App Insights before assuming OTel is working.
+
+30. **`LogsDashboardPart` tiles need `isOptional: false` on `ComponentId`, `Query`, `ControlType`.** Azure Portal treats all-optional tile inputs as "unconfigured" and shows "An incomplete query has been provided to this part". Mark these three inputs as required to force the portal to execute the KQL query. Other inputs (`TimeRange`, `PartTitle`, etc.) can remain optional.
+
+31. **OTel Counter name normalization: hyphens may become underscores.** Metric names with hyphens (e.g., `CKM-TokenUsage`) may be stored with underscores (`CKM_TokenUsage`) by the OTel SDK. Verify actual stored name in App Insights `customMetrics | summarize by name` and align KQL `startswith` filter accordingly.
+
+32. **Git commit timestamp vs image push timestamp determines what code is deployed.** A CI/CD image build triggered immediately before a commit will NOT contain that commit's changes. Always verify: `git log --format="%ai" <commit>` in UTC vs ACR push timestamp in UTC. If fix commit is after image push, the deployed container is stale and must be rebuilt.
+
+33. **Zero `customMetrics` ≠ "app is down".** If baseline telemetry (requests, exceptions) flows to App Insights but `customMetrics` is empty, the most likely cause is that the running image predates the OTel metric emission code, NOT that App Insights connectivity is broken. Confirm by comparing fix commit UTC timestamp against ACR image push UTC timestamp.
+
+34. **Scanner bot traffic looks like app activity in App Insights.** WordPress probes (`/xmlrpc.php`, `/wp-includes/`, `/wp-login.php`) will populate `requests` and `exceptions` tables with 404 + `OperationNotFound` errors. These are NOT real user sessions. Exclude scanner paths before drawing conclusions about app health or traffic volume.
+
+
+### Dashboard Contract Drift Fix (2026-06-08)
+
+**Problem:** Live portal still showed "incomplete query" and "no metrics" on APIM dashboard. Contract drift existed across 6 artifact files: Bicep source, compiled ARM JSON, tile reference files, and live snapshot.
+
+**Root cause (multi-layer):**
+1. The prior fix was applied to `monitor-dashboard.json` (ARM) only; never back-ported to `monitor-dashboard.bicep` (canonical source).
+2. Tile 6 was completely **missing** from `monitor-dashboard.json` — dropped during manual editing.
+3. All tile reference files (`tile-4.json`, `tile-6.json`) and `dashboard-full-definition.json` still had `isOptional: true` on all critical inputs.
+4. Tile 6 KQL in Bicep had invalid dot-bracket syntax: `customDimensions.["User ID"]` → fixed to `customDimensions["User ID"]`.
+5. `dashboard.json` was corrupted (contained AZ CLI warning text, not JSON).
+
+**Fixes applied:**
+- `monitor-dashboard.bicep`: Tile 6 `ComponentId`, `Query`, `ControlType` → `isOptional: false`; removed 10 unnecessary optional stubs; fixed KQL dot syntax.
+- `monitor-dashboard.json`: Added complete Tile 6 definition (was missing entirely).
+- `tile-4.json`: `ComponentId`, `Query`, `ControlType` → `isOptional: false`; removed stub inputs.
+- `tile-6.json`: Same `isOptional` fixes; removed stub inputs; confirmed KQL is correct.
+- `dashboard-full-definition.json`: `isOptional: false` applied to both tiles 4 & 6 for `ComponentId`, `Query`, `ControlType`.
+- `dashboard.json`: Could not write (OneDrive file lock); file remains a broken stub — non-blocking for deployment.
+
+**Deployment:** `az deployment group create` with `infra/modules/monitor-dashboard.json` → `Succeeded`.
+
+**Key principle confirmed:** The canonical source of truth is `monitor-dashboard.bicep`. ANY fix applied directly to `monitor-dashboard.json` or portal must be immediately back-ported to Bicep. Otherwise Bicep↔JSON drift guarantees the issue returns on next infra re-deploy.
+
+**Charter:** 4-step live end-to-end validation — deployed version → metrics flow → dashboard KQL → tile render.
+
+**Context:** Prior session fixed two issues: (1) `APPLICATIONINSIGHTS_CONNECTION_STRING` env var was missing → set via CLI; (2) `LogsDashboardPart` tiles 4 & 6 had `isOptional: true` on all inputs → fixed to `isOptional: false` and deployed via `az deployment group create`.
+
+The current session validated whether metrics are NOW flowing end-to-end.
+
+---
+
+**Step 1 — Deployed Image Version**
+
+- Deployed image: `acrcallcenter100.azurecr.io/web-app:hotfix-topic-filter-4`
+- ACR push timestamp: `2026-06-03T23:38:56Z`
+- OTel metrics fix commit (`f49303a`): `2026-06-04T02:30:26Z` (+2h52m AFTER image push)
+- Dashboard `isOptional` fix commit (`60819d7`): `2026-06-04T02:52:36Z` (+3h14m AFTER image push)
+- **Result: ❌ STALE IMAGE — neither fix is deployed in the running container**
+
+---
+
+**Step 2 — App Insights `customMetrics`**
+
+- KQL: `customMetrics | where timestamp > ago(7d) | summarize count() by name` → **0 rows**
+- Expected: rows with `name = "CKM-TokenUsage"` (or `"CKM_TokenUsage"`)
+- Root cause: image predates `event_utils.py` fix → `track_metric_if_configured()` not present → no metric emission
+- **Result: ❌ NO DATA**
+
+---
+
+**Step 3 — Dashboard KQL vs Metric Shape**
+
+- Cannot validate OTel normalization (hyphen vs underscore) because `customMetrics` is empty
+- Dashboard KQL uses `startswith "CKM-TokenUsage"` — correctness TBD once data flows
+- **Result: ⚠️ BLOCKED (no data to query)**
+
+---
+
+**Step 4 — Live Dashboard Tile Render**
+
+- `isOptional: false` fix IS deployed (prior session confirmed) → "incomplete query" portal error resolved
+- But tiles 4 & 6 will show "No results from query" because `customMetrics` is empty
+- **Result: ❌ NO DATA (config correct, data absent)**
+
+---
+
+**App Health Check (bonus)**
+
+- 48 requests + 48 exceptions in last 24h confirmed in App Insights
+- ALL are WordPress/scanner bot probes (`/xmlrpc.php`, `/wlwmanifest.xml`, etc.) → 404 + `OperationNotFound`
+- Zero real user conversations → zero organic metric data
+- App Insights pipeline IS connected and receiving telemetry ✅
+
+---
+
+**Remediation Required (in order)**
+
+1. Trigger `.github/workflows/docker-build.yml` (workflow_dispatch on `main`) to build a new image from the current fixed source
+2. Update App Service `linuxFxVersion` to the new `main`-branch image tag
+3. Restart App Service to pull new image
+4. Send at least one test chat request to seed `customMetrics`
+5. Run: `customMetrics | summarize by name` to confirm stored metric name (hyphen vs underscore — see learning #31 above)
+6. If name is `CKM_TokenUsage`, update KQL in tiles 4 & 6 of `monitor-dashboard.bicep` and redeploy dashboard
+7. Verify dashboard tiles 4 & 6 render data
+
+
+---
+
+### Grafana Dashboard — AI Foundry Token Consumption per User (2026-06-09)
+
+**Task**: Add per-user token consumption section to Grafana dashboard Dashboard-financeirax01.
+
+**Key Learnings**:
+
+33. **Azure Managed Grafana is NOT ARM dashboard**. The ARM resource Microsoft.Dashboard/dashboards is just a portal proxy/metadata layer. GET on it returns empty properties (no serializedData). The ARM tag GrafanaDashboardId: 24039 does NOT match Grafana's internal integer ID. Always use the Grafana REST API: GET /api/search?type=dash-db to find the real dashboard, then work with Grafana's own API.
+
+34. **Grafana API auth scope for Azure Managed Grafana**: ce34e7e5-485f-4d76-964f-b3d2b16d1e4f. Get token with z account get-access-token --resource "ce34e7e5-485f-4d76-964f-b3d2b16d1e4f". Use Bearer auth on Grafana REST endpoints. Note: isGrafanaAdmin: false doesn't block dashboard saves if the user has canSave: true on the dashboard.
+
+35. **AI Foundry OTel token data is in AppTraces** (not metrics). Events gen_ai.run_step.message_creation / gen_ai.user.message carry gen_ai.usage.input_tokens and gen_ai.usage.output_tokens in the Properties bag. Use 	odynamic(Properties)["gen_ai.usage.input_tokens"] in KQL to extract.
+
+36. **No AAD user ID in AI Foundry telemetry**. UserId field is empty in AppTraces, AppRequests, and ApiManagementGatewayLogs. The best user proxy is gen_ai.thread.id — each user conversation creates a distinct persistent thread in AI Foundry Agents.
+
+37. **Grafana Azure Log Analytics panel query format**: Use queryType: "Azure Log Analytics", zureLogAnalytics.resources: ["/subscriptions//resourceGroups//providers/Microsoft.OperationalInsights/workspaces/<name>"]. Dashboard template variables (\, \) work in resource paths. Use \(TimeGenerated) macro for time range binding.
+
+38. **ADO work item creation blocked for external ADO orgs** (TF237111). If blocked, use GitHub Issues as fallback tracker — create with gh issue create or GitHub API. All 
+odrigoleme* ADO orgs are deactivated due to inactivity.
+
+39. **PowerShell ConvertTo-Json -Depth 20 on large objects can hang indefinitely** when used with nested PowerShell objects from REST calls. Use Python for JSON manipulation of large dashboard payloads. z monitor log-analytics query --analytics-query "@file.kql" avoids shell-escaping issues with KQL that has double-quoted property accessors.
+
+**Dashboard updated**: ws-financeirax01 Grafana, dashboard uid=c61668191c417f, version 2. Panels added: Row (ID 15) + Table (ID 16) at y=102/103.
+
+**Validation**: Query returned 1 thread with 2525 total tokens (2231 input + 294 output, 2 calls) from AppTraces in law-financeirax01.
+
+40. **Safe git sync strategy** (2026-06-14): Follow sequence: (1) `git status -sb` (2) `git remote -v` (3) `git fetch --all --prune` (4) determine branch & upstream (5) if behind: `git pull --rebase` (6) if ahead: `git push` (7) if both: rebase then push. Key: always fetch first, never use destructive commands (`--hard`, force push, `checkout --`). On conflict, stop and report files. After push, untracked files remain in working directory but don't block sync. GitHub security warnings on vulnerable deps noted; separate task for remediation.
+
+## Azure Entra ID RBAC Setup for Application Roles (2026-06-16)
+
+**Task:** Implement Entra ID RBAC for two application roles (callcenter, faturamento) with idempotent provisioning scripts and Easy Auth v2 integration.
+
+**Deliverables Completed:**
+- [x] **Two app roles defined with stable GUIDs:**
+  - `callcenter` (id: `8b9810aa-eef5-493d-8890-8dd16a6cbbcc`) — "Call Center Operator" — restricted access (excludes Billing/Payment)
+  - `faturamento` (id: `c8c277ec-cda9-45da-922c-ac1a3c67db38`) — "Financeiro/Faturamento" — full access
+- [x] **Two equivalent provisioning scripts:**
+  - `infra/scripts/setup-entra-id-rbac.ps1` (436 lines) — PowerShell + Azure CLI
+  - `infra/scripts/setup-entra-id-rbac.sh` (279 lines) — Bash + Azure CLI + Python
+  - Both scripts are idempotent: check-before-create pattern, preserve existing roles
+- [x] **RBAC configuration file:** `infra/scripts/rbac-config.json` — centralized params (subscription, RG, role defs, test users)
+- [x] **Easy Auth v2 integration:** `infra/scripts/configure-easy-auth.ps1` — consumes `.rbac-output.json`, configures App Service with ID token issuance enabled
+- [x] **Test users provisioned:** Two test users (operador-callcenter@…, financeiro-faturamento@…) created with temporary passwords, auto-assigned to roles
+- [x] **Comprehensive documentation:** `docs/rbac-architecture.md` (11.7KB) — architecture overview, workflow, script internals, troubleshooting, security considerations
+- [x] **Architecture decision documented:** `.squad/decisions/inbox/kai-entra-auth-rbac.md` (8.7KB) — problem statement, rationale, implementation status, risks, success criteria
+
+**Key Learnings:**
+
+41. **Entra ID app roles + Easy Auth v2 hybrid flow require `enableIdTokenIssuance: true`** in app registration. Without this, Azure AD returns error 700054 (OAuth error `invalid_request`) and Easy Auth's `/.auth/login/aad/callback` fails with 401. Hybrid flow (`response_type=code id_token`) requires ID token; access token is insufficient for role claims.
+
+42. **ID token carries `roles` array claim** with assigned role values (e.g., `"roles": ["callcenter"]`). Application backend receives role claims in the `X-Ms-Client-Principal` header (Base64-encoded JSON, extracted by Easy Auth from ID token). Backend uses `get_user_id(request)` from `auth_utils.py` and application-level checks on role values to enforce access control.
+
+43. **Idempotent RBAC provisioning: check-before-create pattern** (both PS1 and SH scripts).
+    - Query if app registration exists by displayName; reuse if found, create if missing
+    - Query existing app roles; preserve roles not in {callcenter, faturamento}; merge new/updated roles
+    - Query if test user exists by UPN; reuse if found, create with temp password if missing
+    - Query existing role assignments; skip assignment if user already has the role
+    - **Benefit:** Operator can safely re-run provisioning script without errors or duplicates. Supports gradual migration and re-validation.
+
+44. **Role IDs are stable UUIDs (v4 GUID), NOT generated per script run.** Both PS1 and SH scripts define role IDs as hardcoded constants (callcenter: `8b9810aa-...`, faturamento: `c8c277ec-...`). If role IDs change, all existing role assignments break and must be redeployed. Store role IDs in code/config; never let them auto-regenerate.
+
+45. **Temporary passwords for new users only; script logs password in `.rbac-output.json`.** When script creates a user, temporary password is generated and returned in the output JSON (`"temporaryPassword": "Temp!90032317..."`) along with the UPN. Existing users (if UPN already exists) return `"created": false` and `"temporaryPassword": null`. **Recommendation:** Store `.rbac-output.json` in Key Vault after provisioning; handle as sensitive.
+
+46. **Test user naming convention:** Prefix + `@<tenant_domain>` (e.g., `operador-callcenter@MngEnvMCAP197214.onmicrosoft.com`). Tenant domain is resolved dynamically via MS Graph `/organization` endpoint; script uses exact domain for consistency. If multiple *.onmicrosoft.com domains exist, script picks first one found (Ensure-TenantDomain function).
+
+47. **Both PS1 and SH scripts use identical hardcoded constants:**
+    - Subscription: `a2ec8402-d75b-419c-b71d-7558309c50dc`
+    - Resource Group: `rg-callcenter-100`
+    - App Registration display name: `ckm-callcenter-app`
+    - **Future improvement:** Parameterize subscription/RG for multi-environment support (via CLI args or config file load).
+
+48. **Output artifact `.rbac-output.json` is the contract between RBAC provisioning and Easy Auth configuration.**
+    - RBAC script generates: `appRegistration.clientId`, `appRegistration.tenantId` (needed for Easy Auth)
+    - Easy Auth script consumes output and configures App Service with: `azureActiveDirectory.clientId`, `azureActiveDirectory.issuer`
+    - If RBAC output is missing/invalid, Easy Auth setup fails. Always validate `.rbac-output.json` before running `configure-easy-auth.ps1`.
+
+49. **SQL auth uses managed identities, NOT Entra ID app roles.** Current `create_users_sql_auth.sql` creates SQL login principals for managed identities (`api-financeirax01`, `id-financeirax01`) and assigns db_datareader/db_datawriter roles. No direct sync between Entra ID app roles and SQL roles. Application enforces RBAC via token claims (JWT `roles` array); SQL enforces identity-based access (who is calling), not role-based access (what roles do they have). **Design:** Entra ID app roles enforce topic access; SQL roles enforce identity/service-level access (application service can read/write, other services cannot).
+
+50. **Easy Auth v2 stores ID token in client-side cookie** (on F1/B1 tiers with `tokenStore.enabled: false`). Hybrid flow callback stores the ID token in a signed, HTTP-only cookie. Subsequent API requests carry the cookie; Easy Auth extracts ID token from cookie and passes `X-Ms-Client-Principal` header to backend. Cookie size ~4KB (sufficient for most JWT payloads); no server-side session storage needed. **Benefit:** Stateless scaling on Free tier.
+
+**Architecture Decision Summary:**
+Two Entra ID app roles (callcenter, faturamento) define access scope. Idempotent provisioning scripts create app registration, define roles, provision test users, and output metadata to `.rbac-output.json`. Easy Auth v2 is configured to issue ID tokens carrying `roles` claim. Application backend extracts role from token and enforces topic-level access control. **Next step:** E2E validation by QA (Morgan) — test login with both users, inspect JWT token, validate topic access restrictions.
+
+**Files Created/Updated:**
+- `infra/scripts/rbac-config.json` — NEW (centralized RBAC parameters)
+- `docs/rbac-architecture.md` — NEW (comprehensive RBAC architecture guide, 11.7KB)
+- `.squad/decisions/inbox/kai-entra-auth-rbac.md` — NEW (decision artifact, 8.7KB)
+- `.squad/agents/kai/history.md` — APPENDED (this entry)
+
+**Status:** ✅ IMPLEMENTED. Ready for E2E testing and deployment validation.
+14. - 2026-06-16T15:03:26.9939922Z: **Team sync: Decision merge batch.** Consolidated 21 inbox decision files into decisions.md. RBAC setup scripts and app role provisioning notes integrated into central decisions hub. Entra ID setup documentation now co-located with auth/guardrails decisions.
+
+

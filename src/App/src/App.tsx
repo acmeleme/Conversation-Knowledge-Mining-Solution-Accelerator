@@ -36,6 +36,7 @@ import { ChatMessage, Conversation } from "./types/AppTypes";
 import { AppLogo } from "./components/Svg/Svg";
 import CustomSpinner from "./components/CustomSpinner/CustomSpinner";
 import CitationPanel from "./components/CitationPanel/CitationPanel";
+import { formatImageNameForDisplay } from "./utils/versionDisplay";
 const panels = {
   DASHBOARD: "DASHBOARD",
   CHAT: "CHAT",
@@ -80,6 +81,8 @@ const Dashboard: React.FC<{ userRole: UserRole; userName: string; userEmail: str
   const [hasMoreRecords, setHasMoreRecords] = useState<boolean>(true);
   const [userMenuOpen, setUserMenuOpen] = useState<boolean>(false);
   const [apiVersion, setApiVersion] = useState<string>("");
+  const [frontendImageTag, setFrontendImageTag] = useState<string>("");
+  const [backendImageTag, setBackendImageTag] = useState<string>("");
 
   useEffect(() => {
     const fetchApiVersion = async () => {
@@ -89,6 +92,8 @@ const Dashboard: React.FC<{ userRole: UserRole; userName: string; userEmail: str
         if (resp.ok) {
           const data = await resp.json();
           setApiVersion(data.api_version || "");
+          setFrontendImageTag(data.frontend_image_name || data.frontend_image_tag || "");
+          setBackendImageTag(data.backend_image_name || data.backend_image_tag || "");
         }
       } catch {
         // silent
@@ -96,6 +101,9 @@ const Dashboard: React.FC<{ userRole: UserRole; userName: string; userEmail: str
     };
     fetchApiVersion();
   }, []);
+
+  const frontendImageName = (frontendImageTag || "").trim() || "loading...";
+  const backendImageName = (backendImageTag || "").trim() || "loading...";
 
   useEffect(() => {
     try {
@@ -130,6 +138,8 @@ const Dashboard: React.FC<{ userRole: UserRole; userName: string; userEmail: str
   const roleLabel =
     userRole === "financeiro"
       ? "💼 Financeiro & Faturamento"
+      : userRole === "operador-cartao"
+      ? "💳 Operador de Cartão"
       : "🎧 Operador de Callcenter";
 
   const updateLayoutWidths = (newState: Record<string, boolean>) => {
@@ -337,18 +347,22 @@ const Dashboard: React.FC<{ userRole: UserRole; userName: string; userEmail: str
             size="small"
             style={{
               marginLeft: 12,
-                backgroundColor: userRole === "financeiro" ? "#dff6dd" : "#dce9f8",
-                color: userRole === "financeiro" ? "#107c10" : "#0078d4",
+                backgroundColor: userRole === "financeiro" ? "#dff6dd" : userRole === "operador-cartao" ? "#f3e5f5" : "#dce9f8",
+                color: userRole === "financeiro" ? "#107c10" : userRole === "operador-cartao" ? "#5c2d91" : "#0078d4",
               fontWeight: 600,
             }}
           >
-              {userRole === "financeiro" ? "💼 Financeiro" : "🎧 Operador"}
+              {roleLabel} — {userName || userEmail || "usuário"}
           </Tag>
         </div>
         <div className="header-right-section">
-          <Text size={100} style={{ color: "#aaa", fontSize: 11, alignSelf: "center", fontFamily: "monospace", marginRight: 4 }}>
-            fe:{(process.env.REACT_APP_VERSION || "dev").slice(0, 7)}
-            {apiVersion ? ` · api:${String(apiVersion).slice(0, 7)}` : ""}
+          <Text
+            size={100}
+            title={`frontend=${frontendImageName} | backend=${backendImageName}`}
+            style={{ color: "#aaa", fontSize: 11, alignSelf: "center", fontFamily: "monospace", marginRight: 4 }}
+          >
+            {`fe:${formatImageNameForDisplay(frontendImageName, "n/a")}`}
+            {` · be:${formatImageNameForDisplay(backendImageName, "n/a")}`}
           </Text>
           <Button
             appearance="subtle"
@@ -487,6 +501,7 @@ const Dashboard: React.FC<{ userRole: UserRole; userName: string; userEmail: str
 const App: React.FC = () => {
   const [userInfo, setUserInfo] = useState<{ name: string; email: string; role: UserRole } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [authError, setAuthError] = useState<string | null>(null);
 
   useEffect(() => {
     // Tenta obter identidade via EasyAuth (/.auth/me)
@@ -617,13 +632,28 @@ const App: React.FC = () => {
           identifier.includes("faturamento") ||
           claims.some((c: any) => c.typ === "roles" && c.val === "financeiro");
 
-        const name: string = isFaturamento ? "Financeiro" : "Operador";
-        let role: UserRole = isFaturamento ? "financeiro" : "operador";
+        const isOperadorCartao =
+          identifier.includes("operador-cartao") ||
+          identifier.includes("operador_cartao") ||
+          identifier.includes("cartao") ||
+          claims.some((c: any) => c.typ === "roles" && c.val === "operador-cartao");
+
+        let role: UserRole;
+        if (isFaturamento) {
+          role = "financeiro";
+        } else if (isOperadorCartao) {
+          role = "operador-cartao";
+        } else {
+          role = "operador";
+        }
+
+        // Usa o email/UPN real como nome de exibição (Bug Fix: mostrar usuário autenticado)
+        const displayName: string = email || rawName || (isFaturamento ? "Financeiro" : "Operador");
 
         // Sincroniza a role no localStorage para que api.ts injete o header x-demo-role
         setDemoRole(role);
 
-        setUserInfo({ name: name || email, email, role });
+        setUserInfo({ name: displayName, email, role });
         setLoading(false);
       } catch {
         const isLocal =
@@ -633,7 +663,12 @@ const App: React.FC = () => {
           setUserInfo({ name: "Dev Local", email: "", role: "operador" });
           setLoading(false);
         } else {
-          window.location.href = `/.auth/login/aad?post_login_redirect_uri=${encodeURIComponent(window.location.href)}`;
+          // Easy Auth can be intentionally disabled in App Service.
+          // In this case run the UI in anonymous mode instead of blocking access.
+          const role: UserRole = "operador";
+          setDemoRole(role);
+          setUserInfo({ name: "Usuário", email: "", role });
+          setLoading(false);
         }
       }
     };
@@ -644,6 +679,17 @@ const App: React.FC = () => {
     return (
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", fontFamily: "Segoe UI, sans-serif", color: "#0078d4" }}>
         Autenticando...
+      </div>
+    );
+  }
+
+  if (authError) {
+    return (
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", fontFamily: "Segoe UI, sans-serif", color: "#242424", padding: 24, textAlign: "center" }}>
+        <div>
+          <h2 style={{ margin: 0, marginBottom: 12 }}>Authentication unavailable</h2>
+          <p style={{ margin: 0 }}>{authError}</p>
+        </div>
       </div>
     );
   }
