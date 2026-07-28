@@ -257,6 +257,20 @@ class ChatService:
         return f"{memory_context}\n\nCurrent user question:\n{user_query}"
 
     @staticmethod
+    def _is_chart_query(query: str) -> bool:
+        """Detect if user query is requesting a chart/graph visualization."""
+        if not query:
+            return False
+        chart_keywords = [
+            "chart", "graph", "visualize", "plot", "histogram", "pie chart",
+            "bar chart", "line chart", "scatter",
+            "gráfico", "grafico", "gerar gráfico", "criar gráfico",
+            "visualizar", "plotar", "diagrama", "barras", "pizza", "linhas",
+        ]
+        query_lower = query.lower()
+        return any(kw in query_lower for kw in chart_keywords)
+
+    @staticmethod
     def _try_extract_chart_json(text: str):
         """Extract Chart.js JSON from agent response text when present."""
         if not text:
@@ -484,7 +498,7 @@ class ChatService:
 
                 enforced_query = self._build_language_enforced_query(query or "", session_language)
                 enriched_query = self._build_memory_augmented_query(enforced_query, memory_context)
-                buffer_response = bool(restricted_topics)
+                buffer_response = bool(restricted_topics) or ChatService._is_chart_query(query or "")
                 async for chunk in self.stream_openai_text(
                     conversation_id,
                     enriched_query,

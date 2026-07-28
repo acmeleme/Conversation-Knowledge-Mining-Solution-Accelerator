@@ -143,7 +143,10 @@ const Chat: React.FC<ChatProps> = ({
     return [];
   };
   const isChartQuery = (query: string) => {
-    const chartKeywords = ["chart", "graph", "visualize", "plot"];
+    const chartKeywords = [
+      "chart", "graph", "visualize", "plot", "histogram",
+      "gráfico", "grafico", "visualizar", "plotar", "diagrama", "barras", "pizza", "linhas",
+    ];
     return chartKeywords.some((keyword) =>
       query.toLowerCase().includes(keyword)
     );
