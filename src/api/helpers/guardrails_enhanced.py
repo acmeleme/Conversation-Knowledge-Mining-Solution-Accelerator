@@ -68,6 +68,16 @@ CALL_CENTER_KEYWORDS = {
                              "insatisfeito", "insatisfeita", "frustrado", "frustrada",
                              "positivo", "negativo", "neutro", "reclamacao", "elogio"],
 
+    # Data visualization & charts
+    "data_visualization": [
+        "chart", "charts", "graph", "graphs", "plot", "visualization", "visualize",
+        "bar chart", "pie chart", "line chart", "doughnut", "histogram",
+        "grafico", "graficos", "grafico de barras", "grafico de pizza",
+        "grafico de linhas", "grafico de rosca", "visualizacao", "visualizar",
+        "crie um grafico", "criar grafico", "gerar grafico", "montar grafico",
+        "mostrar grafico", "exibir grafico", "plotar",
+    ],
+
     # Known call-center topic names — must match the actual topic names in the SQL database.
     # These ensure that queries like "resumo sobre Seguro" or "analise de Cartao de Credito"
     # are always classified as IN_SCOPE even without other call-center keywords.
@@ -239,6 +249,9 @@ def classify_query(query: str) -> Tuple[QueryScope, str]:
         "summary", "summarize", "analysis", "analyze", "action plan", "next steps",
         "resumo", "resumir", "analise", "plano de acao", "acoes", "melhoria",
         "relatorio", "insights", "tendencia", "comparar", "comparativo",
+        "chart", "graph", "plot", "visualization", "visualize",
+        "grafico", "graficos", "visualizacao", "visualizar", "plotar",
+        "crie um grafico", "criar grafico", "gerar grafico",
     ]
     known_topics = CALL_CENTER_KEYWORDS.get("known_topics", [])
     if any(term in query_norm for term in analysis_intent_terms) and any(
